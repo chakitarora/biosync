@@ -643,17 +643,17 @@ function resolveIdentifier(detected, callback) {
     'Ensembl Transcript': function() { resolveEnsembl(id, detected, done); },
     'Ensembl Transcript (Mouse)': function() { resolveEnsembl(id, detected, done); },
     'Ensembl Protein': function() { resolveEnsembl(id, detected, done); },
-    'Ensembl Gene': function() { resolveMyGene(id, detected, done); },
+    'Ensembl Gene': function() { resolveMyGeneWithCanonical(id, detected, done); },
     'Ensembl Gene (Mouse)': function() { resolveMyGene(id, detected, done); },
-    'HGNC ID': function() { resolveMyGene(id, detected, done); },
-    'NCBI Gene ID': function() { resolveMyGene(id, detected, done); },
+    'HGNC ID': function() { resolveMyGeneWithCanonical(id, detected, done); },
+    'NCBI Gene ID': function() { resolveMyGeneWithCanonical(id, detected, done); },
     'RefSeq mRNA': function() { resolveMyGene(id, detected, done); },
     'RefSeq ncRNA': function() { resolveMyGene(id, detected, done); },
     'RefSeq Protein': function() { resolveMyGene(id, detected, done); },
     'RefSeq Predicted mRNA': function() { resolveMyGene(id, detected, done); },
     'RefSeq Predicted Protein': function() { resolveMyGene(id, detected, done); },
     'RefSeq Genomic': function() { resolveMyGene(id, detected, done); },
-    'Gene Symbol': function() { resolveMyGene(id, detected, done); },
+    'Gene Symbol': function() { resolveMyGeneWithCanonical(id, detected, done); },
     'miRBase': function() { resolveMyGene(id, detected, done); },
   };
 
@@ -927,6 +927,60 @@ function resolveChEMBL(id, callback) {
 }
 
 // ═══════════════════════════════════════════════
+// UNIPROT CANONICAL LOOKUP BY GENE NAME
+// ═══════════════════════════════════════════════
+function resolveUniProtByGene(symbol, taxId, callback) {
+  // Use UniProt search to get canonical reviewed entry for a gene symbol
+  // This is more reliable than MyGene's uniprot field for complex loci
+  var query = 'gene:' + encodeURIComponent(symbol) + '+AND+organism_id:' + encodeURIComponent(taxId) + '+AND+reviewed:true';
+  var url = 'https://rest.uniprot.org/uniprotkb/search?query=' + query + '&fields=accession,id,gene_names,protein_name&format=json&size=5';
+  apiFetch(url, function(err, d) {
+    if (err || !d || !d.results || !d.results.length) { callback(null, []); return; }
+    var entries = d.results.map(function(e) {
+      var fullName = '';
+      if (e.proteinDescription && e.proteinDescription.recommendedName)
+        fullName = e.proteinDescription.recommendedName.fullName.value || '';
+      return {
+        db: 'UniProt (canonical)',
+        id: e.primaryAccession,
+        link: 'https://www.uniprot.org/uniprot/' + e.primaryAccession,
+        curated: true,
+        fullName: fullName,
+        uniprotId: e.uniProtkbId || ''
+      };
+    });
+    callback(null, entries);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// MYGENE WITH CANONICAL UNIPROT ENRICHMENT
+// ═══════════════════════════════════════════════
+function resolveMyGeneWithCanonical(id, detected, callback) {
+  resolveMyGene(id, detected, function(err, data) {
+    if (err || !data) { callback(err, data); return; }
+    // Get gene symbol and taxId for canonical UniProt lookup
+    var symbol = data.geneSymbols && data.geneSymbols[0] ? data.geneSymbols[0] : data.primaryName;
+    var taxId = data.taxId || '9606';
+    if (!symbol || symbol.length < 2) { callback(null, data); return; }
+    resolveUniProtByGene(symbol, taxId, function(err2, canonEntries) {
+      if (!canonEntries || !canonEntries.length) { callback(null, data); return; }
+      // Remove any existing UniProt mappings from MyGene (may be wrong)
+      var nonUp = (data.mappings||[]).filter(function(m){
+        return !m.db.startsWith('UniProt');
+      });
+      // Place canonical entries at top of mappings, then non-UniProt
+      data.mappings = canonEntries.concat(nonUp);
+      // Update fullName if we got a better one from UniProt canonical
+      if (!data.fullName && canonEntries[0].fullName) {
+        data.fullName = canonEntries[0].fullName;
+      }
+      callback(null, data);
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════
 // MYGENE.INFO — gene/transcript/symbol
 // ═══════════════════════════════════════════════
 function resolveMyGene(id, detected, callback) {
@@ -1011,7 +1065,15 @@ function parseMyGeneJSON(d, originalId, detected) {
   if (d.uniprot) {
     var up2 = d.uniprot;
     var sw = up2['Swiss-Prot'];
-    if (sw) { var sps=Array.isArray(sw)?sw.slice(0,2):[sw]; sps.forEach(function(u){ mappings.push({db:'UniProt (reviewed)',id:u,link:'https://www.uniprot.org/uniprot/'+u,curated:true}); }); }
+    if (sw) {
+      var sps = Array.isArray(sw) ? sw : [sw];
+      // Sort: canonical accessions (no dash) before isoform-specific (with dash)
+      sps.sort(function(a,b){ var ad=a.indexOf('-')>=0?1:0, bd=b.indexOf('-')>=0?1:0; return ad-bd; });
+      sps.slice(0,3).forEach(function(u){
+        var isIsoform = u.indexOf('-') >= 0;
+        mappings.push({db: isIsoform ? 'UniProt (isoform)' : 'UniProt (reviewed)', id:u, link:'https://www.uniprot.org/uniprot/'+u, curated:!isIsoform});
+      });
+    }
     var tr = up2['TrEMBL'];
     if (tr && !sw) { var trs=Array.isArray(tr)?tr.slice(0,1):[tr]; trs.forEach(function(u){ mappings.push({db:'UniProt (TrEMBL)',id:u,link:'https://www.uniprot.org/uniprot/'+u,curated:false}); }); }
   }
