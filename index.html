@@ -8,27 +8,17 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --white:   #ffffff;
-  --paper:   #fafaf8;
-  --paper2:  #f4f4f0;
-  --rule:    #e0ddd8;
-  --rule2:   #c8c4be;
-  --ink:     #111111;
-  --ink2:    #2a2a2a;
-  --ink3:    #444444;
-  --muted:   #6b6b6b;
-  --dim:     #a0a09a;
-  --red:     #d4200c;
-  --red-pale:#fdf0ee;
-  --navy:    #1a3a6b;
-  --navy-pale:#eef2f8;
-  --teal:    #0d7a6b;
-  --teal-pale:#eef7f5;
-  --amber:   #8a5a00;
-  --amber-pale:#fdf5e6;
-  --serif:   "Fraunces",Georgia,serif;
-  --mono:    "JetBrains Mono",monospace;
-  --sans:    "Inter","Helvetica Neue",sans-serif;
+  --white:#ffffff;--paper:#fafaf8;--paper2:#f4f4f0;
+  --rule:#e0ddd8;--rule2:#c8c4be;
+  --ink:#111111;--ink2:#2a2a2a;--ink3:#444444;
+  --muted:#6b6b6b;--dim:#a0a09a;
+  --red:#d4200c;--red-pale:#fdf0ee;
+  --navy:#1a3a6b;--navy-pale:#eef2f8;
+  --teal:#0d7a6b;--teal-pale:#eef7f5;
+  --amber:#8a5a00;--amber-pale:#fdf5e6;
+  --serif:"Fraunces",Georgia,serif;
+  --mono:"JetBrains Mono",monospace;
+  --sans:"Inter","Helvetica Neue",sans-serif;
 }
 body{font-family:var(--sans);background:var(--white);color:var(--ink);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased}
 ::selection{background:rgba(26,58,107,0.12)}
@@ -36,152 +26,91 @@ a{color:var(--navy);text-decoration:none}a:hover{text-decoration:underline}
 ::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--paper)}::-webkit-scrollbar-thumb{background:var(--rule2)}
 
 /* ── HEADER ── */
-.hdr{
-  height:52px;padding:0 32px;
-  display:flex;align-items:center;gap:20px;
-  border-bottom:2px solid var(--ink);
-  background:var(--white);
-  position:sticky;top:0;z-index:100;
-}
-.logo-wrap{display:flex;align-items:baseline;gap:10px}
-.logo-name{
-  font-family:var(--serif);font-size:1.25rem;font-weight:600;
-  font-variant-ligatures:none;letter-spacing:-0.01em;color:var(--ink);
-  line-height:1;
-}
-.logo-dot{color:var(--red);margin:0 1px}
-.logo-tag{
-  font-family:var(--mono);font-size:0.58rem;font-weight:400;
-  color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;
-}
+.hdr{height:52px;padding:0 28px;display:flex;align-items:center;gap:16px;border-bottom:2px solid var(--ink);background:var(--white);position:sticky;top:0;z-index:100}
+.logo-wrap{display:flex;align-items:baseline;gap:8px}
+.logo-name{font-family:var(--serif);font-size:1.2rem;font-weight:600;color:var(--ink);line-height:1}
+.logo-dot{color:var(--red)}
+.logo-tag{font-family:var(--mono);font-size:0.56rem;color:var(--muted);letter-spacing:0.12em;text-transform:uppercase}
 .hdr-sep{flex:1;height:1px;background:var(--rule)}
-.hdr-right{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:0.62rem;color:var(--dim)}
-.cache-btn{background:none;border:none;color:var(--dim);cursor:pointer;font-family:var(--mono);font-size:0.62rem;transition:color 0.12s;padding:0}
-.cache-btn:hover{color:var(--red)}
+.hdr-right{display:flex;align-items:center;gap:12px;font-family:var(--mono);font-size:0.62rem;color:var(--dim)}
+.hdr-btn{background:none;border:none;color:var(--dim);cursor:pointer;font-family:var(--mono);font-size:0.62rem;transition:color 0.12s;padding:2px 6px}
+.hdr-btn:hover{color:var(--navy)}
+.history-toggle{border:1px solid var(--rule2);color:var(--muted);padding:3px 8px}
+.history-toggle:hover{border-color:var(--navy);color:var(--navy)}
 
-/* ── CONNECTIVITY WARN ── */
-.conn-warn{
-  display:none;padding:8px 32px;
-  background:var(--amber-pale);border-bottom:1px solid rgba(138,90,0,0.2);
-  font-family:var(--mono);font-size:0.7rem;color:var(--amber);
-}
+/* ── CONNECTIVITY ── */
+.conn-warn{display:none;padding:7px 28px;background:var(--amber-pale);border-bottom:1px solid rgba(138,90,0,0.2);font-family:var(--mono);font-size:0.68rem;color:var(--amber)}
 .conn-warn a{color:var(--navy)}
 
+/* ── HISTORY DRAWER ── */
+.history-drawer{display:none;background:var(--paper);border-bottom:1px solid var(--rule);padding:8px 28px}
+.hist-empty{font-family:var(--mono);font-size:0.66rem;color:var(--dim);padding:4px 0}
+.hist-row{display:grid;grid-template-columns:130px 1fr 120px;gap:8px;padding:5px 8px;cursor:pointer;border-bottom:1px solid var(--rule);font-size:0.76rem;transition:background 0.08s;align-items:center}
+.hist-row:last-child{border-bottom:none}
+.hist-row:hover{background:var(--navy-pale)}
+.hist-id{font-family:var(--mono);font-size:0.72rem;color:var(--navy);font-weight:500}
+.hist-name{color:var(--ink3)}
+.hist-type{font-family:var(--mono);font-size:0.62rem;color:var(--muted);text-align:right}
+
 /* ── SEARCH ZONE ── */
-.search-zone{
-  max-width:780px;margin:0 auto;
-  padding:40px 32px 28px;
-}
-.sz-eyebrow{
-  font-family:var(--mono);font-size:0.62rem;font-weight:500;
-  text-transform:uppercase;letter-spacing:0.14em;
-  color:var(--muted);margin-bottom:20px;
-  display:flex;align-items:center;gap:10px;
-}
+.search-zone{max-width:780px;margin:0 auto;padding:36px 28px 24px}
+.sz-eyebrow{font-family:var(--mono);font-size:0.6rem;font-weight:500;text-transform:uppercase;letter-spacing:0.14em;color:var(--muted);margin-bottom:18px;display:flex;align-items:center;gap:10px}
 .sz-eyebrow::after{content:'';flex:1;height:1px;background:var(--rule)}
 
 /* TABS */
-.tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--rule)}
-.tab{
-  font-family:var(--mono);font-size:0.72rem;font-weight:500;
-  padding:7px 18px;border:none;background:none;color:var(--muted);
-  cursor:pointer;transition:color 0.12s;border-bottom:2px solid transparent;margin-bottom:-1px;
-  text-transform:uppercase;letter-spacing:0.08em;
-}
+.tabs{display:flex;border-bottom:1px solid var(--rule);margin-bottom:18px;gap:0;flex-wrap:wrap}
+.tab{font-family:var(--mono);font-size:0.7rem;font-weight:500;padding:7px 16px;border:none;background:none;color:var(--muted);cursor:pointer;transition:color 0.1s;border-bottom:2px solid transparent;margin-bottom:-1px;text-transform:uppercase;letter-spacing:0.08em}
 .tab.on{color:var(--ink);border-bottom-color:var(--ink)}
 .tab:hover:not(.on){color:var(--ink3)}
 
 /* INPUT ROW */
-.input-row{display:flex;gap:0;margin-bottom:12px}
-.id-input{
-  flex:1;
-  font-family:var(--mono);font-size:0.92rem;font-weight:400;
-  border:1px solid var(--ink);border-right:none;
-  padding:11px 14px;color:var(--ink);background:var(--white);
-  outline:none;transition:border-color 0.12s;
-  letter-spacing:0.02em;
-}
+.input-row{display:flex;margin-bottom:10px}
+.id-input{flex:1;font-family:var(--mono);font-size:0.9rem;border:1px solid var(--ink);border-right:none;padding:11px 13px;color:var(--ink);background:var(--white);outline:none;transition:border-color 0.12s;letter-spacing:0.02em}
 .id-input:focus{border-color:var(--navy);box-shadow:inset 0 0 0 1px var(--navy)}
-.id-input::placeholder{color:var(--dim);font-style:italic;font-size:0.82rem}
-.resolve-btn{
-  font-family:var(--mono);font-size:0.72rem;font-weight:600;
-  text-transform:uppercase;letter-spacing:0.1em;
-  padding:11px 22px;background:var(--ink);color:var(--white);
-  border:1px solid var(--ink);cursor:pointer;transition:all 0.12s;
-  white-space:nowrap;
-}
+.id-input::placeholder{color:var(--dim);font-style:italic;font-size:0.8rem}
+.resolve-btn{font-family:var(--mono);font-size:0.7rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;padding:11px 20px;background:var(--ink);color:var(--white);border:1px solid var(--ink);cursor:pointer;transition:all 0.12s;white-space:nowrap}
 .resolve-btn:hover{background:var(--navy);border-color:var(--navy)}
+.resolve-btn:disabled{background:var(--muted);border-color:var(--muted);cursor:not-allowed}
 
-/* EXAMPLE CHIPS */
-.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
-.chip{
-  font-family:var(--mono);font-size:0.64rem;
-  padding:3px 9px;border:1px solid var(--rule2);
-  background:var(--paper);color:var(--ink3);cursor:pointer;
-  transition:all 0.1s;display:flex;align-items:center;gap:5px;
-}
+/* CHIPS + DB RAIL */
+.chips{display:flex;flex-wrap:wrap;gap:4px;margin-bottom:6px}
+.chip{font-family:var(--mono);font-size:0.62rem;padding:3px 8px;border:1px solid var(--rule2);background:var(--paper);color:var(--ink3);cursor:pointer;transition:all 0.1s;display:flex;align-items:center;gap:4px}
 .chip:hover{border-color:var(--navy);color:var(--navy);background:var(--navy-pale)}
 .chip-id{font-weight:500;color:var(--navy)}.chip-type{color:var(--dim)}
+.db-rail{display:flex;flex-wrap:wrap;gap:3px;padding-top:8px;border-top:1px solid var(--rule);margin-top:4px}
+.db-tag{font-family:var(--mono);font-size:0.56rem;padding:2px 5px;border:1px solid var(--rule2);color:var(--muted);background:var(--paper)}
 
-/* DB RAIL */
-.db-rail{
-  display:flex;flex-wrap:wrap;gap:4px;padding-top:10px;
-  border-top:1px solid var(--rule);margin-top:4px;
-}
-.db-tag{
-  font-family:var(--mono);font-size:0.58rem;
-  padding:2px 6px;border:1px solid var(--rule2);
-  color:var(--muted);background:var(--paper);
-}
-
-/* ── BATCH SPECIFICS ── */
-.batch-ta{
-  width:100%;height:120px;
-  font-family:var(--mono);font-size:0.8rem;line-height:1.9;
-  border:1px solid var(--ink);padding:10px 12px;
-  color:var(--ink);background:var(--white);outline:none;resize:vertical;
-  transition:border-color 0.12s;margin-bottom:8px;
-}
+/* PANEL-SPECIFIC INPUTS */
+.batch-ta{width:100%;height:110px;font-family:var(--mono);font-size:0.78rem;line-height:1.9;border:1px solid var(--ink);padding:9px 11px;color:var(--ink);background:var(--white);outline:none;resize:vertical;transition:border-color 0.12s;margin-bottom:8px}
 .batch-ta:focus{border-color:var(--navy);box-shadow:inset 0 0 0 1px var(--navy)}
-.batch-ta::placeholder{color:var(--dim);font-style:italic;font-size:0.74rem}
-.batch-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.species-sel{
-  font-family:var(--mono);font-size:0.7rem;
-  border:1px solid var(--rule2);padding:7px 10px;
-  color:var(--ink3);background:var(--paper);outline:none;cursor:pointer;
-}
-.species-sel:focus{border-color:var(--navy)}
-.batch-hint{font-family:var(--mono);font-size:0.62rem;color:var(--dim)}
-.progress-bar-wrap{display:none;margin-top:10px}
-.pbar-track{height:2px;background:var(--rule);margin-bottom:4px}
-.pbar-fill{height:100%;background:var(--navy);transition:width 0.2s}
-.pbar-txt{font-family:var(--mono);font-size:0.62rem;color:var(--muted)}
-
-/* ── SEARCH PANEL ── */
-.search-hint{font-family:var(--mono);font-size:0.64rem;color:var(--dim);margin-top:5px;text-align:left}
+.batch-ta::placeholder{color:var(--dim);font-style:italic;font-size:0.72rem}
+.batch-controls{display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.species-sel,.convert-sel{font-family:var(--mono);font-size:0.7rem;border:1px solid var(--rule2);padding:7px 9px;color:var(--ink3);background:var(--paper);outline:none;cursor:pointer}
+.species-sel:focus,.convert-sel:focus{border-color:var(--navy)}
+.field-hint{font-family:var(--mono);font-size:0.6rem;color:var(--dim)}
+.mode-desc{font-family:var(--sans);font-size:0.82rem;color:var(--muted);line-height:1.6;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--rule)}
+.mode-desc strong{color:var(--ink3);font-weight:500}
+.pbar-wrap{display:none;margin-top:8px}
+.pbar-track{height:2px;background:var(--rule)}.pbar-fill{height:100%;background:var(--navy);transition:width 0.2s}
+.pbar-txt{font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-top:3px}
+/* Convert panel */
+.convert-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.convert-arrow{font-family:var(--mono);font-size:1.1rem;color:var(--muted);flex-shrink:0}
+/* Reconcile panel */
+.reconcile-cols{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:8px}
+.reconcile-cols .batch-ta{height:90px}
+.reconcile-label{font-family:var(--mono);font-size:0.64rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);margin-bottom:4px}
 
 /* ── RESULTS ZONE ── */
-.results-zone{max-width:780px;margin:0 auto;padding:0 32px 60px}
+.results-zone{max-width:780px;margin:0 auto;padding:0 28px 60px}
 
 /* DETECTED STRIP */
-.detected-strip{
-  display:flex;align-items:center;gap:0;
-  margin-bottom:0;
-  border:1px solid var(--rule2);
-  border-bottom:none;
-  background:var(--paper);
-  font-family:var(--mono);font-size:0.68rem;
-}
-.ds-seg{
-  padding:6px 12px;border-right:1px solid var(--rule2);
-  display:flex;align-items:center;gap:6px;
-  white-space:nowrap;
-}
+.detected-strip{display:flex;align-items:center;flex-wrap:wrap;border:1px solid var(--rule2);border-bottom:none;background:var(--paper);font-family:var(--mono);font-size:0.66rem}
+.ds-seg{padding:6px 11px;border-right:1px solid var(--rule2);display:flex;align-items:center;gap:5px;white-space:nowrap}
 .ds-seg:last-child{border-right:none}
-.ds-label{color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;font-size:0.56rem}
+.ds-label{color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;font-size:0.54rem}
 .ds-val{color:var(--ink2);font-weight:500}
-.ds-type{color:var(--navy)}
-.ds-entity{padding:1px 6px;font-size:0.62rem;font-weight:600}
+.ds-entity{padding:1px 5px;font-size:0.6rem;font-weight:600}
 .entity-protein{color:var(--navy);background:var(--navy-pale);border:1px solid rgba(26,58,107,0.2)}
 .entity-gene{color:var(--teal);background:var(--teal-pale);border:1px solid rgba(13,122,107,0.2)}
 .entity-transcript{color:var(--amber);background:var(--amber-pale);border:1px solid rgba(138,90,0,0.2)}
@@ -191,246 +120,158 @@ a{color:var(--navy);text-decoration:none}a:hover{text-decoration:underline}
 .entity-structure{color:var(--muted);background:var(--paper2);border:1px solid var(--rule)}
 .entity-target{color:var(--red);background:var(--red-pale);border:1px solid rgba(212,32,12,0.2)}
 .entity-mirna{color:#2a6b1a;background:#eef7ea;border:1px solid rgba(42,107,26,0.2)}
-/* SIGNAL DOTS */
-.sig{width:10px;height:10px;border-radius:50%;flex-shrink:0;border:1.5px solid}
+.entity-variant{color:#6b1a3a;background:#f8eef3;border:1px solid rgba(107,26,58,0.2)}
+.sig{width:9px;height:9px;border-radius:50%;flex-shrink:0;border:1.5px solid}
 .sig-high{background:var(--teal);border-color:var(--teal)}
-.sig-medium{background:none;border-color:var(--amber);box-shadow:inset 0 0 0 3px var(--amber-pale)}
+.sig-medium{background:none;border-color:var(--amber);box-shadow:inset 0 0 0 2px var(--amber-pale)}
 .sig-low{background:none;border-color:var(--muted)}
 .sig-none{background:none;border-color:var(--red)}
-.conf-label-high{color:var(--teal)}.conf-label-medium{color:var(--amber)}.conf-label-low{color:var(--muted)}.conf-label-none{color:var(--red)}
+
+/* NOTES */
+.version-note{padding:5px 12px;background:var(--amber-pale);border:1px solid rgba(138,90,0,0.2);border-top:none;font-family:var(--mono);font-size:0.66rem;color:var(--amber)}
+.issue-warn{padding:7px 12px;background:var(--red-pale);border:1px solid rgba(212,32,12,0.15);border-top:none;font-family:var(--mono);font-size:0.68rem;color:var(--ink3);line-height:1.6}
+.issue-icon{color:var(--red);margin-right:4px}
 
 /* RESOLVING */
-.resolving{
-  display:flex;align-items:center;gap:10px;
-  font-family:var(--mono);font-size:0.76rem;color:var(--muted);
-  padding:20px 0;
-}
-.spinner{
-  width:12px;height:12px;
-  border:1.5px solid var(--rule2);border-top-color:var(--navy);
-  border-radius:50%;animation:spin 0.7s linear infinite;
-}
+.resolving{display:flex;align-items:center;gap:9px;font-family:var(--mono);font-size:0.74rem;color:var(--muted);padding:18px 0}
+.spinner{width:11px;height:11px;border:1.5px solid var(--rule2);border-top-color:var(--navy);border-radius:50%;animation:spin 0.7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* RESULT CARD — timetable layout */
+/* RESULT CARD */
 .result-card{border:1px solid var(--rule2)}
-
-.rc-primary-row{
-  padding:18px 20px 14px;
-  border-bottom:1px solid var(--rule);
-  background:var(--white);
-  display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;
-}
-.rc-name{
-  font-family:var(--serif);font-size:2rem;font-weight:600;
-  color:var(--ink);letter-spacing:-0.02em;line-height:1.1;
-  font-optical-sizing:auto;
-}
-.rc-fullname{
-  font-family:var(--serif);font-style:italic;font-weight:300;
-  font-size:0.88rem;color:var(--muted);margin-top:3px;line-height:1.4;
-}
-.rc-badges{display:flex;gap:5px;flex-wrap:wrap;align-items:flex-start;justify-content:flex-end}
-.rc-badge{
-  font-family:var(--mono);font-size:0.58rem;font-weight:500;
-  padding:2px 7px;border:1px solid;white-space:nowrap;
-}
+.rc-primary-row{padding:16px 18px 12px;border-bottom:1px solid var(--rule);background:var(--white);display:grid;grid-template-columns:1fr auto;gap:10px;align-items:start}
+.rc-name{font-family:var(--serif);font-size:1.9rem;font-weight:600;color:var(--ink);letter-spacing:-0.02em;line-height:1.1}
+.rc-fullname{font-family:var(--serif);font-style:italic;font-weight:300;font-size:0.86rem;color:var(--muted);margin-top:3px;line-height:1.4}
+.rc-badges{display:flex;gap:4px;flex-wrap:wrap;align-items:flex-start;justify-content:flex-end}
+.rc-badge{font-family:var(--mono);font-size:0.56rem;font-weight:500;padding:2px 6px;border:1px solid;white-space:nowrap}
 .badge-species{border-color:rgba(26,58,107,0.3);color:var(--navy);background:var(--navy-pale)}
 .badge-reviewed{border-color:rgba(13,122,107,0.3);color:var(--teal);background:var(--teal-pale)}
-.badge-genetype,.badge-biotype,.badge-ns{border-color:var(--rule2);color:var(--muted);background:var(--paper)}
-
-/* ISOFORM BAR */
-.isoform-bar{
-  padding:7px 20px;background:var(--navy-pale);
-  border-bottom:1px solid rgba(26,58,107,0.12);
-  display:flex;align-items:center;gap:12px;
-  font-family:var(--mono);font-size:0.68rem;
-}
-.iso-arrow{color:var(--navy);font-size:0.9rem}
-.iso-label{color:var(--muted)}
-.iso-id{color:var(--navy);font-weight:500}
-.iso-len{color:var(--muted);margin-left:auto}
-.iso-loc{color:var(--muted)}
-
-/* SECTION */
-.rc-section{border-bottom:1px solid var(--rule)}
-.rc-section:last-child{border-bottom:none}
-.rc-sec-head{
-  padding:8px 20px;background:var(--paper);
-  border-bottom:1px solid var(--rule);
-  font-family:var(--mono);font-size:0.6rem;font-weight:600;
-  text-transform:uppercase;letter-spacing:0.14em;color:var(--muted);
-}
-.rc-sec-body{padding:10px 20px}
-
-/* MAPPING TABLE — timetable rows */
+.badge-meta{border-color:var(--rule2);color:var(--muted);background:var(--paper)}
+.isoform-bar{padding:6px 18px;background:var(--navy-pale);border-bottom:1px solid rgba(26,58,107,0.12);display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:0.66rem;flex-wrap:wrap}
+.iso-label{color:var(--muted)}.iso-len{color:var(--muted);margin-left:auto}.iso-sep{color:var(--muted)}.iso-loc{color:var(--muted)}
+.ambig-row{padding:7px 18px;background:var(--amber-pale);border-bottom:1px solid rgba(138,90,0,0.15);font-family:var(--mono);font-size:0.66rem;color:var(--amber);display:flex;align-items:center;gap:7px;flex-wrap:wrap}
+.ambig-item{padding:1px 5px;border:1px solid rgba(138,90,0,0.3);cursor:pointer;transition:all 0.1s;color:var(--navy)}
+.ambig-item:hover{background:var(--navy-pale)}
+.rc-section{border-bottom:1px solid var(--rule)}.rc-section:last-child{border-bottom:none}
+.rc-sec-head{padding:7px 18px;background:var(--paper);border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.14em;color:var(--muted)}
+.rc-sec-body{padding:9px 18px}
 .map-table{display:flex;flex-direction:column}
-.map-row{
-  display:grid;grid-template-columns:160px 1fr auto 24px;
-  align-items:center;gap:8px;
-  padding:5px 0;border-bottom:1px solid var(--rule);
-}
+.map-row{display:grid;grid-template-columns:165px 1fr auto 22px;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid var(--rule)}
 .map-row:last-child{border-bottom:none}
-.map-db-label{
-  font-family:var(--mono);font-size:0.64rem;font-weight:600;
-  color:var(--navy);
-}
-.map-id-val{font-family:var(--mono);font-size:0.78rem;color:var(--ink2)}
-.map-id-link{color:var(--navy);transition:color 0.1s}
-.map-id-link:hover{color:var(--red);text-decoration:underline}
-.map-prov{
-  font-family:var(--mono);font-size:0.56rem;
-  padding:1px 5px;border:1px solid;
-  cursor:help;white-space:nowrap;flex-shrink:0;
-}
+.map-db-label{font-family:var(--mono);font-size:0.62rem;font-weight:600;color:var(--navy)}
+.map-id-val{font-family:var(--mono);font-size:0.76rem;color:var(--ink2)}
+.map-id-link{color:var(--navy);transition:color 0.1s}.map-id-link:hover{color:var(--red);text-decoration:underline}
+.map-prov{font-family:var(--mono);font-size:0.54rem;padding:1px 4px;border:1px solid;cursor:help;white-space:nowrap;flex-shrink:0}
 .prov-curated{border-color:rgba(13,122,107,0.35);color:var(--teal)}
 .prov-auto{border-color:var(--rule2);color:var(--muted)}
-.map-copy{
-  background:none;border:none;color:var(--dim);cursor:pointer;
-  font-size:0.75rem;padding:0;transition:color 0.1s;
-}
+.map-copy{background:none;border:none;color:var(--dim);cursor:pointer;font-size:0.72rem;padding:0;transition:color 0.1s}
 .map-copy:hover{color:var(--navy)}
-
-/* ALIAS CHIPS */
 .alias-tags{display:flex;flex-wrap:wrap;gap:4px}
-.alias-tag{
-  font-family:var(--mono);font-size:0.68rem;
-  padding:2px 8px;border:1px solid var(--rule2);
-  color:var(--ink3);background:var(--paper);
-}
+.alias-tag{font-family:var(--mono);font-size:0.66rem;padding:2px 7px;border:1px solid var(--rule2);color:var(--ink3);background:var(--paper)}
 .alias-tag-gene{border-color:rgba(13,122,107,0.3);color:var(--teal)}
-
-/* FUNCTION TEXT */
-.fn-text{
-  font-family:var(--serif);font-style:italic;font-weight:300;
-  font-size:0.88rem;line-height:1.7;color:var(--ink3);
-  border-left:2px solid var(--rule2);padding-left:12px;
-}
-
-/* FOOTER ROW */
-.rc-footer-row{
-  padding:7px 20px;background:var(--paper);
-  border-top:1px solid var(--rule);
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-}
-.rc-src-label{font-family:var(--mono);font-size:0.6rem;color:var(--dim)}
-.rc-ext-link{
-  font-family:var(--mono);font-size:0.62rem;color:var(--navy);
-  border:1px solid var(--rule2);padding:2px 7px;text-decoration:none;
-  transition:all 0.1s;
-}
+.fn-text{font-family:var(--serif);font-style:italic;font-weight:300;font-size:0.86rem;line-height:1.7;color:var(--ink3);border-left:2px solid var(--rule2);padding-left:11px}
+.rc-footer-row{padding:7px 18px;background:var(--paper);border-top:1px solid var(--rule);display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.rc-src-label{font-family:var(--mono);font-size:0.58rem;color:var(--dim)}
+.rc-ext-link{font-family:var(--mono);font-size:0.6rem;color:var(--navy);border:1px solid var(--rule2);padding:2px 6px;text-decoration:none;transition:all 0.1s;cursor:pointer}
 .rc-ext-link:hover{border-color:var(--navy);background:var(--navy-pale)}
 
-/* AMBIGUITY */
-.ambig-row{
-  padding:9px 20px;background:var(--amber-pale);
-  border-bottom:1px solid rgba(138,90,0,0.15);
-  font-family:var(--mono);font-size:0.68rem;color:var(--amber);
-  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
-}
-.ambig-item{
-  padding:1px 6px;border:1px solid rgba(138,90,0,0.3);
-  cursor:pointer;transition:all 0.1s;color:var(--navy);
-}
-.ambig-item:hover{background:var(--navy-pale)}
-
-/* FREE-TEXT RESULTS */
+/* FREE-TEXT */
 .ft-results{border:1px solid var(--rule2)}
-.ft-head{
-  padding:8px 16px;background:var(--paper);border-bottom:1px solid var(--rule);
-  font-family:var(--mono);font-size:0.64rem;color:var(--muted);
-  display:flex;align-items:center;gap:8px;
-}
-.ft-row{
-  display:grid;grid-template-columns:110px 1fr 90px;gap:12px;
-  padding:9px 16px;border-bottom:1px solid var(--rule);
-  cursor:pointer;transition:background 0.08s;align-items:center;
-}
-.ft-row:last-child{border-bottom:none}
-.ft-row:hover{background:var(--navy-pale)}
-.ft-sym{font-family:var(--mono);font-size:0.82rem;font-weight:600;color:var(--navy)}
-.ft-name{font-family:var(--serif);font-size:0.84rem;font-style:italic;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.ft-sp{font-family:var(--mono);font-size:0.64rem;color:var(--muted);text-align:right}
+.ft-head{padding:7px 14px;background:var(--paper);border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:0.62rem;color:var(--muted)}
+.ft-row{display:grid;grid-template-columns:110px 1fr 90px;gap:10px;padding:8px 14px;border-bottom:1px solid var(--rule);cursor:pointer;transition:background 0.08s;align-items:center}
+.ft-row:last-child{border-bottom:none}.ft-row:hover{background:var(--navy-pale)}
+.ft-sym{font-family:var(--mono);font-size:0.8rem;font-weight:600;color:var(--navy)}
+.ft-name{font-family:var(--serif);font-size:0.82rem;font-style:italic;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ft-sp{font-family:var(--mono);font-size:0.62rem;color:var(--muted);text-align:right}
 
-/* ERROR / INFO */
-.err-box{
-  padding:12px 16px;background:var(--red-pale);
-  border:1px solid rgba(212,32,12,0.2);border-left:3px solid var(--red);
-  font-family:var(--mono);font-size:0.72rem;color:var(--ink3);line-height:1.7;
-}
-.info-box{
-  padding:12px 16px;background:var(--navy-pale);
-  border:1px solid rgba(26,58,107,0.2);border-left:3px solid var(--navy);
-  font-family:var(--mono);font-size:0.72rem;color:var(--ink3);line-height:1.7;
-}
+/* CONVERT RESULT */
+.convert-result-card{border:1px solid var(--rule2)}
+.cr-header{padding:10px 16px;background:var(--paper);border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:10px;font-family:var(--mono);font-size:0.78rem}
+.cr-from{color:var(--navy);font-weight:600}.cr-arrow{color:var(--muted);font-size:1.1rem}.cr-to-label{color:var(--teal);font-weight:600}
+.cr-results{padding:10px 16px}
+.cr-row{display:flex;align-items:center;gap:10px;padding:5px 0;border-bottom:1px solid var(--rule)}
+.cr-row:last-child{border-bottom:none}
+.cr-id{font-family:var(--mono);font-size:0.88rem;font-weight:600;color:var(--navy);flex:1}
+.cr-copy{font-family:var(--mono);font-size:0.66rem;padding:3px 9px;border:1px solid var(--rule2);background:none;cursor:pointer;color:var(--muted);transition:all 0.1s}
+.cr-copy:hover{border-color:var(--navy);color:var(--navy)}
+.cr-via{padding:7px 16px;background:var(--paper);border-top:1px solid var(--rule);font-family:var(--mono);font-size:0.6rem;color:var(--dim)}
+
+/* RECONCILE */
+.recon-card{border:1px solid var(--rule2)}
+.recon-header{padding:10px 14px;background:var(--paper);border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.recon-stat{display:flex;flex-direction:column;align-items:center;min-width:60px}
+.rs-n{font-family:var(--serif);font-size:1.4rem;font-weight:600;line-height:1.1}
+.rs-label{font-family:var(--mono);font-size:0.58rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em}
+.recon-cols{display:grid;grid-template-columns:1fr 1fr 1fr;border-top:none}
+.recon-col{border-right:1px solid var(--rule)}.recon-col:last-child{border-right:none}
+.recon-col-head{padding:6px 12px;background:var(--paper);border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:0.6rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted)}
+.recon-id-list{padding:6px;max-height:200px;overflow-y:auto}
+.recon-id{font-family:var(--mono);font-size:0.7rem;padding:3px 6px;cursor:pointer;border-bottom:1px solid var(--rule);transition:background 0.08s;color:inherit}
+.recon-id:hover{background:var(--navy-pale);color:var(--navy)}
+.recon-empty{font-family:var(--mono);font-size:0.66rem;color:var(--dim);padding:8px 6px;font-style:italic}
+
+/* ERRORS / INFO */
+.err-box{padding:11px 14px;background:var(--red-pale);border:1px solid rgba(212,32,12,0.2);border-left:3px solid var(--red);font-family:var(--mono);font-size:0.72rem;color:var(--ink3);line-height:1.7}
+.info-box{padding:11px 14px;background:var(--navy-pale);border:1px solid rgba(26,58,107,0.2);border-left:3px solid var(--navy);font-family:var(--mono);font-size:0.72rem;color:var(--ink3)}
 .net-err{background:var(--amber-pale);border-color:rgba(138,90,0,0.2);border-left-color:var(--amber)}
-.err-title{font-weight:600;color:var(--red);margin-bottom:6px;font-size:0.76rem}
-.net-err .err-title{color:var(--amber)}
-.err-body{font-size:0.7rem;line-height:1.8}
-.err-body code{background:var(--paper2);padding:1px 5px;border:1px solid var(--rule);font-family:var(--mono)}
+.err-title{font-weight:600;color:var(--amber);margin-bottom:5px;font-size:0.74rem}
+.err-body{font-size:0.68rem;line-height:1.8}
+.err-body code{background:var(--paper2);padding:1px 4px;border:1px solid var(--rule);font-family:var(--mono)}
 
 /* BATCH TABLE */
-.batch-summary{
-  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
-  padding:8px 0;margin-bottom:8px;
-  border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);
-  font-family:var(--mono);font-size:0.7rem;
-}
+.batch-summary{display:flex;align-items:center;gap:9px;flex-wrap:wrap;padding:7px 0;margin-bottom:7px;border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:0.68rem}
 .bs-n{color:var(--muted)}.bs-ok{color:var(--teal)}.bs-fail{color:var(--red)}
-.exp-btn{
-  font-family:var(--mono);font-size:0.62rem;padding:3px 9px;
-  border:1px solid var(--rule2);background:var(--paper);
-  color:var(--muted);cursor:pointer;transition:all 0.1s;
-}
+.exp-btn{font-family:var(--mono);font-size:0.6rem;padding:3px 8px;border:1px solid var(--rule2);background:var(--paper);color:var(--muted);cursor:pointer;transition:all 0.1s}
 .exp-btn:hover{border-color:var(--navy);color:var(--navy)}
-.bt-tbl{width:100%;border-collapse:collapse;font-size:0.76rem}
-.bt-tbl th{
-  font-family:var(--mono);font-size:0.58rem;font-weight:600;
-  text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);
-  padding:5px 8px;border-bottom:1px solid var(--ink);
-  text-align:left;background:var(--paper);
-}
-.bt-tbl td{padding:5px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+.bt-tbl{width:100%;border-collapse:collapse;font-size:0.74rem}
+.bt-tbl th{font-family:var(--mono);font-size:0.56rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);padding:5px 7px;border-bottom:1px solid var(--ink);text-align:left;background:var(--paper)}
+.bt-tbl td{padding:5px 7px;border-bottom:1px solid var(--rule);vertical-align:top}
 .bt-tbl tr:last-child td{border-bottom:none}
 .bt-tbl tr:hover td{background:var(--paper)}
-.bt-input-id{font-family:var(--mono);font-size:0.7rem;color:var(--navy);white-space:nowrap}
-.bt-type-cell{font-family:var(--mono);font-size:0.62rem;color:var(--muted);white-space:nowrap}
-.bt-name-cell{font-weight:500}
-.bt-sp-cell{font-family:var(--mono);font-size:0.68rem;color:var(--muted);white-space:nowrap}
-.bt-map-cell{font-family:var(--mono);font-size:0.66rem}
-.map-db-sm{
-  font-family:var(--mono);font-size:0.58rem;font-weight:600;
-  color:var(--navy);padding:1px 4px;border:1px solid rgba(26,58,107,0.2);
-  background:var(--navy-pale);margin-right:3px;
-}
-.bt-err-cell{color:var(--red);font-family:var(--mono);font-size:0.66rem}
-.pbar-wrap{display:none;margin-top:10px}
-.pbar-track{height:2px;background:var(--rule)}
-.pbar-fill{height:100%;background:var(--navy);transition:width 0.2s}
-.pbar-txt{font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-top:4px}
+.bt-input-id{font-family:var(--mono);font-size:0.68rem;color:var(--navy);white-space:nowrap}
+.bt-type-cell{font-family:var(--mono);font-size:0.6rem;color:var(--muted);white-space:nowrap}
+.bt-name-cell{font-weight:500}.bt-sp-cell{font-family:var(--mono);font-size:0.66rem;color:var(--muted);white-space:nowrap}
+.bt-map-cell{font-family:var(--mono);font-size:0.64rem}
+.map-db-sm{font-family:var(--mono);font-size:0.56rem;font-weight:600;color:var(--navy);padding:1px 3px;border:1px solid rgba(26,58,107,0.2);background:var(--navy-pale);margin-right:2px}
+.bt-err-cell{color:var(--red);font-family:var(--mono);font-size:0.64rem}
 
+/* RECONCILE RESOLVED */
+.rr-card{border:1px solid var(--rule2)}
+.rr-header{padding:10px 14px;background:var(--paper);border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:12px;flex-wrap:wrap}
+.rr-stat{display:flex;flex-direction:column;align-items:center;min-width:56px}
+.rrs-n{font-family:var(--serif);font-size:1.35rem;font-weight:600;line-height:1.1}
+.rrs-label{font-family:var(--mono);font-size:0.56rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.08em}
+.rr-fmt-badge{font-family:var(--mono);font-size:0.64rem;color:var(--navy);border:1px solid rgba(26,58,107,0.3);background:var(--navy-pale);padding:2px 8px;margin-left:auto}
+.rr-cols{display:grid;grid-template-columns:1fr 1fr 1fr}
+.rr-col{border-right:1px solid var(--rule)}.rr-col:last-child{border-right:none}
+.rr-col-head{padding:6px 10px;background:var(--paper);border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:0.58rem;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;display:flex;align-items:center;justify-content:space-between}
+.rr-id-list{padding:4px;max-height:220px;overflow-y:auto}
+.rr-id-row{display:flex;align-items:center;gap:5px;padding:3px 6px;border-bottom:1px solid var(--rule);font-family:var(--mono);font-size:0.68rem;transition:background 0.08s}
+.rr-id-row:last-child{border-bottom:none}
+.rr-id-row:hover{background:var(--navy-pale)}
+.rr-orig{color:var(--dim);font-size:0.6rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:90px;flex-shrink:0}
+.rr-arrow{color:var(--dim);font-size:0.7rem;flex-shrink:0}
+.rr-resolved{color:var(--ink2);font-weight:500;flex:1;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.rr-resolved:hover{color:var(--navy)}
+.rr-unresolved{padding:6px 10px;background:var(--red-pale);border-top:1px solid rgba(212,32,12,0.15)}
+.rr-unresolved-head{font-family:var(--mono);font-size:0.58rem;font-weight:600;text-transform:uppercase;color:var(--red);margin-bottom:4px}
+.rr-unresolved-id{font-family:var(--mono);font-size:0.66rem;color:var(--muted);padding:1px 0}
+/* VALIDATION CARD */
+.valid-card{border:1px solid var(--rule2)}
+/* BULK RESULT */
+.bulk-result-wrap{margin-top:0}
 /* ── FOOTER ── */
-.site-footer{
-  border-top:2px solid var(--ink);padding:14px 32px;
-  display:flex;gap:16px;flex-wrap:wrap;align-items:baseline;
-  font-family:var(--mono);font-size:0.6rem;
-}
+.site-footer{border-top:2px solid var(--ink);padding:14px 28px;display:flex;gap:14px;flex-wrap:wrap;align-items:baseline;font-family:var(--mono);font-size:0.6rem}
 .footer-left{color:var(--dim);line-height:1.8;flex:2}
-.footer-right{text-align:right}
-.footer-right a{color:var(--navy)}
-.footer-right a:hover{text-decoration:underline}
-.design-note{
-  width:100%;padding-top:10px;
-  border-top:1px solid var(--rule);
-  font-family:var(--serif);font-style:italic;font-weight:300;
-  font-size:0.72rem;color:var(--dim);line-height:1.7;
-}
+.footer-right{text-align:right}.footer-right a{color:var(--navy)}
+.design-note{width:100%;padding-top:9px;border-top:1px solid var(--rule);font-family:var(--serif);font-style:italic;font-weight:300;font-size:0.7rem;color:var(--dim);line-height:1.7}
 
 @media(max-width:640px){
-  .search-zone,.results-zone{padding-left:16px;padding-right:16px}
-  .rc-primary-row{grid-template-columns:1fr}
-  .rc-badges{justify-content:flex-start}
-  .map-row{grid-template-columns:120px 1fr auto 20px}
+  .search-zone,.results-zone{padding-left:14px;padding-right:14px}
+  .rc-primary-row{grid-template-columns:1fr}.rc-badges{justify-content:flex-start}
+  .recon-cols{grid-template-columns:1fr}
+  .recon-col{border-right:none;border-bottom:1px solid var(--rule)}
+  .map-row{grid-template-columns:130px 1fr auto 20px}
 }
 </style>
 </head>
@@ -444,27 +285,36 @@ a{color:var(--navy);text-decoration:none}a:hover{text-decoration:underline}
   <div class="hdr-sep"></div>
   <div class="hdr-right">
     <span id="cache-stats"></span>
-    <button class="cache-btn" onclick="clearCache()" title="Clear cached results">clear cache</button>
+    <button class="hdr-btn history-toggle" id="history-toggle" onclick="toggleHistory()">History &#9662;</button>
+    <button class="hdr-btn" id="share-btn" onclick="copyShareURL()">&#x2197; Share URL</button>
+    <button class="hdr-btn" onclick="clearCache()">clear cache</button>
   </div>
 </header>
 
+<div id="history-panel" class="history-drawer" style="display:none">
+  <div id="history-list"><div class="hist-empty">No lookups yet this session</div></div>
+</div>
+
 <div id="connectivity-warn" class="conn-warn">
-  &#x26A0;&ensp;External API access is blocked in this preview environment.
-  BioSync works on GitHub Pages or any web server. &ensp;
+  &#x26A0;&ensp;External API access is blocked in this preview.
+  BioSync works on GitHub Pages or any web server.&ensp;
   <a href="https://chakitarora.github.io/biosync" target="_blank">Open live tool &nearr;</a>
 </div>
 
 <div class="search-zone">
   <div class="sz-eyebrow">Look up any biological identifier</div>
-
   <div class="tabs">
     <button class="tab on" data-m="single" onclick="setMode('single')">Single</button>
     <button class="tab" data-m="batch" onclick="setMode('batch')">Batch</button>
     <button class="tab" data-m="search" onclick="setMode('search')">Name search</button>
+    <button class="tab" data-m="validate" onclick="setMode('validate')">Validate</button>
+    <button class="tab" data-m="ortholog" onclick="setMode('ortholog')">Orthologs</button>
+    <button class="tab" data-m="reconcile" onclick="setMode('reconcile')">Resolve &amp; Reconcile</button>
   </div>
 
   <!-- SINGLE -->
   <div id="single-panel">
+    <p class="mode-desc">Paste <strong>any biological identifier</strong> — UniProt accession, Ensembl ID, RefSeq, HGNC, GO term, Reactome pathway, ChEMBL, rsID, gene symbol, and more. Bio.Sync detects the type automatically and returns all cross-database mappings, aliases, species, and provenance. <strong>Input is case-insensitive.</strong> Paste anywhere on the page to auto-fill.</p>
     <div class="input-row">
       <input class="id-input" id="single-input" type="text"
         placeholder="P07550 &nbsp;&middot;&nbsp; ENSG00000169252 &nbsp;&middot;&nbsp; GO:0007165 &nbsp;&middot;&nbsp; R-HSA-162582 &nbsp;&middot;&nbsp; adrb2"/>
@@ -483,8 +333,9 @@ a{color:var(--navy);text-decoration:none}a:hover{text-decoration:underline}
 
   <!-- BATCH -->
   <div id="batch-panel" style="display:none">
+    <p class="mode-desc">Paste up to <strong>500 identifiers</strong>, one per line — any mix of formats. Results build as each identifier resolves. Use <strong>Species filter</strong> to constrain gene symbol lookups. Use <strong>Convert →</strong> to collapse results to one target format (e.g. all inputs → Ensembl Gene ID), producing a clean two-column table ready for a pipeline.</p>
     <textarea class="batch-ta" id="batch-input"
-      placeholder="One identifier per line (case-insensitive):&#10;P07550&#10;ENSG00000169252&#10;GO:0007165&#10;NM_000024&#10;ADRB2&#10;&#10;Comma or tab-separated also accepted. Up to 100. Duplicates removed."></textarea>
+      placeholder="One identifier per line (case-insensitive):&#10;P07550&#10;ENSG00000169252&#10;GO:0007165&#10;NM_000024&#10;ADRB2&#10;&#10;Any mix of formats. Up to 500. Duplicates removed."></textarea>
     <div class="batch-controls">
       <button class="resolve-btn" id="batch-run-btn" onclick="runBatch()">Resolve all &rarr;</button>
       <select class="species-sel" id="batch-species">
@@ -496,7 +347,17 @@ a{color:var(--navy);text-decoration:none}a:hover{text-decoration:underline}
         <option value="fly">Fly only</option>
         <option value="worm">C. elegans only</option>
       </select>
-      <span class="batch-hint">Results cached 7 days &middot; ~6 req/sec</span>
+      <select class="species-sel" id="batch-convert-fmt">
+        <option value="none">Show all mappings</option>
+        <option value="Ensembl Gene ID">Convert &rarr; Ensembl Gene ID</option>
+        <option value="UniProt Accession">Convert &rarr; UniProt Accession</option>
+        <option value="NCBI Gene ID">Convert &rarr; NCBI Gene ID</option>
+        <option value="Gene Symbol">Convert &rarr; Gene Symbol</option>
+        <option value="HGNC ID">Convert &rarr; HGNC ID</option>
+        <option value="RefSeq mRNA">Convert &rarr; RefSeq mRNA</option>
+        <option value="RefSeq Protein">Convert &rarr; RefSeq Protein</option>
+      </select>
+      <span class="field-hint">Results cached 7 days &middot; paste anywhere on page</span>
     </div>
     <div class="pbar-wrap" id="batch-progress">
       <div class="pbar-track"><div class="pbar-fill" id="batch-progress-fill" style="width:0%"></div></div>
@@ -506,41 +367,124 @@ a{color:var(--navy);text-decoration:none}a:hover{text-decoration:underline}
 
   <!-- NAME SEARCH -->
   <div id="search-panel" style="display:none">
+    <p class="mode-desc">Don't have a database ID? Search by <strong>protein name, gene description, or alias</strong> — <em>beta-2 adrenergic receptor</em>, <em>tumor protein p53</em>, <em>von Willebrand factor</em>. Returns up to 5 ranked matches across human, mouse, and rat. Click any result for a full single lookup.</p>
     <div class="input-row">
       <input class="id-input" id="search-input" type="text"
-        placeholder="beta-2 adrenergic receptor &nbsp;&middot;&nbsp; tumor protein p53 &nbsp;&middot;&nbsp; BRCA1 kinase"
-        onkeydown="if(event.key==='Enter')runFreeSearch()"/>
+        placeholder="beta-2 adrenergic receptor &nbsp;&middot;&nbsp; tumor protein p53 &nbsp;&middot;&nbsp; BRCA1 kinase"/>
       <button class="resolve-btn" onclick="runFreeSearch()">Search &rarr;</button>
     </div>
-    <div class="search-hint">Search by protein name, gene description, or alias &mdash; returns matching entries across human, mouse, and rat</div>
+    <div class="field-hint" style="margin-top:4px">Search by protein name, gene description, or alias &mdash; returns matching entries across human, mouse, and rat</div>
+  </div>
+
+
+
+
+  <!-- VALIDATE -->
+  <div id="validate-panel" style="display:none">
+    <p class="mode-desc">Check whether a list of identifiers is <strong>current, retired, or invalid</strong>. Ensembl IDs are checked against the current Ensembl release — retired IDs return their current replacement. Essential before resubmitting a dataset or citing identifiers from a paper published more than a year ago.</p>
+    <textarea class="batch-ta" id="validate-input"
+      placeholder="Identifiers to validate:&#10;ENSG00000169252&#10;P07550&#10;NM_000024&#10;&#10;Checks if each is current, retired, or invalid.&#10;Ensembl IDs checked against current release + archive."></textarea>
+    <div class="batch-controls">
+      <button class="resolve-btn" id="validate-run-btn" onclick="runValidation()">Validate &rarr;</button>
+      <span class="field-hint">Valid / retired (with current replacement) / invalid / unrecognised format</span>
+    </div>
+    <div class="pbar-wrap" id="validate-progress">
+      <div class="pbar-track"><div class="pbar-fill" id="validate-progress-fill" style="width:0%"></div></div>
+      <div class="pbar-txt" id="validate-progress-text"></div>
+    </div>
+  </div>
+
+  <!-- ORTHOLOGS -->
+  <div id="ortholog-panel" style="display:none">
+    <p class="mode-desc">Find the <strong>ortholog of a gene in another species</strong> via Ensembl comparative genomics. Input any identifier — gene symbol, UniProt accession, Ensembl Gene ID. Select the target species. Results show orthology type (<em>one-to-one</em> = highest confidence) and sequence identity.</p>
+    <div class="input-row" style="margin-bottom:8px">
+      <input class="id-input" id="ortholog-input" type="text"
+        placeholder="Gene symbol or Ensembl Gene ID &mdash; ADRB2, ENSG00000169252, TP53&hellip;"
+        onkeydown="if(event.key===&apos;Enter&apos;)runOrtholog()"/>
+      <button class="resolve-btn" onclick="runOrtholog()">Find &rarr;</button>
+    </div>
+    <div class="batch-controls">
+      <select class="species-sel" id="ortholog-target">
+        <option value="mouse">&#x2192; Mouse</option>
+        <option value="rat">&#x2192; Rat</option>
+        <option value="zebrafish">&#x2192; Zebrafish</option>
+        <option value="fly">&#x2192; Fruit fly</option>
+        <option value="worm">&#x2192; C. elegans</option>
+        <option value="yeast">&#x2192; S. cerevisiae</option>
+        <option value="chicken">&#x2192; Chicken</option>
+        <option value="xenopus">&#x2192; Xenopus</option>
+        <option value="human">&#x2192; Human (from mouse)</option>
+      </select>
+      <span class="field-hint">Finds orthologs via Ensembl comparative genomics &mdash; includes orthology type and sequence identity</span>
+    </div>
+  </div>
+
+  <!-- RESOLVE & RECONCILE -->
+  <div id="reconcile-panel" style="display:none">
+    <p class="mode-desc">Compare two identifier lists — <strong>even if they use different formats</strong>. Paste List A and List B, choose a canonical format, and Bio.Sync resolves both lists to that format before comparing. <em>ADRB2</em> in List A and <em>P07550</em> in List B will correctly match after both resolve to the same Ensembl Gene ID. Results show shared identifiers, those unique to each list, and anything that could not be resolved.</p>
+    <div class="reconcile-cols">
+      <div>
+        <div class="reconcile-label">List A</div>
+        <textarea class="batch-ta" id="reconcile-a" placeholder="Any format, mixed ok:&#10;ADRB2&#10;TP53&#10;P07550&#10;ENSG00000169252&#10;&#10;One per line"></textarea>
+      </div>
+      <div>
+        <div class="reconcile-label">List B</div>
+        <textarea class="batch-ta" id="reconcile-b" placeholder="Any format, mixed ok:&#10;TP53&#10;P04637&#10;BRCA1&#10;NM_000024&#10;&#10;One per line"></textarea>
+      </div>
+    </div>
+    <div class="batch-controls" style="margin-bottom:8px">
+      <button class="resolve-btn" id="reconcile-run-btn" onclick="runResolveReconcile()">Resolve &amp; Reconcile &rarr;</button>
+      <select class="species-sel" id="reconcile-format">
+        <option value="Ensembl Gene ID">Ensembl Gene ID</option>
+        <option value="NCBI Gene ID">NCBI Gene ID</option>
+        <option value="UniProt Accession">UniProt Accession</option>
+        <option value="Gene Symbol">Gene Symbol</option>
+        <option value="HGNC ID">HGNC ID</option>
+        <option value="RefSeq mRNA">RefSeq mRNA</option>
+      </select>
+      <span class="field-hint">Both lists resolved to this format before comparison &mdash; mixed input formats work</span>
+    </div>
+    <div class="pbar-wrap" id="reconcile-progress-a">
+      <div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-bottom:2px">List A</div>
+      <div class="pbar-track"><div class="pbar-fill" id="reconcile-fill-a" style="width:0%;background:var(--navy)"></div></div>
+      <div class="pbar-txt" id="reconcile-txt-a"></div>
+    </div>
+    <div class="pbar-wrap" id="reconcile-progress-b" style="margin-top:5px">
+      <div style="font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-bottom:2px">List B</div>
+      <div class="pbar-track"><div class="pbar-fill" id="reconcile-fill-b" style="width:0%;background:var(--teal)"></div></div>
+      <div class="pbar-txt" id="reconcile-txt-b"></div>
+    </div>
   </div>
 </div>
 
-<!-- RESULTS -->
+<!-- RESULTS (all hidden by default except single) -->
 <div class="results-zone">
   <div id="single-result"></div>
-  <div id="batch-result"></div>
-  <div id="search-result"></div>
+  <div id="batch-result" style="display:none"></div>
+  <div id="search-result" style="display:none"></div>
+  <div id="validate-result" style="display:none"></div>
+  <div id="ortholog-result" style="display:none"></div>
+  <div id="reconcile-result" style="display:none"></div>
 </div>
 
 <footer class="site-footer">
   <div class="footer-left">
-    Queries MyGene.info, UniProt REST, Ensembl REST, Gene Ontology, Reactome, InterPro, and ChEMBL in real time.
-    Results cached locally 7 days. Verify critical mappings against primary databases before publication.
+    Queries MyGene.info, UniProt REST, Ensembl REST, Gene Ontology, Reactome, InterPro, ChEMBL, NCBI dbSNP, and ClinVar in real time.
+    Results cached locally for 7 days. Paste anywhere on the page to auto-fill single lookup. Share results via URL (?q=identifier).
+    Verify critical mappings against primary databases before publication.
   </div>
   <div class="footer-right">
     Built by <a href="https://chakitarora.github.io" target="_blank">Chakit Arora</a><br/>
     Post-Doctoral Fellow, BIO@SNS, Pisa
   </div>
   <div class="design-note">
-    Design note &mdash; The visual language of Bio.Sync is borrowed from mid-century Swiss Federal Railways printed timetables: white paper, typographic precision, colour used only to encode meaning, no ornament. A timetable tells you all the connections from your departure point and which are direct; Bio.Sync does the same for biological identifiers. Primary type is set in Fraunces (a variable optical-size serif); identifiers in JetBrains Mono.
+    Design note &mdash; Bio.Sync uses the visual language of mid-century Swiss Federal Railways printed timetables: white paper, typographic grid, colour only to encode meaning, no ornament. A timetable tells you all connections from a departure point and which are direct; Bio.Sync does the same for biological identifiers. Primary names are set in Fraunces, a variable optical-size serif that reads with authority at display sizes; identifiers in JetBrains Mono.
   </div>
 </footer>
-
 <script>
-// ═══════════════════════════════════════════════
-// IDENTIFIER PATTERNS — v2
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// IDENTIFIER PATTERNS
+// ═══════════════════════════════════════════════════════
 var ID_PATTERNS = [
   { type:'UniProt Accession', db:'UniProt', entity:'Protein',
     regex:/^[OPQ][0-9][A-Z0-9]{3}[0-9](\.[0-9]+)?$|^[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}(\.[0-9]+)?$/,
@@ -589,867 +533,1528 @@ var ID_PATTERNS = [
     regex:/^[0-9][A-Z0-9]{3}$/, confidence:'medium' },
   { type:'NCBI Gene ID', db:'NCBI Gene', entity:'Gene',
     regex:/^[1-9][0-9]{1,8}$/, confidence:'medium' },
+  { type:'dbSNP rsID', db:'dbSNP', entity:'Variant',
+    regex:/^RS[0-9]+$/, confidence:'high' },
+  { type:'ClinVar ID', db:'ClinVar', entity:'Variant',
+    regex:/^(VCV|RCV)[0-9]+$/, confidence:'high' },
   { type:'Gene Symbol', db:'Multiple', entity:'Gene',
     regex:/^[A-Z][A-Z0-9\-]{1,19}$/, confidence:'low' },
 ];
+
+// Problematic identifier warnings
+var KNOWN_ISSUES = {
+  'GNAS':'Encodes 5+ distinct proteins (Gsα, XLαs, NESP55, A/B, Alex). Results show all reviewed isoforms.',
+  'TP53':'Verify species: Human TP53 (P04637) vs Mouse Trp53 (P02340).',
+  'H1-0':'Renamed from H1F0 in 2022. Pre-2022 datasets may use old symbol.',
+  'MAPT':'Tau — 6 CNS isoforms. UniProt P10636 covers all.',
+  'INS':'Insulin precursor (P01308) is cleaved into B chain, C peptide, A chain.',
+  'POMC':'Cleaved into ACTH, β-endorphin, α-MSH and others. P01189 is the precursor.',
+  'APP':'Amyloid precursor — cleaved to Aβ peptides. P05067 is full precursor.',
+  'MHC':'Not a gene symbol — use HLA-A, HLA-B, HLA-DRB1 etc.',
+  'HLA':'Use specific gene: HLA-A (P04439), HLA-B (P01889), HLA-DRB1 etc.',
+  'CD8':'Ambiguous — CD8A (P01732) or CD8B (P10966)? Specify subunit.',
+  'ACTIN':'Not a gene symbol. Use ACTB (P60709), ACTG1 (P63261), or specific isoform.',
+  'SNCA':'α-synuclein — 3 isoforms. P37840 canonical (140aa).',
+  'IGF1':'6 isoforms (Ea, Eb, Ec etc.). P05019 covers canonical.',
+  'VEGF':'Not approved symbol — use VEGFA (P15692), VEGFB, VEGFC separately.',
+  'TNF':'TNF-α is TNF (P01375). TNF-β is LTA (P01374). Different genes.',
+  'NOS':'Ambiguous — NOS1 (neuronal), NOS2 (inducible), NOS3 (endothelial) are distinct.',
+  'AKT':'Ambiguous — AKT1 (P31749), AKT2 (P31751), AKT3 (Q9Y243). Specify isoform.',
+  'ERK':'Not an approved symbol — use MAPK1 (ERK2) or MAPK3 (ERK1).',
+  'P53':'Not approved symbol — use TP53.',
+  'HRAS':'RAS family — distinct from KRAS (P01116) and NRAS (P01111).',
+  'MT-ND1':'Mitochondrial gene. MT- prefix genes use different naming across databases.',
+  'LHCGR':'LH/CG receptor shares agonist with FSHR. Confirm correct receptor.',
+  'NOTCH1':'Large gene — multiple transcript isoforms with distinct functions.',
+  'GAPDH':'Housekeeping loading control. P04406 human canonical.',
+  'IFNG':'IFN-γ gene. IFN-α is a multigene family (IFNA1–IFNA21).',
+};
 
 function detectIdentifier(raw) {
   if (!raw) return null;
   var trimmed = raw.trim();
   var up = trimmed.toUpperCase();
   if (/[,\t\n]/.test(trimmed) || trimmed.split(/\s+/).length > 1) {
-    return { id: trimmed, type: 'Multiple', db: 'Multiple', entity: 'Multiple', confidence: 'multi' };
+    return { id: trimmed, type:'Multiple', db:'Multiple', entity:'Multiple', confidence:'multi' };
   }
-  for (var i = 0; i < ID_PATTERNS.length; i++) {
-    var p = ID_PATTERNS[i];
-    if (p.regex.test(up)) {
-      return { id: up, originalId: trimmed, type: p.type, db: p.db, entity: p.entity, confidence: p.confidence };
+  // Check for version suffix and strip it, noting the version
+  var versionNote = null;
+  var versionMatch = trimmed.match(/^(.+?)\.([0-9]+)$/);
+  var baseId = trimmed;
+  if (versionMatch) {
+    var stripped = versionMatch[1].toUpperCase();
+    // Only strip if the stripped version matches a pattern (not gene symbols like TP53.1 which don't exist)
+    for (var j=0; j<ID_PATTERNS.length; j++) {
+      if (ID_PATTERNS[j].confidence !== 'low' && ID_PATTERNS[j].regex.test(stripped)) {
+        versionNote = 'Version .' + versionMatch[2] + ' stripped — resolved as ' + stripped;
+        baseId = versionMatch[1];
+        up = stripped;
+        break;
+      }
     }
   }
-  return { id: up, originalId: trimmed, type: 'Unknown', db: 'Unknown', entity: 'Unknown', confidence: 'none' };
+  var upFinal = baseId.toUpperCase();
+  for (var i=0; i<ID_PATTERNS.length; i++) {
+    var p = ID_PATTERNS[i];
+    if (p.regex.test(upFinal)) {
+      return {
+        id: upFinal, originalId: trimmed, type: p.type, db: p.db,
+        entity: p.entity, confidence: p.confidence,
+        versionNote: versionNote,
+        knownIssue: KNOWN_ISSUES[upFinal] || null,
+      };
+    }
+  }
+  return { id: upFinal, originalId: trimmed, type:'Unknown', db:'Unknown', entity:'Unknown', confidence:'none' };
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // CACHE
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function fromCache(id) {
   try {
     var raw = localStorage.getItem('biosync_' + id);
-    if (raw) { var d = JSON.parse(raw); if (d.ts && Date.now() - d.ts < 7*24*3600*1000) return d.data; }
+    if (raw) { var d=JSON.parse(raw); if(d.ts && Date.now()-d.ts < 7*24*3600*1000) return d.data; }
   } catch(e) {}
   return null;
 }
 function toCache(id, data) {
-  try { localStorage.setItem('biosync_' + id, JSON.stringify({ts: Date.now(), data: data})); } catch(e) {}
+  try { localStorage.setItem('biosync_'+id, JSON.stringify({ts:Date.now(), data:data})); } catch(e) {}
 }
 
-// ═══════════════════════════════════════════════
-// MAIN ROUTER
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// NETWORK
+// ═══════════════════════════════════════════════════════
+function apiFetch(url, callback) {
+  fetch(url)
+    .then(function(r){
+      if(r.status===404) throw new Error('not_found');
+      if(r.status===429) throw new Error('rate_limited');
+      if(!r.ok) throw new Error('HTTP '+r.status);
+      return r.json();
+    })
+    .then(function(d){ callback(null,d); })
+    .catch(function(e){
+      var msg=e.message||String(e);
+      if(msg.toLowerCase().includes('failed to fetch')||msg.toLowerCase().includes('networkerror')||msg.toLowerCase().includes('load failed')){
+        callback('network_error',null);
+      } else { callback(msg,null); }
+    });
+}
+
+// ═══════════════════════════════════════════════════════
+// ROUTER
+// ═══════════════════════════════════════════════════════
 function resolveIdentifier(detected, callback) {
   var cached = fromCache(detected.id);
   if (cached) { callback(null, cached); return; }
-  var id = detected.id;
-  var type = detected.type;
-
+  var id = detected.id, type = detected.type;
+  function done(err, data) { if(!err&&data) toCache(id,data); callback(err,data); }
   var routes = {
-    'UniProt Accession': function() { resolveUniProt(id, done); },
-    'UniParc': function() { resolveUniProt(id, done); },
-    'GO Term': function() { resolveGO(id, done); },
-    'Reactome Pathway': function() { resolveReactome(id, done); },
-    'InterPro': function() { resolveInterPro(id, done); },
-    'Pfam': function() { resolveInterPro(id, done); },
-    'ChEMBL ID': function() { resolveChEMBL(id, done); },
-    'Ensembl Transcript': function() { resolveEnsembl(id, detected, done); },
-    'Ensembl Transcript (Mouse)': function() { resolveEnsembl(id, detected, done); },
-    'Ensembl Protein': function() { resolveEnsembl(id, detected, done); },
-    'Ensembl Gene': function() { resolveMyGeneWithCanonical(id, detected, done); },
-    'Ensembl Gene (Mouse)': function() { resolveMyGene(id, detected, done); },
-    'HGNC ID': function() { resolveMyGeneWithCanonical(id, detected, done); },
-    'NCBI Gene ID': function() { resolveMyGeneWithCanonical(id, detected, done); },
-    'RefSeq mRNA': function() { resolveMyGene(id, detected, done); },
-    'RefSeq ncRNA': function() { resolveMyGene(id, detected, done); },
-    'RefSeq Protein': function() { resolveMyGene(id, detected, done); },
-    'RefSeq Predicted mRNA': function() { resolveMyGene(id, detected, done); },
-    'RefSeq Predicted Protein': function() { resolveMyGene(id, detected, done); },
-    'RefSeq Genomic': function() { resolveMyGene(id, detected, done); },
-    'Gene Symbol': function() { resolveMyGeneWithCanonical(id, detected, done); },
-    'miRBase': function() { resolveMyGene(id, detected, done); },
+    'UniProt Accession': function(){ resolveUniProt(id,done); },
+    'UniParc':           function(){ resolveUniProt(id,done); },
+    'GO Term':           function(){ resolveGO(id,done); },
+    'Reactome Pathway':  function(){ resolveReactome(id,done); },
+    'InterPro':          function(){ resolveInterPro(id,done); },
+    'Pfam':              function(){ resolveInterPro(id,done); },
+    'ChEMBL ID':         function(){ resolveChEMBL(id,done); },
+    'Ensembl Transcript':         function(){ resolveEnsembl(id,detected,done); },
+    'Ensembl Transcript (Mouse)': function(){ resolveEnsembl(id,detected,done); },
+    'Ensembl Protein':            function(){ resolveEnsembl(id,detected,done); },
+    'Ensembl Gene':               function(){ resolveMyGeneWithCanonical(id,detected,done); },
+    'Ensembl Gene (Mouse)':       function(){ resolveMyGene(id,detected,done); },
+    'HGNC ID':           function(){ resolveMyGeneWithCanonical(id,detected,done); },
+    'NCBI Gene ID':      function(){ resolveMyGeneWithCanonical(id,detected,done); },
+    'Gene Symbol':       function(){ resolveMyGeneWithCanonical(id,detected,done); },
+    'RefSeq mRNA':       function(){ resolveMyGene(id,detected,done); },
+    'RefSeq ncRNA':      function(){ resolveMyGene(id,detected,done); },
+    'RefSeq Protein':    function(){ resolveMyGene(id,detected,done); },
+    'RefSeq Predicted mRNA':    function(){ resolveMyGene(id,detected,done); },
+    'RefSeq Predicted Protein': function(){ resolveMyGene(id,detected,done); },
+    'RefSeq Genomic':    function(){ resolveMyGene(id,detected,done); },
+    'miRBase':           function(){ resolveMyGene(id,detected,done); },
+    'dbSNP rsID':        function(){ resolveRsId(id,done); },
+    'ClinVar ID':        function(){ resolveClinVar(id,done); },
   };
-
-  function done(err, data) {
-    if (!err && data) toCache(id, data);
-    callback(err, data);
-  }
-
-  if (routes[type]) { routes[type](); }
-  else { resolveMyGene(id, detected, done); }
+  if (routes[type]) routes[type](); else resolveMyGene(id,detected,done);
 }
 
-// ═══════════════════════════════════════════════
-// NETWORK HELPER
-// ═══════════════════════════════════════════════
-function apiFetch(url, callback) {
-  fetch(url)
-    .then(function(r) {
-      if (r.status === 404) throw new Error('not_found');
-      if (r.status === 429) throw new Error('rate_limited');
-      if (!r.ok) throw new Error('HTTP ' + r.status);
-      return r.json();
-    })
-    .then(function(d) { callback(null, d); })
-    .catch(function(e) {
-      var msg = e.message || String(e);
-      if (msg.toLowerCase().includes('failed to fetch') ||
-          msg.toLowerCase().includes('networkerror') ||
-          msg.toLowerCase().includes('load failed') ||
-          msg.toLowerCase().includes('fetch')) {
-        callback('network_error', null);
-      } else {
-        callback(msg, null);
-      }
-    });
-}
-
-// ═══════════════════════════════════════════════
-// UNIPROT
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// UNIPROT DIRECT
+// ═══════════════════════════════════════════════════════
 function resolveUniProt(accession, callback) {
-  var acc = accession.replace(/\.[0-9]+$/, '');
-  apiFetch('https://rest.uniprot.org/uniprotkb/' + acc + '.json', function(err, d) {
-    if (err) { callback(err, null); return; }
-    var name = d.uniProtkbId || '';
-    var fullName = '';
-    if (d.proteinDescription && d.proteinDescription.recommendedName)
-      fullName = d.proteinDescription.recommendedName.fullName.value || '';
-    var shortNames = [];
-    if (d.proteinDescription && d.proteinDescription.recommendedName && d.proteinDescription.recommendedName.shortNames)
-      shortNames = d.proteinDescription.recommendedName.shortNames.map(function(s){return s.value;});
-    var genes = [];
-    if (d.genes) d.genes.forEach(function(g){
-      if (g.geneName) genes.push(g.geneName.value);
-      if (g.synonyms) g.synonyms.forEach(function(s){genes.push(s.value);});
-    });
-    var organism = d.organism ? d.organism.scientificName : '';
-    var commonName = d.organism && d.organism.commonName ? d.organism.commonName : '';
-    var taxId = d.organism && d.organism.taxonId ? String(d.organism.taxonId) : '';
-    var xrefs = {};
-    if (d.uniProtKBCrossReferences) {
-      d.uniProtKBCrossReferences.forEach(function(x){
-        if (!xrefs[x.database]) xrefs[x.database] = [];
-        xrefs[x.database].push({ id: x.id, evidences: x.evidences });
-      });
+  var acc = accession.replace(/\.[0-9]+$/,'');
+  apiFetch('https://rest.uniprot.org/uniprotkb/'+acc+'.json', function(err,d){
+    if(err){callback(err,null);return;}
+    var name=d.uniProtkbId||'', fullName='', shortNames=[];
+    if(d.proteinDescription&&d.proteinDescription.recommendedName){
+      fullName=d.proteinDescription.recommendedName.fullName.value||'';
+      if(d.proteinDescription.recommendedName.shortNames)
+        shortNames=d.proteinDescription.recommendedName.shortNames.map(function(s){return s.value;});
     }
-    // Build mappings with provenance
-    var mappings = [];
-    var mapOrder = ['GeneID','HGNC','Ensembl','RefSeq','AlphaFoldDB','PDB','GO','Reactome','KEGG'];
-    var linkMap = {
-      'GeneID': function(id){ return {db:'NCBI Gene', link:'https://www.ncbi.nlm.nih.gov/gene/'+id}; },
-      'HGNC': function(id){ return {db:'HGNC', link:'https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/'+id}; },
-      'Ensembl': function(id){ return {db: id.startsWith('ENSG')?'Ensembl Gene':id.startsWith('ENST')?'Ensembl Transcript':'Ensembl Protein', link:'https://www.ensembl.org/id/'+id}; },
-      'RefSeq': function(id){ return {db:'RefSeq', link:'https://www.ncbi.nlm.nih.gov/nuccore/'+id}; },
-      'AlphaFoldDB': function(id){ return {db:'AlphaFold', link:'https://alphafold.ebi.ac.uk/entry/'+id}; },
-      'PDB': function(id){ return {db:'PDB', link:'https://www.rcsb.org/structure/'+id}; },
-      'GO': function(id){ return {db:'GO', link:'https://amigo.geneontology.org/amigo/term/'+id}; },
-      'Reactome': function(id){ return {db:'Reactome', link:'https://reactome.org/content/detail/'+id}; },
-      'KEGG': function(id){ return {db:'KEGG', link:'https://www.kegg.jp/entry/'+id}; },
+    var genes=[];
+    if(d.genes) d.genes.forEach(function(g){
+      if(g.geneName) genes.push(g.geneName.value);
+      if(g.synonyms) g.synonyms.forEach(function(s){genes.push(s.value);});
+    });
+    var organism=d.organism?d.organism.scientificName:'';
+    var commonName=d.organism&&d.organism.commonName?d.organism.commonName:'';
+    var taxId=d.organism&&d.organism.taxonId?String(d.organism.taxonId):'';
+    var xrefs={};
+    if(d.uniProtKBCrossReferences) d.uniProtKBCrossReferences.forEach(function(x){
+      if(!xrefs[x.database]) xrefs[x.database]=[];
+      xrefs[x.database].push({id:x.id,evidences:x.evidences});
+    });
+    var mappings=[];
+    var linkMap={
+      'GeneID':function(id){return{db:'NCBI Gene',link:'https://www.ncbi.nlm.nih.gov/gene/'+id};},
+      'HGNC':function(id){return{db:'HGNC',link:'https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/'+id};},
+      'Ensembl':function(id){return{db:id.startsWith('ENSG')?'Ensembl Gene':id.startsWith('ENST')?'Ensembl Transcript':'Ensembl Protein',link:'https://www.ensembl.org/id/'+id};},
+      'RefSeq':function(id){return{db:'RefSeq',link:'https://www.ncbi.nlm.nih.gov/nuccore/'+id};},
+      'AlphaFoldDB':function(id){return{db:'AlphaFold',link:'https://alphafold.ebi.ac.uk/entry/'+id};},
+      'PDB':function(id){return{db:'PDB',link:'https://www.rcsb.org/structure/'+id};},
+      'GO':function(id){return{db:'GO',link:'https://amigo.geneontology.org/amigo/term/'+id};},
+      'Reactome':function(id){return{db:'Reactome',link:'https://reactome.org/content/detail/'+id};},
+      'KEGG':function(id){return{db:'KEGG',link:'https://www.kegg.jp/entry/'+id};},
     };
-    mapOrder.forEach(function(dbk){
-      if (!xrefs[dbk]) return;
+    ['GeneID','HGNC','Ensembl','RefSeq','AlphaFoldDB','PDB','GO','Reactome','KEGG'].forEach(function(dbk){
+      if(!xrefs[dbk]) return;
       xrefs[dbk].slice(0,4).forEach(function(x){
-        var meta = linkMap[dbk] ? linkMap[dbk](x.id) : {db:dbk, link:null};
-        var curated = x.evidences && x.evidences.some(function(e){return e.evidenceCode && e.evidenceCode.value && e.evidenceCode.value.startsWith('ECO:0000269');});
-        mappings.push({ db: meta.db, id: x.id, link: meta.link, curated: curated });
+        var meta=linkMap[dbk]?linkMap[dbk](x.id):{db:dbk,link:null};
+        var curated=x.evidences&&x.evidences.some(function(e){return e.evidenceCode&&e.evidenceCode.value&&e.evidenceCode.value.startsWith('ECO:0000269');});
+        mappings.push({db:meta.db,id:x.id,link:meta.link,curated:curated});
       });
     });
-    var fn_ = '';
-    if (d.comments) {
-      var fc = d.comments.filter(function(c){return c.commentType==='FUNCTION';});
-      if (fc.length && fc[0].texts && fc[0].texts[0]) fn_ = fc[0].texts[0].value;
-    }
-    callback(null, {
-      source:'UniProt', inputId:accession, detectedType:'UniProt Accession',
-      entity:'Protein', primaryName:genes[0]||name||fullName, fullName:fullName,
-      organism:organism, commonName:commonName, taxId:taxId,
-      geneSymbols:genes, aliases:([name].concat(shortNames)).filter(Boolean),
-      mappings:mappings, function_:fn_,
-      reviewed: d.entryType === 'UniProtKB reviewed (Swiss-Prot)',
+    var fn_='';
+    if(d.comments){var fc=d.comments.filter(function(c){return c.commentType==='FUNCTION';});if(fc.length&&fc[0].texts&&fc[0].texts[0])fn_=fc[0].texts[0].value;}
+    callback(null,{
+      source:'UniProt',inputId:accession,detectedType:'UniProt Accession',entity:'Protein',
+      primaryName:genes[0]||name||fullName,fullName:fullName,organism:organism,commonName:commonName,
+      taxId:taxId,geneSymbols:genes,aliases:([name].concat(shortNames)).filter(Boolean),
+      mappings:mappings,function_:fn_,reviewed:d.entryType==='UniProtKB reviewed (Swiss-Prot)',
       uniprotLink:'https://www.uniprot.org/uniprot/'+acc,
     });
   });
 }
 
-// ═══════════════════════════════════════════════
-// ENSEMBL REST — transcript/protein isoform info
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// ENSEMBL REST
+// ═══════════════════════════════════════════════════════
 function resolveEnsembl(id, detected, callback) {
-  var baseId = id.split('.')[0];
-  apiFetch('https://rest.ensembl.org/lookup/id/' + baseId + '?content-type=application/json&expand=1', function(err, d) {
-    if (err) { resolveMyGene(id, detected, callback); return; }
-    var mappings = [];
-    var entity = d.object_type || detected.entity;
-    if (d.Parent) mappings.push({ db:'Parent Gene', id:d.Parent, link:'https://www.ensembl.org/id/'+d.Parent, curated:true });
-    if (d.Translation) {
-      var t = d.Translation;
-      mappings.push({ db:'Ensembl Protein', id:t.id, link:'https://www.ensembl.org/id/'+t.id, curated:true });
-      mappings.push({ db:'Protein length', id:t.length+' aa', link:null, curated:true });
+  var baseId=id.split('.')[0];
+  apiFetch('https://rest.ensembl.org/lookup/id/'+baseId+'?content-type=application/json&expand=1', function(err,d){
+    if(err){resolveMyGene(id,detected,callback);return;}
+    var mappings=[];
+    if(d.Parent) mappings.push({db:'Parent Gene',id:d.Parent,link:'https://www.ensembl.org/id/'+d.Parent,curated:true});
+    if(d.Translation){
+      mappings.push({db:'Ensembl Protein',id:d.Translation.id,link:'https://www.ensembl.org/id/'+d.Translation.id,curated:true});
+      mappings.push({db:'Protein length',id:d.Translation.length+' aa',link:null,curated:true});
     }
-    if (d.Exon) mappings.push({ db:'Exon count', id:String(d.Exon.length), link:null, curated:true });
-    if (d.gene_id) mappings.push({ db:'Ensembl Gene', id:d.gene_id, link:'https://www.ensembl.org/id/'+d.gene_id, curated:true });
-    // Also get MyGene mappings for cross-db refs
-    resolveMyGene(id, detected, function(err2, mgData) {
-      if (mgData && mgData.mappings) {
-        mgData.mappings.forEach(function(m){ mappings.push(m); });
-      }
-      callback(null, {
-        source:'Ensembl REST', inputId:id, detectedType:detected.type,
-        entity:entity,
-        primaryName:d.display_name || d.id || id,
-        fullName:d.description || '',
-        organism:d.species ? d.species.replace(/_/g,' ') : '',
-        taxId:'',
-        geneSymbols:d.display_name ? [d.display_name] : [],
-        aliases:[],
-        mappings:mappings,
-        biotype:d.biotype || '',
-        strand:d.strand !== undefined ? (d.strand > 0 ? '+' : '-') : '',
-        location: d.seq_region_name ? d.seq_region_name+':'+d.start+'-'+d.end : '',
+    if(d.gene_id) mappings.push({db:'Ensembl Gene',id:d.gene_id,link:'https://www.ensembl.org/id/'+d.gene_id,curated:true});
+    resolveMyGene(id,detected,function(err2,mgData){
+      if(mgData&&mgData.mappings) mgData.mappings.forEach(function(m){mappings.push(m);});
+      callback(null,{
+        source:'Ensembl REST',inputId:id,detectedType:detected.type,
+        entity:d.object_type||detected.entity,
+        primaryName:d.display_name||d.id||id,fullName:d.description||'',
+        organism:d.species?d.species.replace(/_/g,' '):'',taxId:'',
+        geneSymbols:d.display_name?[d.display_name]:[],aliases:[],
+        mappings:mappings,biotype:d.biotype||'',strand:d.strand!==undefined?(d.strand>0?'+':'-'):'',
+        location:d.seq_region_name?d.seq_region_name+':'+d.start+'-'+d.end:'',
         ensemblLink:'https://www.ensembl.org/id/'+baseId,
-        transcriptInfo: d.Translation ? {
-          protein: d.Translation.id,
-          length: d.Translation.length
-        } : null,
+        transcriptInfo:d.Translation?{protein:d.Translation.id,length:d.Translation.length}:null,
       });
     });
   });
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // GO TERM
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function resolveGO(id, callback) {
-  var goId = id.toUpperCase();
-  apiFetch('https://api.geneontology.org/api/ontology/term/' + goId, function(err, d) {
-    if (err) { callback(err, null); return; }
-    var mappings = [
-      { db:'AmiGO', id:goId, link:'https://amigo.geneontology.org/amigo/term/'+goId, curated:true },
-      { db:'QuickGO', id:goId, link:'https://www.ebi.ac.uk/QuickGO/term/'+goId, curated:true },
+  var goId=id.toUpperCase();
+  apiFetch('https://api.geneontology.org/api/ontology/term/'+goId, function(err,d){
+    if(err){callback(err,null);return;}
+    var ns=d.namespace||'';
+    var nsLabel={'biological_process':'Biological Process','molecular_function':'Molecular Function','cellular_component':'Cellular Component'}[ns]||ns;
+    var mappings=[
+      {db:'AmiGO',id:goId,link:'https://amigo.geneontology.org/amigo/term/'+goId,curated:true},
+      {db:'QuickGO',id:goId,link:'https://www.ebi.ac.uk/QuickGO/term/'+goId,curated:true},
     ];
-    var ns = d.goid ? (d.namespace||'') : '';
-    var nsLabel = {biological_process:'Biological Process', molecular_function:'Molecular Function', cellular_component:'Cellular Component'}[ns] || ns;
-    if (d.synonyms && d.synonyms.length) {
-      d.synonyms.slice(0,3).forEach(function(s){
-        mappings.push({ db:'Synonym ('+s.pred+')', id:s.val, link:null, curated:false });
-      });
-    }
-    callback(null, {
-      source:'Gene Ontology', inputId:id, detectedType:'GO Term',
-      entity:nsLabel || 'Ontology Term',
-      primaryName:d.label || id,
-      fullName:d.definition || '',
-      organism:'All species',
-      taxId:'',
-      geneSymbols:[],
-      aliases:d.synonyms ? d.synonyms.slice(0,5).map(function(s){return s.val;}) : [],
-      mappings:mappings,
-      namespace:nsLabel,
-      goLink:'https://amigo.geneontology.org/amigo/term/'+goId,
+    if(d.synonyms) d.synonyms.slice(0,3).forEach(function(s){mappings.push({db:'Synonym ('+s.pred+')',id:s.val,link:null,curated:false});});
+    callback(null,{
+      source:'Gene Ontology',inputId:id,detectedType:'GO Term',entity:nsLabel||'Ontology Term',
+      primaryName:d.label||id,fullName:d.definition||'',organism:'All species',taxId:'',
+      geneSymbols:[],aliases:d.synonyms?d.synonyms.slice(0,5).map(function(s){return s.val;}):[], 
+      mappings:mappings,namespace:nsLabel,goLink:'https://amigo.geneontology.org/amigo/term/'+goId,
     });
   });
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // REACTOME
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function resolveReactome(id, callback) {
-  var rxId = id.toUpperCase();
-  apiFetch('https://reactome.org/ContentService/data/query/' + rxId, function(err, d) {
-    if (err) { callback(err, null); return; }
-    var mappings = [
-      { db:'Reactome', id:rxId, link:'https://reactome.org/content/detail/'+rxId, curated:true },
-    ];
-    if (d.hasEvent) {
-      d.hasEvent.slice(0,4).forEach(function(e){
-        mappings.push({ db:'Sub-pathway', id:e.displayName||e.stId, link:'https://reactome.org/content/detail/'+e.stId, curated:true });
-      });
-    }
-    var species = d.speciesName || (d.species && d.species[0] && d.species[0].displayName) || '';
-    callback(null, {
-      source:'Reactome', inputId:id, detectedType:'Reactome Pathway',
-      entity: d.className || 'Pathway',
-      primaryName:d.displayName || d.name || id,
-      fullName:d.displayName || '',
-      organism:species,
-      taxId:'',
-      geneSymbols:[],
-      aliases:[],
-      mappings:mappings,
-      reactomeLink:'https://reactome.org/content/detail/'+rxId,
+  var rxId=id.toUpperCase();
+  apiFetch('https://reactome.org/ContentService/data/query/'+rxId, function(err,d){
+    if(err){callback(err,null);return;}
+    var mappings=[{db:'Reactome',id:rxId,link:'https://reactome.org/content/detail/'+rxId,curated:true}];
+    if(d.hasEvent) d.hasEvent.slice(0,4).forEach(function(e){mappings.push({db:'Sub-pathway',id:e.displayName||e.stId,link:'https://reactome.org/content/detail/'+e.stId,curated:true});});
+    var species=d.speciesName||(d.species&&d.species[0]&&d.species[0].displayName)||'';
+    callback(null,{
+      source:'Reactome',inputId:id,detectedType:'Reactome Pathway',entity:d.className||'Pathway',
+      primaryName:d.displayName||d.name||id,fullName:d.displayName||'',organism:species,taxId:'',
+      geneSymbols:[],aliases:[],mappings:mappings,reactomeLink:'https://reactome.org/content/detail/'+rxId,
     });
   });
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // INTERPRO / PFAM
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function resolveInterPro(id, callback) {
-  var url = id.startsWith('IPR') ?
-    'https://www.ebi.ac.uk/interpro/api/entry/interpro/' + id + '/?format=json' :
-    'https://www.ebi.ac.uk/interpro/api/entry/pfam/' + id + '/?format=json';
-  apiFetch(url, function(err, d) {
-    if (err) { callback(err, null); return; }
-    var meta = d.metadata || {};
-    var mappings = [
-      { db: id.startsWith('IPR') ? 'InterPro' : 'Pfam',
-        id: id,
-        link: id.startsWith('IPR') ? 'https://www.ebi.ac.uk/interpro/entry/interpro/'+id : 'https://www.ebi.ac.uk/interpro/entry/pfam/'+id,
-        curated:true },
-    ];
-    callback(null, {
-      source:'InterPro', inputId:id,
-      detectedType: id.startsWith('IPR') ? 'InterPro' : 'Pfam',
-      entity:'Domain/Family',
-      primaryName:meta.name && meta.name.name ? meta.name.name : id,
-      fullName:meta.description || '',
-      organism:'All species',
-      taxId:'',
-      geneSymbols:[],
-      aliases:[],
-      mappings:mappings,
-      domainType:meta.type || '',
-      interproLink:mappings[0].link,
+  var url=id.startsWith('IPR')?'https://www.ebi.ac.uk/interpro/api/entry/interpro/'+id+'/?format=json':'https://www.ebi.ac.uk/interpro/api/entry/pfam/'+id+'/?format=json';
+  apiFetch(url, function(err,d){
+    if(err){callback(err,null);return;}
+    var meta=d.metadata||{};
+    var link=id.startsWith('IPR')?'https://www.ebi.ac.uk/interpro/entry/interpro/'+id:'https://www.ebi.ac.uk/interpro/entry/pfam/'+id;
+    callback(null,{
+      source:'InterPro',inputId:id,detectedType:id.startsWith('IPR')?'InterPro':'Pfam',entity:'Domain/Family',
+      primaryName:meta.name&&meta.name.name?meta.name.name:id,fullName:meta.description||'',
+      organism:'All species',taxId:'',geneSymbols:[],aliases:[],
+      mappings:[{db:id.startsWith('IPR')?'InterPro':'Pfam',id:id,link:link,curated:true}],
+      domainType:meta.type||'',interproLink:link,
     });
   });
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 // CHEMBL
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function resolveChEMBL(id, callback) {
-  apiFetch('https://www.ebi.ac.uk/chembl/api/data/target/' + id.toUpperCase() + '.json', function(err, d) {
-    if (err) { callback(err, null); return; }
-    var mappings = [];
-    if (d.target_components) d.target_components.forEach(function(tc){
-      if (tc.accession) mappings.push({ db:'UniProt', id:tc.accession, link:'https://www.uniprot.org/uniprot/'+tc.accession, curated:true });
-    });
-    mappings.push({ db:'ChEMBL', id:id.toUpperCase(), link:'https://www.ebi.ac.uk/chembl/target_report_card/'+id.toUpperCase(), curated:true });
-    callback(null, {
-      source:'ChEMBL', inputId:id, detectedType:'ChEMBL ID',
-      entity:'Target', primaryName:d.pref_name||id,
-      fullName:d.pref_name||'',
-      organism:d.organism||'', taxId:'',
-      geneSymbols:[], aliases:[],
-      mappings:mappings,
-      targetType:d.target_type||'',
+  apiFetch('https://www.ebi.ac.uk/chembl/api/data/target/'+id.toUpperCase()+'.json', function(err,d){
+    if(err){callback(err,null);return;}
+    var mappings=[];
+    if(d.target_components) d.target_components.forEach(function(tc){if(tc.accession) mappings.push({db:'UniProt',id:tc.accession,link:'https://www.uniprot.org/uniprot/'+tc.accession,curated:true});});
+    mappings.push({db:'ChEMBL',id:id.toUpperCase(),link:'https://www.ebi.ac.uk/chembl/target_report_card/'+id.toUpperCase(),curated:true});
+    callback(null,{
+      source:'ChEMBL',inputId:id,detectedType:'ChEMBL ID',entity:'Target',
+      primaryName:d.pref_name||id,fullName:d.pref_name||'',organism:d.organism||'',taxId:'',
+      geneSymbols:[],aliases:[],mappings:mappings,targetType:d.target_type||'',
       chemblLink:'https://www.ebi.ac.uk/chembl/target_report_card/'+id.toUpperCase(),
     });
   });
 }
 
-// ═══════════════════════════════════════════════
-// UNIPROT CANONICAL LOOKUP BY GENE NAME
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// UNIPROT CANONICAL BY GENE NAME
+// ═══════════════════════════════════════════════════════
 function resolveUniProtByGene(symbol, taxId, callback) {
-  // Use UniProt search to get canonical reviewed entry for a gene symbol
-  // This is more reliable than MyGene's uniprot field for complex loci
-  var query = 'gene:' + encodeURIComponent(symbol) + '+AND+organism_id:' + encodeURIComponent(taxId) + '+AND+reviewed:true';
-  var url = 'https://rest.uniprot.org/uniprotkb/search?query=' + query + '&fields=accession,id,gene_names,protein_name&format=json&size=5';
-  apiFetch(url, function(err, d) {
-    if (err || !d || !d.results || !d.results.length) { callback(null, []); return; }
-    var entries = d.results.map(function(e) {
-      var fullName = '';
-      if (e.proteinDescription && e.proteinDescription.recommendedName)
-        fullName = e.proteinDescription.recommendedName.fullName.value || '';
-      return {
-        db: 'UniProt (canonical)',
-        id: e.primaryAccession,
-        link: 'https://www.uniprot.org/uniprot/' + e.primaryAccession,
-        curated: true,
-        fullName: fullName,
-        uniprotId: e.uniProtkbId || ''
-      };
+  var query='gene:'+encodeURIComponent(symbol)+'+AND+organism_id:'+encodeURIComponent(taxId)+'+AND+reviewed:true';
+  apiFetch('https://rest.uniprot.org/uniprotkb/search?query='+query+'&fields=accession,id,gene_names,protein_name&format=json&size=5', function(err,d){
+    if(err||!d||!d.results||!d.results.length){callback(null,[]);return;}
+    var entries=d.results.map(function(e){
+      var fullName='';
+      if(e.proteinDescription&&e.proteinDescription.recommendedName) fullName=e.proteinDescription.recommendedName.fullName.value||'';
+      return{db:'UniProt (canonical)',id:e.primaryAccession,link:'https://www.uniprot.org/uniprot/'+e.primaryAccession,curated:true,fullName:fullName,uniprotId:e.uniProtkbId||''};
     });
-    callback(null, entries);
+    callback(null,entries);
   });
 }
 
-// ═══════════════════════════════════════════════
-// MYGENE WITH CANONICAL UNIPROT ENRICHMENT
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// MYGENE WITH CANONICAL ENRICHMENT
+// ═══════════════════════════════════════════════════════
 function resolveMyGeneWithCanonical(id, detected, callback) {
-  resolveMyGene(id, detected, function(err, data) {
-    if (err || !data) { callback(err, data); return; }
-    // Get gene symbol and taxId for canonical UniProt lookup
-    var symbol = data.geneSymbols && data.geneSymbols[0] ? data.geneSymbols[0] : data.primaryName;
-    var taxId = data.taxId || '9606';
-    if (!symbol || symbol.length < 2) { callback(null, data); return; }
-    resolveUniProtByGene(symbol, taxId, function(err2, canonEntries) {
-      if (!canonEntries || !canonEntries.length) { callback(null, data); return; }
-      // Remove any existing UniProt mappings from MyGene (may be wrong)
-      var nonUp = (data.mappings||[]).filter(function(m){
-        return !m.db.startsWith('UniProt');
-      });
-      // Place canonical entries at top of mappings, then non-UniProt
-      data.mappings = canonEntries.concat(nonUp);
-      // Update fullName if we got a better one from UniProt canonical
-      if (!data.fullName && canonEntries[0].fullName) {
-        data.fullName = canonEntries[0].fullName;
-      }
-      callback(null, data);
+  resolveMyGene(id,detected,function(err,data){
+    if(err||!data){callback(err,data);return;}
+    var symbol=data.geneSymbols&&data.geneSymbols[0]?data.geneSymbols[0]:data.primaryName;
+    var taxId=data.taxId||'9606';
+    if(!symbol||symbol.length<2){callback(null,data);return;}
+    resolveUniProtByGene(symbol,taxId,function(err2,canonEntries){
+      if(!canonEntries||!canonEntries.length){callback(null,data);return;}
+      var nonUp=(data.mappings||[]).filter(function(m){return !m.db.startsWith('UniProt');});
+      data.mappings=canonEntries.concat(nonUp);
+      if(!data.fullName&&canonEntries[0].fullName) data.fullName=canonEntries[0].fullName;
+      callback(null,data);
     });
   });
 }
 
-// ═══════════════════════════════════════════════
-// MYGENE.INFO — gene/transcript/symbol
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// MYGENE.INFO
+// ═══════════════════════════════════════════════════════
 function resolveMyGene(id, detected, callback) {
-  var fields = 'symbol,name,taxid,species,entrezgene,ensembl,refseq,uniprot,alias,HGNC,other_names,type_of_gene,genomic_pos';
-  var url;
-  var up = id.toUpperCase();
-  if (/^[1-9][0-9]{1,8}$/.test(up)) {
-    url = 'https://mygene.info/v3/gene/' + id + '?fields=' + fields;
-  } else if (/^ENSG[0-9]|^ENSMUSG[0-9]/i.test(up)) {
-    url = 'https://mygene.info/v3/query?q=ensembl.gene:' + up.split('.')[0] + '&fields=' + fields + '&size=1';
-  } else if (/^ENST[0-9]|^ENSMUST[0-9]/i.test(up)) {
-    url = 'https://mygene.info/v3/query?q=ensembl.transcript:' + up.split('.')[0] + '&fields=' + fields + '&size=1';
-  } else if (/^ENSP[0-9]/i.test(up)) {
-    url = 'https://mygene.info/v3/query?q=ensembl.protein:' + up.split('.')[0] + '&fields=' + fields + '&size=1';
-  } else if (/^NM_|^NR_/i.test(up)) {
-    url = 'https://mygene.info/v3/query?q=refseq.rna:' + up.split('.')[0] + '&fields=' + fields + '&size=1';
-  } else if (/^NP_/i.test(up)) {
-    url = 'https://mygene.info/v3/query?q=refseq.protein:' + up.split('.')[0] + '&fields=' + fields + '&size=1';
-  } else if (/^NG_/i.test(up)) {
-    url = 'https://mygene.info/v3/query?q=refseq.genomic:' + up.split('.')[0] + '&fields=' + fields + '&size=1';
-  } else if (/^HGNC:[0-9]+$/i.test(up)) {
-    url = 'https://mygene.info/v3/query?q=HGNC:' + up.replace(/^HGNC:/i,'') + '&fields=' + fields + '&size=1';
-  } else {
-    // Gene symbol or free-text: prefer human, then mouse, rat
-    url = 'https://mygene.info/v3/query?q=symbol:' + encodeURIComponent(id) + '&species=9606,10090,10116&fields=' + fields + '&size=5';
-  }
-  apiFetch(url, function(err, d) {
-    if (err) { callback(err, null); return; }
-    var gene = d._id ? d : (d.hits && d.hits[0] ? d.hits[0] : null);
-    if (!gene) { callback('not_found', null); return; }
-    var result = parseMyGeneJSON(gene, id, detected);
-    if (d.hits && d.hits.length > 1) {
-      result.ambiguous = d.hits.map(function(h){ return {symbol:h.symbol||h.name, taxid:h.taxid, entrez:h._id}; });
-    }
-    callback(null, result);
+  var fields='symbol,name,taxid,species,entrezgene,ensembl,refseq,uniprot,alias,HGNC,other_names,type_of_gene,genomic_pos';
+  var url, up=id.toUpperCase();
+  if(/^[1-9][0-9]{1,8}$/.test(up)) url='https://mygene.info/v3/gene/'+id+'?fields='+fields;
+  else if(/^ENSG[0-9]|^ENSMUSG[0-9]/i.test(up)) url='https://mygene.info/v3/query?q=ensembl.gene:'+up.split('.')[0]+'&fields='+fields+'&size=1';
+  else if(/^ENST[0-9]|^ENSMUST[0-9]/i.test(up)) url='https://mygene.info/v3/query?q=ensembl.transcript:'+up.split('.')[0]+'&fields='+fields+'&size=1';
+  else if(/^ENSP[0-9]/i.test(up)) url='https://mygene.info/v3/query?q=ensembl.protein:'+up.split('.')[0]+'&fields='+fields+'&size=1';
+  else if(/^NM_|^NR_/i.test(up)) url='https://mygene.info/v3/query?q=refseq.rna:'+up.split('.')[0]+'&fields='+fields+'&size=1';
+  else if(/^NP_/i.test(up)) url='https://mygene.info/v3/query?q=refseq.protein:'+up.split('.')[0]+'&fields='+fields+'&size=1';
+  else if(/^NG_/i.test(up)) url='https://mygene.info/v3/query?q=refseq.genomic:'+up.split('.')[0]+'&fields='+fields+'&size=1';
+  else if(/^HGNC:[0-9]+$/i.test(up)) url='https://mygene.info/v3/query?q=HGNC:'+up.replace(/^HGNC:/i,'')+'&fields='+fields+'&size=1';
+  else url='https://mygene.info/v3/query?q=symbol:'+encodeURIComponent(id)+'&species=9606,10090,10116&fields='+fields+'&size=5';
+  apiFetch(url,function(err,d){
+    if(err){callback(err,null);return;}
+    var gene=d._id?d:(d.hits&&d.hits[0]?d.hits[0]:null);
+    if(!gene){callback('not_found',null);return;}
+    var result=parseMyGeneJSON(gene,id,detected);
+    if(d.hits&&d.hits.length>1) result.ambiguous=d.hits.map(function(h){return{symbol:h.symbol||h.name,taxid:h.taxid,entrez:h._id};});
+    callback(null,result);
   });
 }
 
-// ═══════════════════════════════════════════════
-// FREE-TEXT SEARCH (fallback for unknown)
-// ═══════════════════════════════════════════════
-function freeTextSearch(query, callback) {
-  var fields = 'symbol,name,taxid,entrezgene,ensembl,refseq,uniprot,alias,HGNC,type_of_gene';
-  var url = 'https://mygene.info/v3/query?q=' + encodeURIComponent(query) + '&species=9606,10090,10116&fields=' + fields + '&size=5';
-  apiFetch(url, function(err, d) {
-    if (err || !d || !d.hits || !d.hits.length) { callback(err || 'not_found', null); return; }
-    var detected_fake = { type:'Free-text search', db:'MyGene.info', entity:'Gene', confidence:'low' };
-    var results = d.hits.map(function(h){ return parseMyGeneJSON(h, query, detected_fake); });
-    callback(null, { freeTextResults: results, query: query });
-  });
-}
-
-function parseMyGeneJSON(d, originalId, detected) {
-  var symbol = d.symbol || '';
-  var name = d.name || '';
-  var taxid = d.taxid || '';
-  var aliases = d.alias ? (Array.isArray(d.alias) ? d.alias : [d.alias]) : [];
-  var otherNames = d.other_names ? (Array.isArray(d.other_names) ? d.other_names : [d.other_names]) : [];
-  var speciesMap = {'9606':'Human','10090':'Mouse','10116':'Rat','7227':'Fruit fly','6239':'C. elegans','7955':'Zebrafish','9913':'Bovine','9823':'Pig'};
-  var species = taxid ? (speciesMap[String(taxid)] || 'TaxID '+taxid) : '';
-  var mappings = [];
-  var entrez = d._id || d.entrezgene || '';
-  if (entrez) mappings.push({ db:'NCBI Gene', id:String(entrez), link:'https://www.ncbi.nlm.nih.gov/gene/'+entrez, curated:true });
-  var hgnc = d.HGNC || '';
-  if (hgnc) mappings.push({ db:'HGNC', id:'HGNC:'+hgnc, link:'https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/HGNC:'+hgnc, curated:true });
-  if (d.ensembl) {
-    var ensList = Array.isArray(d.ensembl) ? d.ensembl : [d.ensembl];
+function parseMyGeneJSON(d,originalId,detected){
+  var symbol=d.symbol||'',name=d.name||'',taxid=d.taxid||'';
+  var aliases=d.alias?(Array.isArray(d.alias)?d.alias:[d.alias]):[];
+  var otherNames=d.other_names?(Array.isArray(d.other_names)?d.other_names:[d.other_names]):[];
+  var speciesMap={'9606':'Human','10090':'Mouse','10116':'Rat','7227':'Fruit fly','6239':'C. elegans','7955':'Zebrafish','9913':'Bovine','9823':'Pig'};
+  var species=taxid?(speciesMap[String(taxid)]||'TaxID '+taxid):'';
+  var mappings=[];
+  var entrez=d._id||d.entrezgene||'';
+  if(entrez) mappings.push({db:'NCBI Gene',id:String(entrez),link:'https://www.ncbi.nlm.nih.gov/gene/'+entrez,curated:true});
+  var hgnc=d.HGNC||'';
+  if(hgnc) mappings.push({db:'HGNC',id:'HGNC:'+hgnc,link:'https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/HGNC:'+hgnc,curated:true});
+  if(d.ensembl){
+    var ensList=Array.isArray(d.ensembl)?d.ensembl:[d.ensembl];
     ensList.slice(0,2).forEach(function(ens){
-      if (ens.gene) mappings.push({ db:'Ensembl Gene', id:ens.gene, link:'https://www.ensembl.org/id/'+ens.gene, curated:true });
-      var txs = ens.transcript ? (Array.isArray(ens.transcript)?ens.transcript.slice(0,2):[ens.transcript]) : [];
-      txs.forEach(function(t){ mappings.push({ db:'Ensembl Transcript', id:t, link:'https://www.ensembl.org/id/'+t, curated:false }); });
-      var prots = ens.protein ? (Array.isArray(ens.protein)?ens.protein.slice(0,2):[ens.protein]) : [];
-      prots.forEach(function(p){ mappings.push({ db:'Ensembl Protein', id:p, link:'https://www.ensembl.org/id/'+p, curated:false }); });
+      if(ens.gene) mappings.push({db:'Ensembl Gene',id:ens.gene,link:'https://www.ensembl.org/id/'+ens.gene,curated:true});
+      var txs=ens.transcript?(Array.isArray(ens.transcript)?ens.transcript.slice(0,2):[ens.transcript]):[];
+      txs.forEach(function(t){mappings.push({db:'Ensembl Transcript',id:t,link:'https://www.ensembl.org/id/'+t,curated:false});});
+      var prots=ens.protein?(Array.isArray(ens.protein)?ens.protein.slice(0,2):[ens.protein]):[];
+      prots.forEach(function(p){mappings.push({db:'Ensembl Protein',id:p,link:'https://www.ensembl.org/id/'+p,curated:false});});
     });
   }
-  if (d.refseq) {
-    var rs = d.refseq;
-    if (rs.rna) { var rnas=Array.isArray(rs.rna)?rs.rna.slice(0,3):[rs.rna]; rnas.forEach(function(r){ mappings.push({db:'RefSeq mRNA',id:r,link:'https://www.ncbi.nlm.nih.gov/nuccore/'+r,curated:true}); }); }
-    if (rs.protein) { var prns=Array.isArray(rs.protein)?rs.protein.slice(0,2):[rs.protein]; prns.forEach(function(r){ mappings.push({db:'RefSeq Protein',id:r,link:'https://www.ncbi.nlm.nih.gov/protein/'+r,curated:true}); }); }
-    if (rs.genomic) { var gens=Array.isArray(rs.genomic)?rs.genomic.slice(0,1):[rs.genomic]; gens.forEach(function(r){ mappings.push({db:'RefSeq Genomic',id:r,link:'https://www.ncbi.nlm.nih.gov/nuccore/'+r,curated:false}); }); }
+  if(d.refseq){
+    var rs=d.refseq;
+    if(rs.rna){var rnas=Array.isArray(rs.rna)?rs.rna.slice(0,3):[rs.rna];rnas.forEach(function(r){mappings.push({db:'RefSeq mRNA',id:r,link:'https://www.ncbi.nlm.nih.gov/nuccore/'+r,curated:true});});}
+    if(rs.protein){var prns=Array.isArray(rs.protein)?rs.protein.slice(0,2):[rs.protein];prns.forEach(function(r){mappings.push({db:'RefSeq Protein',id:r,link:'https://www.ncbi.nlm.nih.gov/protein/'+r,curated:true});});}
+    if(rs.genomic){var gens=Array.isArray(rs.genomic)?rs.genomic.slice(0,1):[rs.genomic];gens.forEach(function(r){mappings.push({db:'RefSeq Genomic',id:r,link:'https://www.ncbi.nlm.nih.gov/nuccore/'+r,curated:false});});}
   }
-  if (d.uniprot) {
-    var up2 = d.uniprot;
-    var sw = up2['Swiss-Prot'];
-    if (sw) {
-      var sps = Array.isArray(sw) ? sw : [sw];
-      // Sort: canonical accessions (no dash) before isoform-specific (with dash)
-      sps.sort(function(a,b){ var ad=a.indexOf('-')>=0?1:0, bd=b.indexOf('-')>=0?1:0; return ad-bd; });
-      sps.slice(0,3).forEach(function(u){
-        var isIsoform = u.indexOf('-') >= 0;
-        mappings.push({db: isIsoform ? 'UniProt (isoform)' : 'UniProt (reviewed)', id:u, link:'https://www.uniprot.org/uniprot/'+u, curated:!isIsoform});
-      });
+  if(d.uniprot){
+    var up2=d.uniprot,sw=up2['Swiss-Prot'];
+    if(sw){
+      var sps=Array.isArray(sw)?sw:[sw];
+      sps.sort(function(a,b){return (a.indexOf('-')>=0?1:0)-(b.indexOf('-')>=0?1:0);});
+      sps.slice(0,3).forEach(function(u){var iso=u.indexOf('-')>=0;mappings.push({db:iso?'UniProt (isoform)':'UniProt (reviewed)',id:u,link:'https://www.uniprot.org/uniprot/'+u,curated:!iso});});
     }
-    var tr = up2['TrEMBL'];
-    if (tr && !sw) { var trs=Array.isArray(tr)?tr.slice(0,1):[tr]; trs.forEach(function(u){ mappings.push({db:'UniProt (TrEMBL)',id:u,link:'https://www.uniprot.org/uniprot/'+u,curated:false}); }); }
+    var tr=up2['TrEMBL'];
+    if(tr&&!sw){var trs=Array.isArray(tr)?tr.slice(0,1):[tr];trs.forEach(function(u){mappings.push({db:'UniProt (TrEMBL)',id:u,link:'https://www.uniprot.org/uniprot/'+u,curated:false});});}
   }
-  return {
-    source:'MyGene.info', inputId:originalId,
-    detectedType:detected?detected.type:'Gene Symbol',
-    entity:detected?detected.entity:'Gene',
-    primaryName:symbol||name, fullName:name,
-    organism:species, taxId:String(taxid),
-    geneSymbols:symbol?[symbol]:[],
-    aliases:aliases.concat(otherNames).slice(0,10),
-    mappings:mappings,
-    typeOfGene:d.type_of_gene||'',
-    mygeneLink:'https://mygene.info/v3/gene/'+(d._id||entrez),
+  return{
+    source:'MyGene.info',inputId:originalId,detectedType:detected?detected.type:'Gene Symbol',
+    entity:detected?detected.entity:'Gene',primaryName:symbol||name,fullName:name,
+    organism:species,taxId:String(taxid),geneSymbols:symbol?[symbol]:[],
+    aliases:aliases.concat(otherNames).slice(0,10),mappings:mappings,
+    typeOfGene:d.type_of_gene||'',mygeneLink:'https://mygene.info/v3/gene/'+(d._id||entrez),
   };
 }
 
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// FREE-TEXT SEARCH
+// ═══════════════════════════════════════════════════════
+function freeTextSearch(query, callback) {
+  var fields='symbol,name,taxid,entrezgene,ensembl,refseq,uniprot,alias,HGNC,type_of_gene';
+  apiFetch('https://mygene.info/v3/query?q='+encodeURIComponent(query)+'&species=9606,10090,10116&fields='+fields+'&size=5', function(err,d){
+    if(err||!d||!d.hits||!d.hits.length){callback(err||'not_found',null);return;}
+    var det={type:'Free-text search',db:'MyGene.info',entity:'Gene',confidence:'low'};
+    callback(null,{freeTextResults:d.hits.map(function(h){return parseMyGeneJSON(h,query,det);}),query:query});
+  });
+}
+
+// ═══════════════════════════════════════════════════════
 // BATCH WITH SPECIES FILTER
-// ═══════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
 function processBatch(ids, speciesFilter, onEach, onDone) {
-  var results = [];
-  var i = 0;
-  var delay = 150;
-  function next() {
-    if (i >= ids.length) { onDone(results); return; }
-    var id = ids[i++];
-    var detected = detectIdentifier(id);
-    if (!detected || detected.type === 'Unknown') {
-      results.push({ id: id, error: 'Unrecognised identifier', detected: detected });
-      onEach(results[results.length-1], i, ids.length);
-      setTimeout(next, 50);
-      return;
+  var results=[], i=0, delay=150;
+  var taxMap={human:'9606',mouse:'10090',rat:'10116',zebrafish:'7955',fly:'7227',worm:'6239'};
+  function next(){
+    if(i>=ids.length){onDone(results);return;}
+    var id=ids[i++], detected=detectIdentifier(id);
+    if(!detected||detected.type==='Unknown'){
+      results.push({id:id,error:'Unrecognised identifier',detected:detected});
+      onEach(results[results.length-1],i,ids.length); setTimeout(next,50); return;
     }
-    resolveIdentifier(detected, function(err, data) {
-      if (!err && data && speciesFilter && speciesFilter !== 'all') {
-        var taxMap = {human:'9606',mouse:'10090',rat:'10116',zebrafish:'7955',fly:'7227',worm:'6239'};
-        var targetTax = taxMap[speciesFilter];
-        if (targetTax && data.taxId && data.taxId !== targetTax) {
-          // Try to refetch with species constraint for gene symbols
-          if (detected.type === 'Gene Symbol') {
-            var sUrl = 'https://mygene.info/v3/query?q=symbol:'+encodeURIComponent(detected.id)+'&species='+targetTax+'&fields=symbol,name,taxid,ensembl,refseq,uniprot,HGNC,type_of_gene&size=1';
-            apiFetch(sUrl, function(e2, d2) {
-              if (!e2 && d2 && d2.hits && d2.hits[0]) {
-                data = parseMyGeneJSON(d2.hits[0], id, detected);
-              }
-              var r = { id: id, data: data, detected: detected };
-              results.push(r); onEach(r, i, ids.length); setTimeout(next, delay);
-            });
-            return;
-          }
+    resolveIdentifier(detected,function(err,data){
+      if(!err&&data&&speciesFilter&&speciesFilter!=='all'){
+        var targetTax=taxMap[speciesFilter];
+        if(targetTax&&data.taxId&&data.taxId!==targetTax&&detected.type==='Gene Symbol'){
+          apiFetch('https://mygene.info/v3/query?q=symbol:'+encodeURIComponent(detected.id)+'&species='+targetTax+'&fields=symbol,name,taxid,ensembl,refseq,uniprot,HGNC,type_of_gene&size=1',function(e2,d2){
+            if(!e2&&d2&&d2.hits&&d2.hits[0]) data=parseMyGeneJSON(d2.hits[0],id,detected);
+            var r={id:id,data:data,detected:detected};
+            results.push(r);onEach(r,i,ids.length);setTimeout(next,delay);
+          }); return;
         }
       }
-      var r = err ? { id: id, error: err, detected: detected } : { id: id, data: data, detected: detected };
-      results.push(r);
-      onEach(r, i, ids.length);
-      setTimeout(next, delay);
+      var r=err?{id:id,error:err,detected:detected}:{id:id,data:data,detected:detected};
+      results.push(r);onEach(r,i,ids.length);setTimeout(next,delay);
     });
   }
   next();
 }
+// ═══════════════════════════════════════════════════════
+// STATE
+// ═══════════════════════════════════════════════════════
 var currentMode = 'single';
 var batchResults = [];
+var sessionHistory = []; // {id, primaryName, type, ts}
+var reconcileResults = null;
 
+// ═══════════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════════
 function init() {
-  document.getElementById('single-input').addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') runSingle();
+  // Input listeners
+  document.getElementById('single-input').addEventListener('keydown', function(e){ if(e.key==='Enter') runSingle(); });
+  document.getElementById('search-input').addEventListener('keydown', function(e){ if(e.key==='Enter') runFreeSearch(); });
+
+  // Global paste anywhere — paste into single input if not already focused
+  document.addEventListener('paste', function(e) {
+    var active = document.activeElement;
+    var inputs = ['single-input','batch-input','search-input','convert-input','reconcile-a','reconcile-b'];
+    var inInput = inputs.indexOf(active&&active.id) >= 0;
+    if (!inInput && currentMode === 'single') {
+      var text = (e.clipboardData||window.clipboardData).getData('text').trim();
+      if (text) {
+        e.preventDefault();
+        document.getElementById('single-input').value = text;
+        runSingle();
+      }
+    }
   });
+
   renderExamples();
   renderCacheStats();
   checkConnectivity();
+  handleURLParams();
+  renderHistory();
 }
 
+// URL deep linking
+function handleURLParams() {
+  var params = new URLSearchParams(window.location.search);
+  var q = params.get('q');
+  var mode = params.get('mode');
+  if (!q) return;
+  if (mode === 'batch' || q.indexOf(',') >= 0) {
+    document.getElementById('batch-input').value = q.replace(/,/g,'\n');
+    setMode('batch');
+  } else {
+    document.getElementById('single-input').value = q;
+    setMode('single');
+    runSingle();
+  }
+}
+
+function getShareURL() {
+  var base = window.location.origin + window.location.pathname;
+  var q;
+  if (currentMode === 'single') {
+    q = document.getElementById('single-input').value.trim();
+    return q ? base + '?q=' + encodeURIComponent(q) : base;
+  } else if (currentMode === 'batch') {
+    var ids = document.getElementById('batch-input').value.trim().split(/[\n,\t]+/).filter(Boolean);
+    return ids.length ? base + '?q=' + encodeURIComponent(ids.join(',')) + '&mode=batch' : base;
+  }
+  return base;
+}
+
+function copyShareURL() {
+  var url = getShareURL();
+  navigator.clipboard.writeText(url).then(function() {
+    var btn = document.getElementById('share-btn');
+    if(btn){ btn.textContent = '✓ Copied'; setTimeout(function(){ btn.textContent = '↗ Share URL'; },2000); }
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// EXAMPLES, CACHE, CONNECTIVITY
+// ═══════════════════════════════════════════════════════
 function renderExamples() {
   var ex = [
-    ['P07550','UniProt'],['ENSG00000169252','Ensembl'],
-    ['GO:0007165','GO term'],['R-HSA-162582','Reactome'],
-    ['HGNC:286','HGNC'],['NM_000024','RefSeq'],
+    ['P07550','UniProt'],['ENSG00000169252','Ensembl'],['GO:0007165','GO'],
+    ['R-HSA-162582','Reactome'],['HGNC:286','HGNC'],['NM_000024','RefSeq'],
     ['ENST00000359597','Ensembl TX'],['CHEMBL210','ChEMBL'],
-    ['IPR000276','InterPro'],['ADRB2','Symbol'],
+    ['IPR000276','InterPro'],['GNAS','Symbol'],
   ];
-  var w = document.getElementById('examples'); w.innerHTML = '';
-  ex.forEach(function(e2) {
-    var b = document.createElement('button'); b.className = 'chip';
-    b.innerHTML = '<span class="chip-id">'+e2[0]+'</span><span class="chip-type">'+e2[1]+'</span>';
-    b.onclick = (function(id){ return function(){ document.getElementById('single-input').value=id; setMode('single'); runSingle(); }; })(e2[0]);
+  var w=document.getElementById('examples'); w.innerHTML='';
+  ex.forEach(function(e2){
+    var b=document.createElement('button'); b.className='chip';
+    b.innerHTML='<span class="chip-id">'+e2[0]+'</span><span class="chip-type">'+e2[1]+'</span>';
+    b.onclick=(function(id){return function(){document.getElementById('single-input').value=id;setMode('single');runSingle();};})(e2[0]);
     w.appendChild(b);
   });
 }
 
-function renderCacheStats() {
-  var c=0; try{ for(var k in localStorage){if(k.startsWith('biosync_'))c++;}}catch(e){}
+function renderCacheStats(){
+  var c=0; try{for(var k in localStorage){if(k.startsWith('biosync_'))c++;}}catch(e){}
   var el=document.getElementById('cache-stats'); if(el) el.textContent=c?c+' cached':'';
 }
 
-function checkConnectivity() {
+function checkConnectivity(){
   fetch('https://mygene.info/v3/metadata',{method:'HEAD'})
-    .then(function(){ var w=document.getElementById('connectivity-warn'); if(w) w.style.display='none'; })
-    .catch(function(){ var w=document.getElementById('connectivity-warn'); if(w) w.style.display='block'; });
+    .then(function(){var w=document.getElementById('connectivity-warn');if(w)w.style.display='none';})
+    .catch(function(){var w=document.getElementById('connectivity-warn');if(w)w.style.display='block';});
 }
 
-function setMode(m) {
-  currentMode = m;
-  document.querySelectorAll('.tab').forEach(function(b){ b.classList.toggle('on', b.dataset.m===m); });
-  document.getElementById('single-panel').style.display  = m==='single' ? 'block':'none';
-  document.getElementById('batch-panel').style.display   = m==='batch'  ? 'block':'none';
-  document.getElementById('search-panel').style.display  = m==='search' ? 'block':'none';
+// ═══════════════════════════════════════════════════════
+// MODE + HISTORY
+// ═══════════════════════════════════════════════════════
+function setMode(m){
+  currentMode=m;
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('on',b.dataset.m===m);});
+  ['single-panel','batch-panel','search-panel','validate-panel','ortholog-panel','reconcile-panel']
+    .forEach(function(id){var el=document.getElementById(id);if(el)el.style.display='none';});
+  var p=document.getElementById(m+'-panel');
+  if(p) p.style.display='block';
+  // Show results for current mode only
+  document.getElementById('single-result').style.display    = m==='single'    ? 'block':'none';
+  document.getElementById('batch-result').style.display     = m==='batch'     ? 'block':'none';
+  document.getElementById('search-result').style.display    = m==='search'    ? 'block':'none';
+  document.getElementById('validate-result').style.display  = m==='validate'  ? 'block':'none';
+  document.getElementById('ortholog-result').style.display  = m==='ortholog'  ? 'block':'none';
+  document.getElementById('reconcile-result').style.display = m==='reconcile' ? 'block':'none';
 }
 
-function runSingle() {
-  var raw = document.getElementById('single-input').value.trim();
-  if (!raw) return;
-  var res = document.getElementById('single-result');
-  var det = detectIdentifier(raw);
-  if (det.confidence === 'multi') {
-    document.getElementById('batch-input').value = raw.replace(/,\s*/g,'\n');
+function addToHistory(id, primaryName, type) {
+  // Remove duplicates
+  sessionHistory = sessionHistory.filter(function(h){return h.id!==id;});
+  sessionHistory.unshift({id:id, primaryName:primaryName, type:type, ts:Date.now()});
+  if(sessionHistory.length>20) sessionHistory.pop();
+  renderHistory();
+}
+
+function renderHistory(){
+  var el=document.getElementById('history-list'); if(!el) return;
+  if(!sessionHistory.length){
+    el.innerHTML='<div class="hist-empty">No lookups yet this session</div>'; return;
+  }
+  el.innerHTML=sessionHistory.map(function(h,i){
+    return '<div class="hist-row" onclick="recallHistory('+i+')">'
+      +'<span class="hist-id">'+esc(h.id)+'</span>'
+      +'<span class="hist-name">'+esc(h.primaryName||'')+'</span>'
+      +'<span class="hist-type">'+esc(h.type||'')+'</span>'
+      +'</div>';
+  }).join('');
+}
+
+function recallHistory(i){
+  var h=sessionHistory[i]; if(!h) return;
+  document.getElementById('single-input').value=h.id;
+  setMode('single'); runSingle();
+}
+
+function toggleHistory(){
+  var panel=document.getElementById('history-panel');
+  var btn=document.getElementById('history-toggle');
+  if(!panel) return;
+  var open=panel.style.display!=='none';
+  panel.style.display=open?'none':'block';
+  if(btn) btn.textContent=open?'History ▾':'History ▴';
+}
+
+// ═══════════════════════════════════════════════════════
+// SINGLE LOOKUP
+// ═══════════════════════════════════════════════════════
+function runSingle(){
+  var raw=document.getElementById('single-input').value.trim();
+  if(!raw) return;
+  setMode('single');
+  var res=document.getElementById('single-result');
+  var det=detectIdentifier(raw);
+  if(det.confidence==='multi'){
+    document.getElementById('batch-input').value=raw.replace(/,\s*/g,'\n');
     setMode('batch');
-    res.innerHTML = '<div class="info-box">Multiple identifiers detected &mdash; switched to Batch mode.</div>';
+    res.innerHTML='<div class="info-box">Multiple identifiers detected — switched to Batch mode.</div>';
     return;
   }
-  res.innerHTML = renderDetStrip(det) + '<div class="resolving"><div class="spinner"></div> Resolving&hellip;</div>';
-  if (det.type === 'Unknown') {
-    res.innerHTML = renderDetStrip(det) + '<div class="resolving"><div class="spinner"></div> Trying name search&hellip;</div>';
-    freeTextSearch(raw, function(err, data) {
-      if (err || !data || !data.freeTextResults || !data.freeTextResults.length) {
-        res.innerHTML = renderDetStrip(det) + renderErr('unknown', raw);
-        return;
+  res.innerHTML=renderDetStrip(det)+'<div class="resolving"><div class="spinner"></div> Resolving&hellip;</div>';
+  res.style.display='block';
+  if(det.type==='Unknown'){
+    freeTextSearch(raw,function(err,data){
+      if(err||!data||!data.freeTextResults||!data.freeTextResults.length){
+        res.innerHTML=renderDetStrip(det)+renderErr('unknown',raw); return;
       }
-      res.innerHTML = renderDetStrip(det) + renderFTResults(data);
-    });
-    return;
+      res.innerHTML=renderDetStrip(det)+renderFTResults(data);
+    }); return;
   }
-  resolveIdentifier(det, function(err, data) {
-    res.innerHTML = err ? renderDetStrip(det)+renderErr(err,raw) : renderDetStrip(det)+renderCard(data);
+  resolveIdentifier(det,function(err,data){
+    res.innerHTML=err?renderDetStrip(det)+renderErr(err,raw):renderDetStrip(det)+renderCard(data,det);
+    if(!err&&data) addToHistory(det.id, data.primaryName, det.type);
     renderCacheStats();
   });
 }
 
-function renderDetStrip(det) {
-  if (!det || det.confidence==='multi') return '';
-  var sigClass = 'sig-'+det.confidence;
-  var confClass = 'conf-label-'+det.confidence;
-  return '<div class="detected-strip">'
-    + '<div class="ds-seg"><span class="ds-label">Input</span><span class="ds-val" style="color:var(--navy);font-weight:600">'+esc(det.originalId||det.id)+'</span></div>'
-    + '<div class="ds-seg"><span class="ds-label">Type</span><span class="ds-val ds-type">'+esc(det.type)+'</span></div>'
-    + '<div class="ds-seg"><span class="ds-label">Database</span><span class="ds-val">'+esc(det.db)+'</span></div>'
-    + '<div class="ds-seg"><span class="ds-entity entity-'+((det.entity||'').toLowerCase().replace(/[^a-z]/g,''))+'">'+esc(det.entity)+'</span></div>'
-    + '<div class="ds-seg" style="margin-left:auto"><div class="sig '+sigClass+'" title="'+det.confidence+' confidence"></div><span class="'+confClass+'" style="font-size:0.62rem;font-family:var(--mono)">'+det.confidence+'</span></div>'
-    + '</div>';
-}
-
-function renderErr(err, raw) {
-  if (err === 'network_error') {
-    return '<div class="err-box net-err"><div class="err-title">&#x26A0; Network request blocked</div>'
-      + '<div class="err-body">BioSync queries external APIs blocked in this preview.'
-      + '<br/>Works on GitHub Pages or locally: <code>python3 -m http.server 8080</code></div></div>';
-  }
-  if (err === 'not_found') return '<div class="err-box"><strong>Not found</strong> &mdash; '+esc(raw)+' was not found. Check the format or verify the identifier is current.</div>';
-  if (err === 'rate_limited') return '<div class="err-box"><strong>Rate limited</strong> &mdash; wait a moment and try again.</div>';
-  if (err === 'unknown') return '<div class="err-box">Could not recognise <strong>'+esc(raw)+'</strong>. Supported: UniProt (P07550), Ensembl (ENSG/ENST/ENSP), RefSeq (NM_/NP_/NR_), HGNC (HGNC:286), GO (GO:0007165), Reactome (R-HSA-...), ChEMBL, InterPro (IPR...), Pfam (PF...), NCBI Gene ID, gene symbol. Input is case-insensitive.</div>';
-  return '<div class="err-box">Could not resolve: '+esc(err)+'</div>';
-}
-
-function renderCard(data) {
-  if (!data) return '<div class="err-box">No data returned.</div>';
-  var html = '<div class="result-card">';
-
-  // Primary row
-  html += '<div class="rc-primary-row">'
-    + '<div><div class="rc-name">'+esc(data.primaryName||data.inputId)+'</div>'
-    + (data.fullName && data.fullName!==data.primaryName ? '<div class="rc-fullname">'+esc(data.fullName.substring(0,220))+'</div>' : '')
-    + '</div>'
-    + '<div class="rc-badges">';
-  if (data.organism) html += '<span class="rc-badge badge-species">'+esc(data.organism)+(data.commonName?' ('+esc(data.commonName)+')':'')+'</span>';
-  if (data.entity) html += '<span class="rc-badge ds-entity entity-'+data.entity.toLowerCase().replace(/[^a-z]/g,'')+'">'+esc(data.entity)+'</span>';
-  if (data.reviewed) html += '<span class="rc-badge badge-reviewed">Swiss-Prot reviewed</span>';
-  if (data.typeOfGene) html += '<span class="rc-badge badge-genetype">'+esc(data.typeOfGene)+'</span>';
-  if (data.namespace) html += '<span class="rc-badge badge-ns">'+esc(data.namespace)+'</span>';
-  if (data.biotype) html += '<span class="rc-badge badge-biotype">'+esc(data.biotype)+'</span>';
-  if (data.targetType) html += '<span class="rc-badge badge-genetype">'+esc(data.targetType)+'</span>';
-  html += '</div></div>';
-
-  // Isoform bar
-  if (data.transcriptInfo) {
-    html += '<div class="isoform-bar">'
-      + '<span class="iso-arrow">&#x21b3;</span>'
-      + '<span class="iso-label">Encodes</span>'
-      + '<span class="iso-id"><a href="https://www.ensembl.org/id/'+esc(data.transcriptInfo.protein)+'" target="_blank" class="map-id-link">'+esc(data.transcriptInfo.protein)+' &nearr;</a></span>'
-      + '<span class="iso-len">'+esc(String(data.transcriptInfo.length))+' aa</span>'
-      + (data.location ? '<span class="iso-loc">&#9656; '+esc(data.location)+(data.strand?' ('+esc(data.strand)+')':'')+'</span>' : '')
-      + '</div>';
-  } else if (data.location) {
-    html += '<div class="isoform-bar"><span class="iso-label">&#9656;</span><span class="iso-loc">'+esc(data.location)+(data.strand?' ('+esc(data.strand)+')':'')+'</span></div>';
-  }
-
-  // Ambiguity
-  if (data.ambiguous && data.ambiguous.length > 1) {
-    html += '<div class="ambig-row">&#x26A0; Multiple species matches. Others: '
-      + data.ambiguous.slice(1,4).map(function(a){ return '<span class="ambig-item" onclick="lookupDirect(\''+esc(a.entrez)+'\')">'+esc(a.symbol||a.entrez)+' ('+esc(String(a.taxid))+')</span>'; }).join('')
-      + '</div>';
-  }
-
-  // Mappings
-  if (data.mappings && data.mappings.length) {
-    html += '<div class="rc-section"><div class="rc-sec-head">Cross-database mappings</div><div class="rc-sec-body"><div class="map-table">';
-    data.mappings.forEach(function(m) {
-      var prov = m.curated !== undefined
-        ? '<span class="map-prov '+(m.curated?'prov-curated':'prov-auto')+'" title="'+(m.curated?'Manually curated':'Computationally predicted')+'">'+(m.curated?'curated':'auto')+'</span>'
-        : '';
-      html += '<div class="map-row">'
-        + '<span class="map-db-label">'+esc(m.db)+'</span>'
-        + '<span class="map-id-val">'+(m.link?'<a href="'+esc(m.link)+'" target="_blank" class="map-id-link">'+esc(m.id)+' &nearr;</a>':esc(m.id))+'</span>'
-        + prov
-        + '<button class="map-copy" onclick="copyId(\''+esc(m.id)+'\',this)" title="Copy">&#x2398;</button>'
-        + '</div>';
-    });
-    html += '</div></div></div>';
-  }
-
-  // Aliases
-  if (data.aliases && data.aliases.length) {
-    html += '<div class="rc-section"><div class="rc-sec-head">Aliases &amp; synonyms</div><div class="rc-sec-body"><div class="alias-tags">';
-    data.aliases.slice(0,12).forEach(function(a){ html += '<span class="alias-tag">'+esc(a)+'</span>'; });
-    html += '</div></div></div>';
-  }
-
-  if (data.geneSymbols && data.geneSymbols.length > 1) {
-    html += '<div class="rc-section"><div class="rc-sec-head">Gene names</div><div class="rc-sec-body"><div class="alias-tags">';
-    data.geneSymbols.forEach(function(g){ html += '<span class="alias-tag alias-tag-gene">'+esc(g)+'</span>'; });
-    html += '</div></div></div>';
-  }
-
-  // Function
-  if (data.function_ && data.function_.length > 10) {
-    html += '<div class="rc-section"><div class="rc-sec-head">Function</div><div class="rc-sec-body"><div class="fn-text">'+esc(data.function_.substring(0,500))+(data.function_.length>500?'&hellip;':'')+'</div></div></div>';
-  }
-
-  // Footer
-  html += '<div class="rc-footer-row"><span class="rc-src-label">Source: '+esc(data.source)+'</span>';
-  if (data.uniprotLink) html += '<a href="'+esc(data.uniprotLink)+'" target="_blank" class="rc-ext-link">UniProt &nearr;</a>';
-  if (data.ensemblLink) html += '<a href="'+esc(data.ensemblLink)+'" target="_blank" class="rc-ext-link">Ensembl &nearr;</a>';
-  if (data.chemblLink) html += '<a href="'+esc(data.chemblLink)+'" target="_blank" class="rc-ext-link">ChEMBL &nearr;</a>';
-  if (data.mygeneLink) html += '<a href="'+esc(data.mygeneLink)+'" target="_blank" class="rc-ext-link">MyGene.info &nearr;</a>';
-  if (data.goLink) html += '<a href="'+esc(data.goLink)+'" target="_blank" class="rc-ext-link">AmiGO &nearr;</a>';
-  if (data.reactomeLink) html += '<a href="'+esc(data.reactomeLink)+'" target="_blank" class="rc-ext-link">Reactome &nearr;</a>';
-  if (data.interproLink) html += '<a href="'+esc(data.interproLink)+'" target="_blank" class="rc-ext-link">InterPro &nearr;</a>';
-  html += '</div></div>';
-  return html;
-}
-
-function renderFTResults(data) {
-  if (!data.freeTextResults || !data.freeTextResults.length) return '<div class="err-box">No results found.</div>';
-  var html = '<div class="ft-results">'
-    + '<div class="ft-head">Free-text results for &ldquo;'+esc(data.query)+'&rdquo; &mdash; click to resolve</div>';
-  data.freeTextResults.forEach(function(r) {
-    var entrez = r.mappings && r.mappings[0] ? r.mappings[0].id : r.primaryName;
-    html += '<div class="ft-row" onclick="lookupDirect(\''+esc(entrez)+'\')">'
-      + '<span class="ft-sym">'+esc(r.primaryName)+'</span>'
-      + '<span class="ft-name">'+esc(r.fullName.substring(0,70))+'</span>'
-      + '<span class="ft-sp">'+esc(r.organism)+'</span>'
-      + '</div>';
-  });
-  html += '</div>';
-  return html;
-}
-
-function lookupDirect(id) {
-  document.getElementById('single-input').value = id;
+function lookupDirect(id){
+  document.getElementById('single-input').value=id;
   setMode('single'); runSingle();
 }
 
-function runFreeSearch() {
-  var q = document.getElementById('search-input').value.trim();
-  if (!q) return;
-  var res = document.getElementById('search-result');
-  res.innerHTML = '<div class="resolving"><div class="spinner"></div> Searching&hellip;</div>';
-  freeTextSearch(q, function(err, data) {
-    if (err || !data || !data.freeTextResults || !data.freeTextResults.length) {
-      res.innerHTML = err==='network_error' ? renderErr('network_error','') : '<div class="err-box">No results for &ldquo;'+esc(q)+'&rdquo;.</div>';
-      return;
+// ═══════════════════════════════════════════════════════
+// DETECTED STRIP
+// ═══════════════════════════════════════════════════════
+function renderDetStrip(det){
+  if(!det||det.confidence==='multi') return '';
+  var confColor={high:'var(--teal)',medium:'var(--amber)',low:'var(--muted)',none:'var(--red)'};
+  var col=confColor[det.confidence]||'var(--dim)';
+  var html='<div class="detected-strip">'
+    +'<div class="ds-seg"><span class="ds-label">Input</span><span class="ds-val" style="color:var(--navy);font-weight:600">'+esc(det.originalId||det.id)+'</span></div>'
+    +'<div class="ds-seg"><span class="ds-label">Type</span><span class="ds-val" style="color:var(--navy)">'+esc(det.type)+'</span></div>'
+    +'<div class="ds-seg"><span class="ds-label">DB</span><span class="ds-val">'+esc(det.db)+'</span></div>'
+    +'<div class="ds-seg"><span class="ds-entity entity-'+((det.entity||'').toLowerCase().replace(/[^a-z]/g,''))+'">'+esc(det.entity)+'</span></div>'
+    +'<div class="ds-seg" style="margin-left:auto">'
+    +'<div class="sig sig-'+det.confidence+'" title="'+det.confidence+' confidence"></div>'
+    +'<span style="font-family:var(--mono);font-size:0.6rem;color:'+col+'">'+det.confidence+'</span>'
+    +'</div>'
+    +'</div>';
+  // Version note
+  if(det.versionNote){
+    html+='<div class="version-note">&#x25B6; '+esc(det.versionNote)+'</div>';
+  }
+  // Known issue warning
+  if(det.knownIssue){
+    html+='<div class="issue-warn"><span class="issue-icon">&#x26A0;</span> <strong>Known complexity:</strong> '+esc(det.knownIssue)+'</div>';
+  }
+  return html;
+}
+
+// ═══════════════════════════════════════════════════════
+// ERROR RENDERING
+// ═══════════════════════════════════════════════════════
+function renderErr(err,raw){
+  if(err==='network_error') return '<div class="err-box net-err"><div class="err-title">&#x26A0; Network request blocked</div><div class="err-body">External APIs are blocked in this preview. Works on GitHub Pages or locally: <code>python3 -m http.server 8080</code></div></div>';
+  if(err==='not_found') return '<div class="err-box"><strong>Not found</strong> — '+esc(raw)+' was not found. Check the format or verify the identifier is current.</div>';
+  if(err==='rate_limited') return '<div class="err-box"><strong>Rate limited</strong> — wait a few seconds and try again.</div>';
+  if(err==='unknown') return '<div class="err-box">Could not recognise <strong>'+esc(raw)+'</strong>. Supported: UniProt (P07550), Ensembl (ENSG/ENST/ENSP), RefSeq (NM_/NP_), HGNC (HGNC:286), GO (GO:0007165), Reactome (R-HSA-...), ChEMBL, InterPro (IPR...), Pfam (PF...), NCBI Gene ID, gene symbol. Input is case-insensitive.</div>';
+  return '<div class="err-box">'+esc(err)+'</div>';
+}
+
+// ═══════════════════════════════════════════════════════
+// RESULT CARD
+// ═══════════════════════════════════════════════════════
+function renderCard(data, det){
+  if(!data) return '<div class="err-box">No data returned.</div>';
+  var html='<div class="result-card">';
+  // Header
+  html+='<div class="rc-primary-row">'
+    +'<div><div class="rc-name">'+esc(data.primaryName||data.inputId)+'</div>'
+    +(data.fullName&&data.fullName!==data.primaryName?'<div class="rc-fullname">'+esc(data.fullName.substring(0,220))+'</div>':'')
+    +'</div><div class="rc-badges">';
+  if(data.organism) html+='<span class="rc-badge badge-species">'+esc(data.organism)+(data.commonName?' ('+esc(data.commonName)+')':'')+'</span>';
+  if(data.entity) html+='<span class="rc-badge ds-entity entity-'+data.entity.toLowerCase().replace(/[^a-z]/g,'')+'">'+esc(data.entity)+'</span>';
+  if(data.reviewed) html+='<span class="rc-badge badge-reviewed">Swiss-Prot reviewed</span>';
+  if(data.typeOfGene) html+='<span class="rc-badge badge-meta">'+esc(data.typeOfGene)+'</span>';
+  if(data.namespace) html+='<span class="rc-badge badge-meta">'+esc(data.namespace)+'</span>';
+  if(data.biotype) html+='<span class="rc-badge badge-meta">'+esc(data.biotype)+'</span>';
+  if(data.targetType) html+='<span class="rc-badge badge-meta">'+esc(data.targetType)+'</span>';
+  html+='</div></div>';
+  // Isoform / location bar
+  if(data.transcriptInfo){
+    html+='<div class="isoform-bar">&#x21B3; <span class="iso-label">Encodes</span> '
+      +'<a href="https://www.ensembl.org/id/'+esc(data.transcriptInfo.protein)+'" target="_blank" class="map-id-link">'+esc(data.transcriptInfo.protein)+' &nearr;</a>'
+      +' <span class="iso-len">'+esc(String(data.transcriptInfo.length))+' aa</span>'
+      +(data.location?'<span class="iso-sep">&#9656;</span><span class="iso-loc">'+esc(data.location)+(data.strand?' ('+esc(data.strand)+')':'')+'</span>':'')
+      +'</div>';
+  } else if(data.location){
+    html+='<div class="isoform-bar"><span style="color:var(--muted);margin-right:6px">&#9656;</span>'+esc(data.location)+(data.strand?' ('+esc(data.strand)+')':'')+'</div>';
+  }
+  // Ambiguity
+  if(data.ambiguous&&data.ambiguous.length>1){
+    html+='<div class="ambig-row">&#x26A0; Multiple species. Others: '
+      +data.ambiguous.slice(1,4).map(function(a){return '<span class="ambig-item" onclick="lookupDirect(\''+esc(a.entrez)+'\')">'+esc(a.symbol||a.entrez)+' ('+esc(String(a.taxid))+')</span>';}).join('')
+      +'</div>';
+  }
+  // Mappings
+  if(data.mappings&&data.mappings.length){
+    html+='<div class="rc-section"><div class="rc-sec-head">Cross-database mappings</div><div class="rc-sec-body"><div class="map-table">';
+    data.mappings.forEach(function(m){
+      var prov=m.curated!==undefined?'<span class="map-prov '+(m.curated?'prov-curated':'prov-auto')+'" title="'+(m.curated?'Manually curated':'Computationally predicted')+'">'+(m.curated?'curated':'auto')+'</span>':'';
+      html+='<div class="map-row">'
+        +'<span class="map-db-label">'+esc(m.db)+'</span>'
+        +'<span class="map-id-val">'+(m.link?'<a href="'+esc(m.link)+'" target="_blank" class="map-id-link">'+esc(m.id)+' &nearr;</a>':esc(m.id))+'</span>'
+        +prov
+        +'<button class="map-copy" onclick="copyId(\''+esc(m.id)+'\',this)" title="Copy">&#x2398;</button>'
+        +'</div>';
+    });
+    html+='</div></div></div>';
+  }
+  // Aliases
+  if(data.aliases&&data.aliases.length){
+    html+='<div class="rc-section"><div class="rc-sec-head">Aliases &amp; synonyms</div><div class="rc-sec-body"><div class="alias-tags">';
+    data.aliases.slice(0,12).forEach(function(a){html+='<span class="alias-tag">'+esc(a)+'</span>';});
+    html+='</div></div></div>';
+  }
+  // Gene names
+  if(data.geneSymbols&&data.geneSymbols.length>1){
+    html+='<div class="rc-section"><div class="rc-sec-head">Gene names</div><div class="rc-sec-body"><div class="alias-tags">';
+    data.geneSymbols.forEach(function(g){html+='<span class="alias-tag alias-tag-gene">'+esc(g)+'</span>';});
+    html+='</div></div></div>';
+  }
+  // Function
+  if(data.function_&&data.function_.length>10){
+    html+='<div class="rc-section"><div class="rc-sec-head">Function</div><div class="rc-sec-body"><div class="fn-text">'+esc(data.function_.substring(0,500))+(data.function_.length>500?'&hellip;':'')+'</div></div></div>';
+  }
+  // Footer + cite + share
+  html+='<div class="rc-footer-row">';
+  html+='<span class="rc-src-label">Source: '+esc(data.source)+'</span>';
+  if(data.uniprotLink) html+='<a href="'+esc(data.uniprotLink)+'" target="_blank" class="rc-ext-link">UniProt &nearr;</a>';
+  if(data.ensemblLink) html+='<a href="'+esc(data.ensemblLink)+'" target="_blank" class="rc-ext-link">Ensembl &nearr;</a>';
+  if(data.chemblLink) html+='<a href="'+esc(data.chemblLink)+'" target="_blank" class="rc-ext-link">ChEMBL &nearr;</a>';
+  if(data.mygeneLink) html+='<a href="'+esc(data.mygeneLink)+'" target="_blank" class="rc-ext-link">MyGene &nearr;</a>';
+  if(data.goLink) html+='<a href="'+esc(data.goLink)+'" target="_blank" class="rc-ext-link">AmiGO &nearr;</a>';
+  if(data.reactomeLink) html+='<a href="'+esc(data.reactomeLink)+'" target="_blank" class="rc-ext-link">Reactome &nearr;</a>';
+  if(data.interproLink) html+='<a href="'+esc(data.interproLink)+'" target="_blank" class="rc-ext-link">InterPro &nearr;</a>';
+  // Citation button
+  html+='<button class="rc-ext-link" style="cursor:pointer;border:none;background:none;font-family:var(--mono)" onclick="copyCitation('+JSON.stringify(JSON.stringify(data))+')" title="Copy citation for methods section">&#x22; Cite</button>';
+  html+='</div></div>';
+  return html;
+}
+
+function copyCitation(dataJson){
+  var data=JSON.parse(dataJson);
+  var today=new Date().toISOString().split('T')[0];
+  var name=data.primaryName||data.inputId;
+  // Data citation (what goes in methods section)
+  var dataCite='';
+  if(data.source==='UniProt'){
+    dataCite=name+' (UniProt accession '+data.inputId+', reviewed Swiss-Prot entry, accessed '+today+').';
+  } else if(data.source==='MyGene.info'||data.source==='Ensembl REST'){
+    var ensId=''; if(data.mappings) { var em=data.mappings.find(function(m){return m.db==='Ensembl Gene';}); if(em) ensId=em.id; }
+    dataCite=name+(ensId?' ('+ensId+', ':' (')+'accessed via MyGene.info '+today+').';
+  } else if(data.source==='Gene Ontology'){
+    dataCite=data.primaryName+' ('+data.inputId+', Gene Ontology, accessed '+today+').';
+  } else if(data.source==='Reactome'){
+    dataCite=data.primaryName+' ('+data.inputId+', Reactome, accessed '+today+').';
+  } else {
+    dataCite=name+' ('+data.inputId+', '+data.source+', accessed '+today+').';
+  }
+  // Database citation (what goes in bibliography)
+  var dbCite='';
+  if(data.source==='UniProt') dbCite='UniProt Consortium. UniProt: the Universal Protein Knowledgebase in 2023. Nucleic Acids Research. 2023;51(D1):D523-D531.';
+  else if(data.source==='Gene Ontology') dbCite='Gene Ontology Consortium. The Gene Ontology knowledgebase in 2023. Genetics. 2023;224(1):iyad031.';
+  else if(data.source==='Reactome') dbCite='Milacic M et al. The Reactome Pathway Knowledgebase 2024. Nucleic Acids Research. 2024;52(D1):D672-D678.';
+  else dbCite='Xin J et al. High-performance web services for querying gene and variant annotation. Genome Biology. 2016;17:91.';
+  var full='Data citation (methods):\n'+dataCite+'\n\nDatabase citation (bibliography):\n'+dbCite;
+  navigator.clipboard.writeText(full).then(function(){alert('Copied:\n\n'+full);});
+}
+
+// ═══════════════════════════════════════════════════════
+// FREE-TEXT SEARCH
+// ═══════════════════════════════════════════════════════
+function renderFTResults(data){
+  if(!data.freeTextResults||!data.freeTextResults.length) return '<div class="err-box">No results found.</div>';
+  var html='<div class="ft-results"><div class="ft-head">Free-text results for &ldquo;'+esc(data.query)+'&rdquo; &mdash; click to resolve</div>';
+  data.freeTextResults.forEach(function(r){
+    var entrez=r.mappings&&r.mappings[0]?r.mappings[0].id:r.primaryName;
+    html+='<div class="ft-row" onclick="lookupDirect(\''+esc(entrez)+'\')">'
+      +'<span class="ft-sym">'+esc(r.primaryName)+'</span>'
+      +'<span class="ft-name">'+esc(r.fullName.substring(0,70))+'</span>'
+      +'<span class="ft-sp">'+esc(r.organism)+'</span>'
+      +'</div>';
+  });
+  return html+'</div>';
+}
+
+function runFreeSearch(){
+  var q=document.getElementById('search-input').value.trim(); if(!q) return;
+  setMode('search');
+  var res=document.getElementById('search-result');
+  res.innerHTML='<div class="resolving"><div class="spinner"></div> Searching&hellip;</div>';
+  res.style.display='block';
+  freeTextSearch(q,function(err,data){
+    if(err||!data||!data.freeTextResults||!data.freeTextResults.length){
+      res.innerHTML=err==='network_error'?renderErr('network_error',''):'<div class="err-box">No results for &ldquo;'+esc(q)+'&rdquo;.</div>'; return;
     }
-    res.innerHTML = renderFTResults(data);
+    res.innerHTML=renderFTResults(data);
   });
 }
 
-function runBatch() {
-  var raw = document.getElementById('batch-input').value.trim();
-  if (!raw) { alert('Paste identifiers first.'); return; }
-  var species = document.getElementById('batch-species').value;
-  var ids = raw.split(/[\n,\t]+/).map(function(s){return s.trim();}).filter(Boolean);
-  var seen={}; ids=ids.filter(function(id){var k=id.toUpperCase(); if(seen[k])return false; seen[k]=true; return true;});
-  if (ids.length>100 && !confirm(ids.length+' IDs — ~'+Math.ceil(ids.length*0.15)+'s. Continue?')) return;
+// ═══════════════════════════════════════════════════════
+// RESOLVE & RECONCILE
+// ═══════════════════════════════════════════════════════
+var _rrResults = null;
 
-  batchResults = [];
-  document.getElementById('batch-result').innerHTML = '';
-  document.getElementById('batch-progress').style.display = 'block';
-  document.getElementById('batch-run-btn').disabled = true;
+function runResolveReconcile() {
+  var rawA = document.getElementById('reconcile-a').value.trim();
+  var rawB = document.getElementById('reconcile-b').value.trim();
+  if (!rawA || !rawB) { alert('Paste identifiers in both columns.'); return; }
+  var targetFmt = document.getElementById('reconcile-format').value;
+  var parseIds = function(raw) {
+    var seen = {};
+    return raw.split(/[\n,\t]+/).map(function(s){return s.trim();}).filter(Boolean)
+      .filter(function(id){var k=id.toUpperCase();if(seen[k])return false;seen[k]=true;return true;});
+  };
+  var idsA = parseIds(rawA), idsB = parseIds(rawB);
+  setMode('reconcile');
+  var res = document.getElementById('reconcile-result');
+  res.style.display = 'block';
+  res.innerHTML = '<div class="resolving"><div class="spinner"></div> Resolving List A&hellip;</div>';
+  document.getElementById('reconcile-run-btn').disabled = true;
+  document.getElementById('reconcile-progress-a').style.display = 'block';
+  document.getElementById('reconcile-progress-b').style.display = 'none';
+  var resolvedA = {}, failedA = [], resolvedB = {}, failedB = [];
 
-  processBatch(ids, species, function(r, done, total) {
+  function resolveList(ids, fillId, txtId, isA, onDone) {
+    var i = 0;
+    function next() {
+      if (i >= ids.length) { onDone(); return; }
+      var id = ids[i++];
+      document.getElementById(fillId).style.width = Math.round(i/ids.length*100) + '%';
+      document.getElementById(txtId).textContent = i + ' / ' + ids.length;
+      var det = detectIdentifier(id);
+      var store = isA ? resolvedA : resolvedB;
+      var failed = isA ? failedA : failedB;
+      if (!det || det.type === 'Unknown') {
+        failed.push({orig:id, reason:'Unrecognised format'}); setTimeout(next, 50); return;
+      }
+      resolveIdentifier(det, function(err, data) {
+        if (err || !data) {
+          failed.push({orig:id, reason:err==='network_error'?'Network blocked':(err||'Not found')});
+          setTimeout(next, 150); return;
+        }
+        var canonical = extractCanonical(data, targetFmt);
+        if (!canonical) { failed.push({orig:id, reason:'No '+targetFmt+' mapping'}); }
+        else { if (!store[canonical]) store[canonical]=[]; store[canonical].push(id); }
+        setTimeout(next, 150);
+      });
+    }
+    next();
+  }
+
+  resolveList(idsA, 'reconcile-fill-a', 'reconcile-txt-a', true, function() {
+    document.getElementById('reconcile-progress-b').style.display = 'block';
+    res.innerHTML = '<div class="resolving"><div class="spinner"></div> Resolving List B&hellip;</div>';
+    resolveList(idsB, 'reconcile-fill-b', 'reconcile-txt-b', false, function() {
+      document.getElementById('reconcile-progress-a').style.display = 'none';
+      document.getElementById('reconcile-progress-b').style.display = 'none';
+      document.getElementById('reconcile-run-btn').disabled = false;
+      renderRRResults(resolvedA, resolvedB, failedA, failedB, targetFmt);
+    });
+  });
+}
+
+function extractCanonical(data, targetFmt) {
+  if (!data) return null;
+  if (targetFmt === 'Gene Symbol') return data.geneSymbols&&data.geneSymbols[0] ? data.geneSymbols[0] : (data.primaryName||null);
+  var dbMap = {
+    'Ensembl Gene ID':   ['Ensembl Gene'],
+    'NCBI Gene ID':      ['NCBI Gene'],
+    'UniProt Accession': ['UniProt (canonical)','UniProt (reviewed)','UniProt'],
+    'HGNC ID':           ['HGNC'],
+    'RefSeq mRNA':       ['RefSeq mRNA'],
+  };
+  var dbs = dbMap[targetFmt] || [targetFmt];
+  var m = (data.mappings||[]).find(function(m){ return dbs.indexOf(m.db) >= 0; });
+  return m ? m.id : null;
+}
+
+function renderRRResults(resolvedA, resolvedB, failedA, failedB, targetFmt) {
+  var setA = new Set(Object.keys(resolvedA)), setB = new Set(Object.keys(resolvedB));
+  var shared = Array.from(setA).filter(function(id){return setB.has(id);});
+  var onlyA  = Array.from(setA).filter(function(id){return !setB.has(id);});
+  var onlyB  = Array.from(setB).filter(function(id){return !setA.has(id);});
+  _rrResults = {shared:shared,onlyA:onlyA,onlyB:onlyB,resolvedA:resolvedA,resolvedB:resolvedB,failedA:failedA,failedB:failedB,targetFmt:targetFmt};
+  var res = document.getElementById('reconcile-result');
+  var html = '<div class="rr-card">';
+  html += '<div class="rr-header">'
+    +'<div class="rr-stat"><span class="rrs-n">'+shared.length+'</span><span class="rrs-label">Shared</span></div>'
+    +'<div class="rr-stat"><span class="rrs-n" style="color:var(--navy)">'+onlyA.length+'</span><span class="rrs-label">Only A</span></div>'
+    +'<div class="rr-stat"><span class="rrs-n" style="color:var(--teal)">'+onlyB.length+'</span><span class="rrs-label">Only B</span></div>'
+    +'<div class="rr-stat"><span class="rrs-n" style="color:var(--muted)">'+(failedA.length+failedB.length)+'</span><span class="rrs-label">Failed</span></div>'
+    +'<span class="rr-fmt-badge">'+esc(targetFmt)+'</span>'
+    +'<div style="margin-left:8px;display:flex;gap:4px;flex-wrap:wrap" id="rr-export-btns"></div></div>';
+  // Attach export buttons after render to avoid quote escaping issues
+  setTimeout(function(){
+    var wrap=document.getElementById('rr-export-btns'); if(!wrap) return;
+    [['shared','Shared'],['onlyA','Only A'],['onlyB','Only B'],['full','Full TSV']].forEach(function(p){
+      var b=document.createElement('button'); b.className='exp-btn'; b.textContent='\u2193 '+p[1];
+      b.onclick=(function(w){return function(){exportRR(w);};})(p[0]);
+      wrap.appendChild(b);
+    });
+  },50);
+  function renderCol(ids, resolvedMap, color) {
+    if (!ids.length) return '<div class="recon-empty">None</div>';
+    return ids.map(function(canonical) {
+      var origs = resolvedMap[canonical]||[];
+      return '<div class="rr-id-row">'
+        +'<span class="rr-orig" title="'+esc(origs.join(', '))+'">'+esc(origs[0]||'')+'</span>'
+        +'<span class="rr-arrow">&#x2192;</span>'
+        +'<span class="rr-resolved" style="color:'+color+'" data-cid="'+esc(canonical)+'" title="Click to look up &rarr; '+esc(canonical)+'">'+esc(canonical)+'</span>'
+        +'</div>';
+    }).join('');
+  }
+  html += '<div class="rr-cols">'
+    +'<div class="rr-col"><div class="rr-col-head"><span>&#10003; Shared</span><span style="color:var(--muted)">'+shared.length+'</span></div>'
+    +'<div class="rr-id-list">'+renderCol(shared,resolvedA,'var(--ink)')+'</div></div>'
+    +'<div class="rr-col"><div class="rr-col-head"><span style="color:var(--navy)">Only A</span><span style="color:var(--muted)">'+onlyA.length+'</span></div>'
+    +'<div class="rr-id-list">'+renderCol(onlyA,resolvedA,'var(--navy)')+'</div></div>'
+    +'<div class="rr-col"><div class="rr-col-head"><span style="color:var(--teal)">Only B</span><span style="color:var(--muted)">'+onlyB.length+'</span></div>'
+    +'<div class="rr-id-list">'+renderCol(onlyB,resolvedB,'var(--teal)')+'</div></div>'
+    +'</div>';
+  var allFailed = failedA.map(function(f){return{list:'A',orig:f.orig,reason:f.reason};})
+    .concat(failedB.map(function(f){return{list:'B',orig:f.orig,reason:f.reason};}));
+  if (allFailed.length) {
+    html += '<div class="rr-unresolved"><div class="rr-unresolved-head">&#x26A0; '+allFailed.length+' could not be resolved to '+esc(targetFmt)+'</div>';
+    allFailed.slice(0,10).forEach(function(f){
+      html += '<div class="rr-unresolved-id"><span style="color:var(--navy)">'+esc(f.orig)+'</span> (List '+esc(f.list)+'): '+esc(f.reason)+'</div>';
+    });
+    if (allFailed.length > 10) html += '<div class="rr-unresolved-id" style="color:var(--dim)">... and '+(allFailed.length-10)+' more</div>';
+    html += '</div>';
+  }
+  html += '</div>';
+  res.innerHTML = html;
+  // Attach click handlers via event delegation (avoids inline onclick quote issues)
+  res.querySelectorAll('.rr-resolved[data-cid]').forEach(function(el){
+    el.style.cursor = 'pointer';
+    el.addEventListener('click', function(){ lookupDirect(el.dataset.cid); });
+  });
+}
+
+function exportRR(which) {
+  if (which && typeof which === "object") which = which.dataset ? which.dataset.w : which;
+  if (!_rrResults) return;
+  var r = _rrResults;
+  if (which === 'full') {
+    var rows = ['Original ID\tResolved ('+r.targetFmt+')\tGroup\tList'];
+    function addRows(ids, resolvedMap, group, listLabel) {
+      ids.forEach(function(canonical){
+        (resolvedMap[canonical]||[]).forEach(function(orig){ rows.push([orig,canonical,group,listLabel].join('\t')); });
+      });
+    }
+    addRows(r.shared, r.resolvedA,'Shared','A');
+    addRows(r.onlyA,  r.resolvedA,'Only A','A');
+    addRows(r.onlyB,  r.resolvedB,'Only B','B');
+    r.failedA.forEach(function(f){rows.push([f.orig,'','Failed: '+f.reason,'A'].join('\t'));});
+    r.failedB.forEach(function(f){rows.push([f.orig,'','Failed: '+f.reason,'B'].join('\t'));});
+    rows.push('','# Resolved to '+r.targetFmt+' | Generated by BioSync');
+    dl(new Blob([rows.join('\n')],{type:'text/plain'}),'biosync_reconcile_full.tsv');
+  } else {
+    var ids = r[which]||[];
+    var resolvedMap = which==='onlyB' ? r.resolvedB : r.resolvedA;
+    var lines = ids.map(function(canonical){
+      var origs=(resolvedMap[canonical]||[]).join(',');
+      return canonical+(origs?'\t'+origs:'');
+    });
+    var label={'shared':'shared','onlyA':'only_A','onlyB':'only_B'}[which]||which;
+    lines.push('','# '+ids.length+' identifiers ('+label+') | resolved to '+r.targetFmt);
+    dl(new Blob([lines.join('\n')],{type:'text/plain'}),'biosync_reconcile_'+label+'.txt');
+  }
+}
+
+// ═══════════════════════════════════════════════════════
+// BATCH
+// ═══════════════════════════════════════════════════════
+function runBatch(){
+  var raw=document.getElementById('batch-input').value.trim(); if(!raw){alert('Paste identifiers first.');return;}
+  var species=document.getElementById('batch-species').value;
+  var convertFmt=document.getElementById('batch-convert-fmt').value;
+  var ids=raw.split(/[\n,\t]+/).map(function(s){return s.trim();}).filter(Boolean);
+  var seen={}; ids=ids.filter(function(id){var k=id.toUpperCase();if(seen[k])return false;seen[k]=true;return true;});
+  if(ids.length>500&&!confirm(ids.length+' IDs — ~'+Math.ceil(ids.length*0.15)+'s. Continue?')) return;
+  batchResults=[];
+  window._batchConvertFmt = convertFmt;
+  setMode('batch');
+  var res=document.getElementById('batch-result'); res.innerHTML=''; res.style.display='block';
+  document.getElementById('batch-progress').style.display='block';
+  document.getElementById('batch-run-btn').disabled=true;
+  processBatch(ids,species,function(r,done,total){
     batchResults.push(r);
-    document.getElementById('batch-progress-fill').style.width = Math.round(done/total*100)+'%';
-    document.getElementById('batch-progress-text').textContent = done+' / '+total;
-    if (done%5===0 || done===total) renderBatchTable();
-  }, function() {
-    document.getElementById('batch-progress').style.display = 'none';
-    document.getElementById('batch-run-btn').disabled = false;
+    document.getElementById('batch-progress-fill').style.width=Math.round(done/total*100)+'%';
+    document.getElementById('batch-progress-text').textContent=done+' / '+total;
+    if(done%5===0||done===total) renderBatchTable();
+  },function(){
+    document.getElementById('batch-progress').style.display='none';
+    document.getElementById('batch-run-btn').disabled=false;
     renderBatchTable(); renderCacheStats();
   });
 }
 
-function renderBatchTable() {
-  var res = document.getElementById('batch-result');
-  if (!batchResults.length) { res.innerHTML=''; return; }
-  var ok = batchResults.filter(function(r){return r.data;});
-  var fail = batchResults.filter(function(r){return r.error;});
+function renderBatchTable(){
+  var res=document.getElementById('batch-result'); if(!batchResults.length){res.innerHTML='';return;}
+  var fmt=window._batchConvertFmt||'none';
+  var isConvert=(fmt!=='none');
+  var ok=batchResults.filter(function(r){return r.data;});
+  var fail=batchResults.filter(function(r){return r.error;});
+  var noMapping=isConvert?ok.filter(function(r){return !extractCanonical(r.data,fmt);}):[];
+  var html='<div class="batch-summary">'
+    +'<span class="bs-n">'+batchResults.length+' identifiers</span>'
+    +'<span class="bs-ok">'+ok.length+' resolved</span>'
+    +(fail.length?'<span class="bs-fail">'+fail.length+' failed</span>':'')
+    +(isConvert&&noMapping.length?'<span style="color:var(--amber);font-family:var(--mono);font-size:0.68rem">'+noMapping.length+' no mapping</span>':'')
+    +(isConvert?'<span class="rr-fmt-badge">&rarr; '+esc(fmt)+'</span>':'')
+    +'<div style="margin-left:auto;display:flex;gap:5px">'
+    +'<button class="exp-btn" id="bt-exp-main">&#8595; '+(isConvert?'Export converted TSV':'Export TSV')+'</button>'
+    +(fail.length||noMapping.length?'<button class="exp-btn" id="bt-exp-fail">&#8595; Failed IDs</button>':'')
+    +'</div></div>';
 
-  var html = '<div class="batch-summary">'
-    + '<span class="bs-n">'+batchResults.length+' identifiers</span>'
-    + '<span class="bs-ok">'+ok.length+' resolved</span>'
-    + (fail.length?'<span class="bs-fail">'+fail.length+' failed</span>':'')
-    + '<div style="margin-left:auto;display:flex;gap:5px">'
-    + '<button class="exp-btn" onclick="exportBatch()">&#8595; Export TSV</button>'
-    + (fail.length?'<button class="exp-btn" onclick="exportFailed()">&#8595; Failed IDs</button>':'')
-    + '</div></div>';
+  if(isConvert){
+    // Convert mode: 3-column table input → converted → name
+    html+='<table class="bt-tbl"><thead><tr>'
+      +'<th>Input</th><th>'+esc(fmt)+'</th><th>Name</th><th>Species</th>'
+      +'</tr></thead><tbody>';
+    batchResults.forEach(function(r){
+      if(r.error){
+        html+='<tr><td class="bt-input-id">'+esc(r.id)+'</td>'
+          +'<td colspan="3" class="bt-err-cell">'+esc(r.error==='network_error'?'Network blocked':r.error)+'</td></tr>';
+      } else {
+        var canonical=extractCanonical(r.data,fmt);
+        html+='<tr><td class="bt-input-id">'+esc(r.id)+'</td>'
+          +'<td class="bt-map-cell" style="font-weight:500;color:var(--navy)">'+(canonical?esc(canonical):'<span style="color:var(--muted)">—</span>')+'</td>'
+          +'<td class="bt-name-cell">'+esc(r.data.primaryName||'')+'</td>'
+          +'<td class="bt-sp-cell">'+esc(r.data.organism||'')+'</td>'
+          +'</tr>';
+      }
+    });
+  } else {
+    // Full mode: all mappings
+    html+='<table class="bt-tbl"><thead><tr>'
+      +'<th>Input</th><th>Type</th><th>Name</th><th>Species</th><th>Top mapping</th><th>Source</th>'
+      +'</tr></thead><tbody>';
+    batchResults.forEach(function(r){
+      if(r.error){
+        html+='<tr><td class="bt-input-id">'+esc(r.id)+'</td><td class="bt-type-cell">'+(r.detected?esc(r.detected.type):'?')+'</td>'
+          +'<td colspan="4" class="bt-err-cell">'+esc(r.error==='network_error'?'Network blocked':r.error)+'</td></tr>';
+      } else {
+        var d=r.data,top=d.mappings&&d.mappings[0]?d.mappings[0]:null;
+        html+='<tr><td class="bt-input-id">'+esc(r.id)+'</td><td class="bt-type-cell">'+esc(d.detectedType||'')+'</td>'
+          +'<td class="bt-name-cell">'+esc(d.primaryName||'')+'</td>'
+          +'<td class="bt-sp-cell">'+esc(d.organism||'')+'</td>'
+          +'<td class="bt-map-cell">'+(top?'<span class="map-db-sm">'+esc(top.db)+'</span>'+esc(top.id):'—')+'</td>'
+          +'<td class="bt-type-cell">'+esc(d.source||'')+'</td></tr>';
+      }
+    });
+  }
+  html+='</tbody></table>';
+  res.innerHTML=html;
 
-  html += '<table class="bt-tbl"><thead><tr>'
-    + '<th>Input</th><th>Type</th><th>Name</th><th>Species</th><th>Top mapping</th><th>Source</th>'
-    + '</tr></thead><tbody>';
-
-  batchResults.forEach(function(r) {
-    if (r.error) {
-      html += '<tr><td class="bt-input-id">'+esc(r.id)+'</td>'
-        +'<td class="bt-type-cell">'+(r.detected?esc(r.detected.type):'?')+'</td>'
-        +'<td colspan="4" class="bt-err-cell">'+esc(r.error==='network_error'?'Network blocked':r.error)+'</td></tr>';
-    } else {
-      var d=r.data, top=d.mappings&&d.mappings[0]?d.mappings[0]:null;
-      html += '<tr>'
-        +'<td class="bt-input-id">'+esc(r.id)+'</td>'
-        +'<td class="bt-type-cell">'+esc(d.detectedType||'')+'</td>'
-        +'<td class="bt-name-cell">'+esc(d.primaryName||'')+'</td>'
-        +'<td class="bt-sp-cell">'+esc(d.organism||'')+'</td>'
-        +'<td class="bt-map-cell">'+(top?'<span class="map-db-sm">'+esc(top.db)+'</span>'+esc(top.id):'—')+'</td>'
-        +'<td class="bt-type-cell">'+esc(d.source||'')+'</td></tr>';
-    }
-  });
-  html += '</tbody></table>';
-  res.innerHTML = html;
+  // Wire export buttons via addEventListener (avoid inline onclick quote issues)
+  var mainBtn=document.getElementById('bt-exp-main');
+  if(mainBtn) mainBtn.addEventListener('click', isConvert ? exportBatchConverted : exportBatch);
+  var failBtn=document.getElementById('bt-exp-fail');
+  if(failBtn) failBtn.addEventListener('click', exportFailed);
 }
 
-function exportBatch() {
-  if (!batchResults.length) return;
-  var rows = ['Input\tDetected type\tEntity\tName\tFull name\tOrganism\tTaxID\tAliases\tAll mappings\tCurated mappings\tSource'];
-  batchResults.forEach(function(r) {
-    if (r.error) {
-      rows.push([r.id,r.detected?r.detected.type:'?','','','','','','','ERROR: '+r.error,'',''].join('\t'));
-    } else {
+function exportBatch(){
+  if(!batchResults.length) return;
+  var rows=['Input\tDetected type\tEntity\tName\tFull name\tOrganism\tTaxID\tAliases\tAll mappings\tCurated mappings\tSource'];
+  batchResults.forEach(function(r){
+    if(r.error){rows.push([r.id,r.detected?r.detected.type:'?','','','','','','','ERROR: '+r.error,'',''].join('\t'));}
+    else{
       var d=r.data;
-      var all=(d.mappings||[]).map(function(m){return m.db+':'+m.id;}).join(';');
-      var cur=(d.mappings||[]).filter(function(m){return m.curated;}).map(function(m){return m.db+':'+m.id;}).join(';');
-      rows.push([r.id,d.detectedType||'',d.entity||'',d.primaryName||'',d.fullName||'',d.organism||'',d.taxId||'',(d.aliases||[]).slice(0,5).join(';'),all,cur,d.source||''].join('\t'));
+      rows.push([r.id,d.detectedType||'',d.entity||'',d.primaryName||'',d.fullName||'',d.organism||'',d.taxId||'',
+        (d.aliases||[]).slice(0,5).join(';'),
+        (d.mappings||[]).map(function(m){return m.db+':'+m.id;}).join(';'),
+        (d.mappings||[]).filter(function(m){return m.curated;}).map(function(m){return m.db+':'+m.id;}).join(';'),
+        d.source||''].join('\t'));
     }
   });
   rows.push('','Generated by BioSync (chakitarora.github.io/biosync)');
   dl(new Blob([rows.join('\n')],{type:'text/plain'}),'biosync_batch.tsv');
 }
 
-function exportFailed() {
-  var fail=batchResults.filter(function(r){return r.error;});
-  if (!fail.length) return;
-  dl(new Blob([fail.map(function(r){return r.id;}).join('\n')+'\n\n# '+fail.length+' unresolved'],{type:'text/plain'}),'biosync_failed.txt');
+function exportBatchConverted(){
+  var fmt=window._batchConvertFmt||'none'; if(fmt==='none') return exportBatch();
+  var rows=['Input\t'+fmt+'\tName\tSpecies'];
+  batchResults.forEach(function(r){
+    if(r.error){ rows.push([r.id,'ERROR: '+(r.error==='network_error'?'Network blocked':r.error),'',''].join('\t')); }
+    else {
+      var canonical=extractCanonical(r.data,fmt);
+      rows.push([r.id,canonical||'—',r.data.primaryName||'',r.data.organism||''].join('\t'));
+    }
+  });
+  rows.push('','# Converted to '+fmt+' | Generated by BioSync');
+  dl(new Blob([rows.join('\n')],{type:'text/plain'}),'biosync_converted.tsv');
 }
 
+function exportFailed(){
+  var fmt=window._batchConvertFmt||'none';
+  var fail=batchResults.filter(function(r){return r.error;});
+  var noMap=fmt!=='none'?batchResults.filter(function(r){return r.data&&!extractCanonical(r.data,fmt);}):[];
+  var all=fail.map(function(r){return r.id;}).concat(noMap.map(function(r){return r.id;}));
+  if(!all.length) return;
+  dl(new Blob([all.join('\n')+'\n\n# '+all.length+' unresolved or no mapping'],{type:'text/plain'}),'biosync_failed.txt');
+}
+
+// ═══════════════════════════════════════════════════════
+// UTILS
+// ═══════════════════════════════════════════════════════
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 function copyId(id,btn){navigator.clipboard.writeText(id).then(function(){var o=btn.innerHTML;btn.innerHTML='&#x2714;';btn.style.color='var(--teal)';setTimeout(function(){btn.innerHTML=o;btn.style.color='';},1500);});}
 function dl(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();}
 function clearCache(){var c=0;try{var ks=[];for(var k in localStorage){if(k.startsWith('biosync_'))ks.push(k);}ks.forEach(function(k){localStorage.removeItem(k);c++;});}catch(e){}renderCacheStats();alert('Cleared '+c+' cached entries.');}
+
+
+// ═══════════════════════════════════════════════════════
+// VARIANT RESOLVERS — rsID + ClinVar
+// ═══════════════════════════════════════════════════════
+function resolveRsId(id, callback) {
+  // NCBI dbSNP esummary
+  var rsNum = id.replace(/^rs/i, '');
+  apiFetch('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=snp&id=' + rsNum + '&retmode=json&tool=biosync', function(err, d) {
+    if (err) { callback(err, null); return; }
+    var result = d.result && d.result[rsNum];
+    if (!result) { callback('not_found', null); return; }
+    var genes = result.genes ? result.genes.map(function(g) { return g.name; }) : [];
+    var alleles = result.primary_snapshot_data && result.primary_snapshot_data.allele_annotations
+      ? result.primary_snapshot_data.allele_annotations : null;
+    var mappings = [
+      { db: 'dbSNP', id: 'rs' + rsNum, link: 'https://www.ncbi.nlm.nih.gov/snp/rs' + rsNum, curated: true },
+    ];
+    if (result.clinical_significance && result.clinical_significance.length) {
+      result.clinical_significance.slice(0, 3).forEach(function(cs) {
+        mappings.push({ db: 'Clinical significance', id: cs, link: null, curated: true });
+      });
+    }
+    // Chromosomal location
+    var loc = '';
+    if (result.chrpos) loc = result.chrpos;
+    else if (result.chr && result.chrpos_prev_assm) loc = 'chr' + result.chr;
+    callback(null, {
+      source: 'NCBI dbSNP', inputId: id, detectedType: 'dbSNP rsID',
+      entity: 'Variant',
+      primaryName: 'rs' + rsNum,
+      fullName: result.docsum || '',
+      organism: 'Human', taxId: '9606',
+      geneSymbols: genes,
+      aliases: result.synonyms || [],
+      mappings: mappings,
+      variantClass: result.snp_class || '',
+      location: loc,
+      clinSig: (result.clinical_significance || []).join('; '),
+      dbsnpLink: 'https://www.ncbi.nlm.nih.gov/snp/rs' + rsNum,
+    });
+  });
+}
+
+function resolveClinVar(id, callback) {
+  var cvId = id.replace(/^(VCV|RCV)/i, '').replace(/^0+/, '');
+  var prefix = id.toUpperCase().startsWith('RCV') ? 'RCV' : 'VCV';
+  apiFetch('https://eutils.ncbi.nlm.nih.gov/entrez/eutils/esummary.fcgi?db=clinvar&id=' + cvId + '&retmode=json&tool=biosync', function(err, d) {
+    if (err) { callback(err, null); return; }
+    var result = d.result && d.result[cvId];
+    if (!result) { callback('not_found', null); return; }
+    var mappings = [
+      { db: 'ClinVar', id: prefix + String(cvId).padStart(9, '0'), link: 'https://www.ncbi.nlm.nih.gov/clinvar/variation/' + cvId, curated: true },
+    ];
+    if (result.variation_set && result.variation_set[0] && result.variation_set[0].variation_xrefs) {
+      result.variation_set[0].variation_xrefs.forEach(function(xr) {
+        if (xr.db_source === 'dbSNP') mappings.push({ db: 'dbSNP', id: 'rs' + xr.db_id, link: 'https://www.ncbi.nlm.nih.gov/snp/rs' + xr.db_id, curated: true });
+      });
+    }
+    var gene = result.gene_sort || (result.genes && result.genes[0] && result.genes[0].symbol) || '';
+    callback(null, {
+      source: 'NCBI ClinVar', inputId: id, detectedType: 'ClinVar ID',
+      entity: 'Variant',
+      primaryName: result.title || id,
+      fullName: result.variation_set && result.variation_set[0] ? result.variation_set[0].variation_name || '' : '',
+      organism: 'Human', taxId: '9606',
+      geneSymbols: gene ? [gene] : [],
+      aliases: [],
+      mappings: mappings,
+      clinSig: result.clinical_significance && result.clinical_significance.description ? result.clinical_significance.description : '',
+      reviewStatus: result.clinical_significance && result.clinical_significance.review_status ? result.clinical_significance.review_status : '',
+      clinvarLink: 'https://www.ncbi.nlm.nih.gov/clinvar/variation/' + cvId,
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// ENSEMBL VALIDATION — POST endpoint for batch validation
+// ═══════════════════════════════════════════════════════
+function validateEnsemblIds(ids, callback) {
+  // Ensembl POST lookup — up to 1000 IDs
+  fetch('https://rest.ensembl.org/lookup/id', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+    body: JSON.stringify({ ids: ids })
+  })
+  .then(function(r) { if (!r.ok) throw new Error('HTTP ' + r.status); return r.json(); })
+  .then(function(d) { callback(null, d); })
+  .catch(function(e) {
+    var msg = e.message || '';
+    callback(msg.includes('fetch') || msg.includes('network') ? 'network_error' : msg, null);
+  });
+}
+
+function checkArchiveId(id, callback) {
+  // Ensembl archive — check if a retired ID has a current replacement
+  apiFetch('https://rest.ensembl.org/archive/id/' + id + '?content-type=application/json', function(err, d) {
+    if (err) { callback(err, null); return; }
+    callback(null, d);
+  });
+}
+
+// ═══════════════════════════════════════════════════════
+// HOMOLOGY / ORTHOLOG LOOKUP
+// ═══════════════════════════════════════════════════════
+var SPECIES_TAXON = {
+  'human': '9606', 'mouse': '10090', 'rat': '10116',
+  'zebrafish': '7955', 'fly': '7227', 'worm': '6239',
+  'yeast': '559292', 'chicken': '9031', 'xenopus': '8364'
+};
+var SPECIES_NAME = {
+  '9606': 'Human', '10090': 'Mouse', '10116': 'Rat',
+  '7955': 'Zebrafish', '7227': 'Fruit fly', '6239': 'C. elegans',
+  '559292': 'S. cerevisiae', '9031': 'Chicken', '8364': 'Xenopus'
+};
+
+function resolveOrtholog(ensGeneId, targetSpecies, callback) {
+  var url = 'https://rest.ensembl.org/homology/id/' + ensGeneId
+    + '?content-type=application/json&target_taxon=' + (SPECIES_TAXON[targetSpecies] || targetSpecies)
+    + '&type=orthologues&sequence=none';
+  apiFetch(url, function(err, d) {
+    if (err) { callback(err, null); return; }
+    var homologs = [];
+    if (d.data && d.data[0] && d.data[0].homologies) {
+      d.data[0].homologies.forEach(function(h) {
+        if (h.target) homologs.push({
+          id: h.target.id,
+          symbol: h.target.protein_id || h.target.id,
+          species: SPECIES_NAME[String(h.target.taxon_id)] || 'TaxID ' + h.target.taxon_id,
+          type: h.type,
+          identity: h.target.perc_id ? Math.round(h.target.perc_id) + '% identity' : '',
+          link: 'https://www.ensembl.org/id/' + h.target.id
+        });
+      });
+    }
+    callback(null, homologs);
+  });
+}
+
+
+// ═══════════════════════════════════════════════════════
+// IDENTIFIER VALIDATION
+// ═══════════════════════════════════════════════════════
+var _validationResults = null;
+
+function runValidation() {
+  var raw = document.getElementById('validate-input').value.trim();
+  if (!raw) { alert('Paste identifiers first.'); return; }
+  var ids = raw.split(/[\n,\t]+/).map(function(s){return s.trim();}).filter(Boolean);
+  var seen = {}; ids = ids.filter(function(id){var k=id.toUpperCase();if(seen[k])return false;seen[k]=true;return true;});
+
+  setMode('validate');
+  var res = document.getElementById('validate-result');
+  res.style.display = 'block';
+  res.innerHTML = '<div class="resolving"><div class="spinner"></div> Validating&hellip;</div>';
+  document.getElementById('validate-run-btn').disabled = true;
+  document.getElementById('validate-progress').style.display = 'block';
+
+  // Separate Ensembl IDs (can use POST batch) from others
+  var ensIds = ids.filter(function(id) {
+    var up = id.toUpperCase().split('.')[0];
+    return /^ENS[A-Z]*G[0-9]{11}$|^ENS[A-Z]*T[0-9]{11}$|^ENS[A-Z]*P[0-9]{11}$/.test(up);
+  });
+  var otherIds = ids.filter(function(id) { return ensIds.indexOf(id) < 0; });
+
+  var results = [];
+
+  function processOthers(cb) {
+    if (!otherIds.length) { cb(); return; }
+    var i = 0;
+    function next() {
+      if (i >= otherIds.length) { cb(); return; }
+      var id = otherIds[i++];
+      var pct = Math.round((ensIds.length + i) / ids.length * 100);
+      document.getElementById('validate-progress-fill').style.width = pct + '%';
+      document.getElementById('validate-progress-text').textContent = (ensIds.length + i) + ' / ' + ids.length;
+      var det = detectIdentifier(id);
+      if (!det || det.type === 'Unknown') {
+        results.push({ id: id, status: 'unrecognised', reason: 'Format not recognised', current: null });
+        setTimeout(next, 30); return;
+      }
+      resolveIdentifier(det, function(err, data) {
+        if (err === 'network_error') {
+          results.push({ id: id, status: 'error', reason: 'Network blocked', current: null });
+        } else if (err === 'not_found' || err) {
+          results.push({ id: id, status: 'invalid', reason: err === 'not_found' ? 'Not found in database' : err, current: null });
+        } else {
+          results.push({ id: id, status: 'valid', reason: '', current: data.primaryName || '', detectedType: det.type, organism: data.organism || '' });
+        }
+        setTimeout(next, 150);
+      });
+    }
+    next();
+  }
+
+  function processEnsembl(cb) {
+    if (!ensIds.length) { cb(); return; }
+    var cleanIds = ensIds.map(function(id){ return id.toUpperCase().split('.')[0]; });
+    document.getElementById('validate-progress-fill').style.width = '10%';
+    document.getElementById('validate-progress-text').textContent = 'Checking ' + cleanIds.length + ' Ensembl IDs&hellip;';
+    validateEnsemblIds(cleanIds, function(err, data) {
+      if (err) {
+        ensIds.forEach(function(id) {
+          results.push({ id: id, status: err === 'network_error' ? 'error' : 'error', reason: err === 'network_error' ? 'Network blocked' : err, current: null });
+        });
+        cb(); return;
+      }
+      ensIds.forEach(function(orig, idx) {
+        var clean = cleanIds[idx];
+        var entry = data && data[clean];
+        if (!entry) {
+          // Try archive lookup for retired IDs
+          checkArchiveId(clean, function(aerr, arch) {
+            if (!aerr && arch && arch.id && arch.id !== clean) {
+              results.push({ id: orig, status: 'retired', reason: 'Retired — current ID:', current: arch.id, detectedType: 'Ensembl', currentLink: 'https://www.ensembl.org/id/' + arch.id });
+            } else {
+              results.push({ id: orig, status: 'invalid', reason: 'Not found in current Ensembl release', current: null });
+            }
+          });
+        } else {
+          var pct = Math.round((idx+1) / ensIds.length * 40) + 10;
+          document.getElementById('validate-progress-fill').style.width = pct + '%';
+          results.push({ id: orig, status: 'valid', reason: '', current: entry.display_name || entry.id || '', detectedType: 'Ensembl ' + (entry.object_type||''), organism: entry.species ? entry.species.replace(/_/g,' ') : '' });
+        }
+      });
+      cb();
+    });
+  }
+
+  processEnsembl(function() {
+    processOthers(function() {
+      document.getElementById('validate-run-btn').disabled = false;
+      document.getElementById('validate-progress').style.display = 'none';
+      renderValidationResults(results);
+      _validationResults = results;
+    });
+  });
+}
+
+function renderValidationResults(results) {
+  var res = document.getElementById('validate-result');
+  var valid    = results.filter(function(r){return r.status==='valid';});
+  var invalid  = results.filter(function(r){return r.status==='invalid';});
+  var retired  = results.filter(function(r){return r.status==='retired';});
+  var unrec    = results.filter(function(r){return r.status==='unrecognised';});
+  var errored  = results.filter(function(r){return r.status==='error';});
+
+  var html = '<div class="valid-card">';
+  html += '<div class="rr-header">'
+    + '<div class="rr-stat"><span class="rrs-n" style="color:var(--teal)">' + valid.length + '</span><span class="rrs-label">Valid</span></div>'
+    + '<div class="rr-stat"><span class="rrs-n" style="color:var(--red)">' + invalid.length + '</span><span class="rrs-label">Invalid</span></div>'
+    + '<div class="rr-stat"><span class="rrs-n" style="color:var(--amber)">' + retired.length + '</span><span class="rrs-label">Retired</span></div>'
+    + '<div class="rr-stat"><span class="rrs-n" style="color:var(--muted)">' + unrec.length + '</span><span class="rrs-label">Unknown</span></div>'
+    + '<div style="margin-left:auto;display:flex;gap:4px">'
+    + '<button class="exp-btn" id="valid-exp-btn">&#8595; Export report</button>'
+    + (retired.length ? '<button class="exp-btn" id="valid-retired-btn">&#8595; Retired IDs</button>' : '')
+    + '</div></div>';
+
+  html += '<table class="bt-tbl"><thead><tr><th>Identifier</th><th>Status</th><th>Type</th><th>Current name / replacement</th><th>Species</th></tr></thead><tbody>';
+
+  var statusOrder = ['retired', 'invalid', 'unrecognised', 'error', 'valid'];
+  var sorted = results.slice().sort(function(a,b){ return statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status); });
+
+  sorted.forEach(function(r) {
+    var statusColour = { valid:'var(--teal)', invalid:'var(--red)', retired:'var(--amber)', unrecognised:'var(--muted)', error:'var(--red)' }[r.status] || 'var(--muted)';
+    var currentCell = '';
+    if (r.status === 'retired' && r.currentLink) {
+      currentCell = '<a href="' + esc(r.currentLink) + '" target="_blank" class="map-id-link">' + esc(r.current) + ' &nearr;</a>';
+    } else if (r.current) {
+      currentCell = esc(r.current);
+    } else if (r.reason) {
+      currentCell = '<span style="color:var(--muted)">' + esc(r.reason) + '</span>';
+    }
+    html += '<tr>'
+      + '<td class="bt-input-id">' + esc(r.id) + '</td>'
+      + '<td style="font-family:var(--mono);font-size:0.68rem;font-weight:600;color:' + statusColour + '">' + esc(r.status) + '</td>'
+      + '<td class="bt-type-cell">' + esc(r.detectedType || '') + '</td>'
+      + '<td style="font-size:0.76rem">' + currentCell + '</td>'
+      + '<td class="bt-sp-cell">' + esc(r.organism || '') + '</td>'
+      + '</tr>';
+  });
+  html += '</tbody></table></div>';
+  res.innerHTML = html;
+
+  var expBtn = document.getElementById('valid-exp-btn');
+  if (expBtn) expBtn.addEventListener('click', exportValidation);
+  var retiredBtn = document.getElementById('valid-retired-btn');
+  if (retiredBtn) retiredBtn.addEventListener('click', exportRetired);
+}
+
+function exportValidation() {
+  if (!_validationResults) return;
+  var rows = ['Identifier\tStatus\tType\tCurrent name / replacement\tOrganism'];
+  _validationResults.forEach(function(r) {
+    rows.push([r.id, r.status, r.detectedType||'', r.current||r.reason||'', r.organism||''].join('\t'));
+  });
+  rows.push('', '# Generated by BioSync');
+  dl(new Blob([rows.join('\n')],{type:'text/plain'}), 'biosync_validation_report.tsv');
+}
+function exportRetired() {
+  if (!_validationResults) return;
+  var retired = _validationResults.filter(function(r){return r.status==='retired';});
+  var lines = retired.map(function(r){return r.id + '\t' + (r.current||'no replacement found');});
+  lines.push('', '# ' + retired.length + ' retired identifiers with current replacements');
+  dl(new Blob([lines.join('\n')],{type:'text/plain'}), 'biosync_retired_ids.tsv');
+}
+
+// ═══════════════════════════════════════════════════════
+// SPECIES / ORTHOLOG MODE
+// ═══════════════════════════════════════════════════════
+function runOrtholog() {
+  var raw = document.getElementById('ortholog-input').value.trim();
+  var targetSp = document.getElementById('ortholog-target').value;
+  if (!raw) { alert('Enter a gene or Ensembl ID.'); return; }
+
+  setMode('ortholog');
+  var res = document.getElementById('ortholog-result');
+  res.style.display = 'block';
+  res.innerHTML = '<div class="resolving"><div class="spinner"></div> Finding orthologs&hellip;</div>';
+
+  var det = detectIdentifier(raw);
+
+  function doOrtholog(ensGeneId, sourceName) {
+    resolveOrtholog(ensGeneId, targetSp, function(err, homologs) {
+      if (err) { res.innerHTML = renderErr(err, raw); return; }
+      if (!homologs || !homologs.length) {
+        res.innerHTML = '<div class="err-box">No ' + esc(targetSp) + ' ortholog found for ' + esc(sourceName) + ' in Ensembl. The gene may not have a documented ortholog in this species, or the Ensembl ID may be incorrect.</div>';
+        return;
+      }
+      var html = '<div class="rr-card">';
+      html += '<div class="rr-header">'
+        + '<span style="font-family:var(--mono);font-size:0.76rem;color:var(--ink)"><strong>' + esc(sourceName) + '</strong></span>'
+        + '<span style="font-family:var(--mono);font-size:0.9rem;color:var(--muted);margin:0 8px">&rarr;</span>'
+        + '<span class="rr-fmt-badge">' + esc(targetSp) + ' orthologs</span>'
+        + '<span style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);margin-left:8px">' + homologs.length + ' found</span>'
+        + '</div>';
+      html += '<table class="bt-tbl"><thead><tr><th>Ensembl ID</th><th>Species</th><th>Orthology type</th><th>Identity</th></tr></thead><tbody>';
+      homologs.forEach(function(h) {
+        html += '<tr>'
+          + '<td class="bt-input-id"><a href="' + esc(h.link) + '" target="_blank" class="map-id-link">' + esc(h.id) + ' &nearr;</a></td>'
+          + '<td class="bt-sp-cell">' + esc(h.species) + '</td>'
+          + '<td class="bt-type-cell">' + esc(h.type.replace(/_/g,' ')) + '</td>'
+          + '<td class="bt-type-cell">' + esc(h.identity) + '</td>'
+          + '</tr>';
+      });
+      html += '</tbody></table></div>';
+      res.innerHTML = html;
+    });
+  }
+
+  // Need an Ensembl Gene ID to query Ensembl homology
+  if (det.type === 'Ensembl Gene' || det.type === 'Ensembl Gene (Mouse)') {
+    doOrtholog(det.id.split('.')[0], det.id);
+  } else {
+    // Resolve to get Ensembl Gene ID first
+    resolveIdentifier(det, function(err, data) {
+      if (err || !data) { res.innerHTML = renderErr(err || 'not_found', raw); return; }
+      var ensId = null;
+      if (data.mappings) {
+        var ensMap = data.mappings.find(function(m){ return m.db === 'Ensembl Gene'; });
+        if (ensMap) ensId = ensMap.id;
+      }
+      if (!ensId) {
+        res.innerHTML = '<div class="err-box">Could not find an Ensembl Gene ID for <strong>' + esc(raw) + '</strong> — needed for ortholog lookup. Try entering the Ensembl Gene ID directly (ENSG...).</div>';
+        return;
+      }
+      doOrtholog(ensId, data.primaryName || raw);
+    });
+  }
+}
+
 
 window.addEventListener('load', init);
 </script>

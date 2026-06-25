@@ -1,18 +1,24 @@
-# BioSync — Biological Identifier Harmonization
+# Bio.Sync — Biological Identifier Harmonization
 
-Paste any biological identifier and instantly get: what it is, what database it belongs to, all equivalent identifiers across databases, aliases, species, provenance, and direct links. Or search by protein name when you don't have an ID at all.
+A browser-based tool for resolving, converting, validating, and comparing biological identifiers across major databases. Paste any identifier — UniProt accession, Ensembl ID, RefSeq, HGNC, GO term, Reactome pathway, ChEMBL target, dbSNP rsID, ClinVar variant, gene symbol — and instantly get all equivalent identifiers, aliases, species, provenance, and source links.
 
 **Live tool:** `https://chakitarora.github.io/biosync`
 
-No account. No install. Works in any modern browser. Results cached locally for 7 days. Requires internet for new lookups (queries public APIs in real time).
+No account. No install. Works in any modern browser. Results cached locally for 7 days. Paste anywhere on the page to auto-fill the single lookup. Share any query as a URL parameter: `?q=P07550`.
 
 ---
 
-## The gap this fills
+## What problem this solves
 
-Biological databases use incompatible identifier systems. A gene may be known as `ADRB2`, `154`, `ENSG00000169252`, `NM_000024`, `P07550`, or `HGNC:286` — all the same entity, none obviously equivalent. Researchers encounter identifiers from papers, tools, and databases and spend time manually cross-referencing them.
+Biological databases use incompatible identifier systems. The same gene may appear as `ADRB2`, `154`, `ENSG00000169252`, `NM_000024`, `P07550`, or `HGNC:286` depending on the database and publication year. Researchers encounter identifiers from papers, pipelines, and collaborators and spend time manually cross-referencing them — one at a time, across multiple browser tabs.
 
-BioSync solves the full lookup workflow in one place: paste the identifier, get all equivalents, see the provenance of each mapping, and export results for downstream use.
+Bio.Sync handles the full identifier workflow in one place:
+- **What is this identifier?** → Single lookup
+- **What are all identifiers for this list?** → Batch
+- **I have a name, not an ID** → Name search
+- **Are these identifiers still current?** → Validate
+- **What is the mouse ortholog of this human gene?** → Orthologs
+- **Do these two gene lists from different sources overlap?** → Resolve & Reconcile
 
 ---
 
@@ -32,179 +38,408 @@ BioSync solves the full lookup workflow in one place: paste the identifier, get 
 | RefSeq Predicted mRNA | `XM_017021966` | RefSeq | Transcript |
 | RefSeq Predicted Protein | `XP_016877455` | RefSeq | Protein |
 | RefSeq Genomic | `NG_007524` | RefSeq | Gene |
-| NCBI Gene ID | `154` | NCBI Gene | Gene |
 | HGNC ID | `HGNC:286` | HGNC | Gene |
 | GO term | `GO:0007165` | Gene Ontology | Function/Process/Component |
 | Reactome pathway | `R-HSA-162582` | Reactome | Pathway |
 | ChEMBL ID | `CHEMBL210` | ChEMBL | Target |
 | InterPro | `IPR000276` | InterPro | Domain/Family |
 | Pfam | `PF00001` | Pfam | Domain |
+| dbSNP rsID | `rs7412` | NCBI dbSNP | Variant |
+| ClinVar ID | `VCV000017112` | ClinVar | Variant |
 | miRBase | `MI0000060` | miRBase | miRNA |
 | LRG identifier | `LRG_292` | LRG | Gene |
 | UniParc | `UPI0000000001` | UniParc | Protein |
+| NCBI Gene ID | `154` | NCBI Gene | Gene |
 | PDB ID | `2RH1` | PDB | Structure |
 | Gene symbol | `ADRB2` | Multiple | Gene |
 
-**All input is case-insensitive.** `p07550`, `ensg00000169252`, `go:0007165`, `adrb2` all work.
+**All input is case-insensitive.** `p07550`, `ensg00000169252`, `go:0007165`, `adrb2` all resolve correctly.
+
+**Versioned identifiers** (`NM_000024.6`, `ENSG00000169252.15`) are accepted — the version suffix is stripped and an amber notice shows which version was submitted.
+
+**Global paste:** paste anywhere on the page (not just inside the input box) to auto-fill the single lookup and resolve immediately.
+
+**Multi-identifier redirect:** pasting a comma-separated list into the single input box automatically switches to Batch mode with the identifiers pre-filled.
 
 ---
 
-## The three modes
-
-### Single lookup
-
-Paste one identifier. Identifier type is detected locally in milliseconds before any network call. Results show:
-
-- **Detected type** — identifier format, database, entity type, and confidence (high/medium/low)
-- **Primary name** — canonical gene symbol or protein/term name
-- **Cross-database mappings** — with provenance badges (`curated` = manually verified, `auto` = computationally predicted) and direct links
-- **Aliases and synonyms**
-- **Species** and organism
-- **Function** — brief description (UniProt entries)
-- **Isoform info** — for Ensembl transcripts: which protein it encodes, length in amino acids
-- **Genomic location** — chromosome, coordinates, strand (Ensembl entries)
-- **Copy button** on each mapping ID
-
-If you paste multiple identifiers into the single box, BioSync detects this and automatically switches to Batch mode.
-
-If the identifier is not recognised by pattern, BioSync runs a free-text fallback search automatically before returning an error.
+## The seven modes
 
 ---
 
-### Batch
+### 1 — Single lookup
 
-Paste up to 100 identifiers — one per line, or comma/tab-separated. Duplicates are removed case-insensitively before processing.
+**When to use:** you have one identifier and want to know what it is, what it maps to across databases, and what its aliases and function are.
 
-**Species filter** — select Human, Mouse, Rat, Zebrafish, Fly, or C. elegans to constrain gene symbol lookups to a specific organism.
+Paste any identifier into the search box. Detection happens locally in milliseconds — no network call needed for the identification step. Results show:
 
-Results build incrementally as each identifier resolves (~6 per second to stay within API rate limits). The output table shows: input ID, detected type, name, species, top mapping, source.
+**Detected strip** — a horizontal rail showing: input value, identifier type, database, entity type, and confidence level. Confidence is shown as a signal dot: filled circle (high — unambiguous format), half-ring (medium — format could match multiple types), empty circle (low — gene symbol, matched last).
 
-**Two export options:**
-- **Export TSV** — full table with all mappings, aliases, provenance flags, and source
-- **Export failed IDs** — a plain text file of all identifiers that could not be resolved, ready to paste back into another tool or investigate manually
+**Version note** — amber bar when a version suffix was stripped, showing what was submitted and what was resolved.
+
+**Known complexity warning** — red bar for 25 identifiers with documented ambiguity. Examples:
+- GNAS: encodes 5+ distinct proteins from one locus (Gsα, XLαs, NESP55, A/B, Alex)
+- AKT: three distinct isoforms (AKT1, AKT2, AKT3) — specify which
+- VEGF: not an approved HGNC symbol — use VEGFA, VEGFB, or VEGFC
+- H1-0: renamed from H1F0 in 2022; pre-2022 datasets use the old symbol
+- ERK: not approved — use MAPK1 (ERK2) or MAPK3 (ERK1)
+- TNF/LTA: TNF-α is TNF (P01375); TNF-β is LTA (P01374) — different genes
+- NOS: three distinct enzymes (NOS1/NOS2/NOS3 — neuronal/inducible/endothelial)
+
+**Primary name** — the canonical gene symbol or protein/term name, displayed in Fraunces serif.
+
+**Cross-database mappings** — a timetable-style table of rows, each showing:
+- Database label (navy)
+- Identifier (with link to source record)
+- Provenance badge: `curated` (green, manually verified) or `auto` (grey, computationally predicted)
+- Copy button to copy the identifier to clipboard
+
+**Isoform info** — for Ensembl transcript IDs: which protein the transcript encodes, protein length in amino acids, genomic coordinates, and strand.
+
+**Aliases and synonyms** — up to 12 alternative names.
+
+**Function** — brief description for UniProt entries (italic serif).
+
+**Variant info** — for dbSNP rsIDs: variant class, gene context, clinical significance. For ClinVar: title, clinical significance, review status, dbSNP cross-reference.
+
+**Cite button** — copies two formatted strings:
+- *Data citation* (for methods section): `ADRB2 (ENSG00000169252, accessed via MyGene.info 2024-06-25).`
+- *Database citation* (for bibliography): the standard journal reference for the source database.
+
+**↗ Share URL** — copies the current query as a shareable URL (`?q=P07550`).
+
+**Canonical UniProt resolution:** for gene symbols, NCBI Gene IDs, HGNC IDs, and Ensembl Gene IDs, Bio.Sync runs a secondary UniProt search (`reviewed:true`) to retrieve the canonical Swiss-Prot entry — ensuring correct results for complex loci like GNAS where MyGene.info may return the wrong isoform.
+
+**Free-text fallback:** if an identifier is not recognised by any pattern, Bio.Sync automatically runs a MyGene.info free-text search and shows candidate matches before returning an error.
+
+**Examples:**
+```
+P07550          → ADRB2, Beta-2 adrenergic receptor, Human
+                  UniProt (canonical): P07550 [curated]
+                  NCBI Gene: 154 [curated]
+                  Ensembl Gene: ENSG00000169252 [curated]
+                  RefSeq mRNA: NM_000024 [curated]
+                  AlphaFold: P07550 [auto]
+
+GO:0007165      → signal transduction (Biological Process)
+                  AmiGO link, QuickGO link, 3 synonyms
+
+R-HSA-162582    → Signal Transduction (Homo sapiens)
+                  Sub-pathways listed
+
+rs7412          → rs7412, APOE variant
+                  dbSNP link, gene context (APOE), variant class: snv
+```
 
 ---
 
-### Name search
+### 2 — Batch
 
-Search by protein name, gene description, or alias when you don't have a database ID. Type any free-text description and get matching gene entries across human, mouse, and rat.
+**When to use:** you have a list of identifiers — from a paper, a pipeline output, a collaborator — and need to resolve them all.
 
-Examples:
-- `beta-2 adrenergic receptor` → ADRB2 (Human), Adrb2 (Mouse)
-- `tumor protein p53` → TP53 (Human), Trp53 (Mouse)
-- `BRCA1 kinase` → BRCA1 and related entries
+Paste up to **500 identifiers**, one per line (or comma/tab-separated). Any mix of identifier formats is accepted. Duplicates are removed case-insensitively before processing.
 
-Results are clickable — selecting a result runs a full lookup for that gene.
+**Species filter** — when selected, constrains gene symbol lookups to a specific organism. Does not affect identifier-based lookups (UniProt, Ensembl, RefSeq etc. resolve to whatever species they encode).
+
+**Convert format** — when a format is selected from the dropdown (e.g. `Convert → Ensembl Gene ID`), the result table collapses to three columns: Input | Ensembl Gene ID | Name. This is the bulk conversion workflow: paste 300 gene symbols from a paper, select Ensembl Gene ID, export the two-column TSV for your pipeline. Identifiers with no mapping to the target format are listed separately.
+
+Results build incrementally as each identifier resolves (~6 per second). The result table shows: input ID, detected type, name, species, top mapping, source database.
+
+**Two export buttons:**
+- **Export TSV** — full table (all mappings, aliases, provenance, TaxID) or converted format table depending on the mode
+- **Export failed IDs** — plain text list of unresolved identifiers and those with no target format mapping
+
+**Workflow example — converting a gene list to Ensembl IDs:**
+```r
+# In Seurat — get top markers
+markers <- FindAllMarkers(seurat_obj, only.pos = TRUE)
+top20 <- markers %>% group_by(cluster) %>% slice_max(avg_log2FC, n = 20)
+# Copy gene names → paste into Batch → select Convert → Ensembl Gene ID → export TSV
+```
+
+```python
+# In Scanpy
+sc.tl.rank_genes_groups(adata, 'leiden', method='wilcoxon')
+genes = [g for cl in adata.uns['rank_genes_groups']['names'] for g in cl]
+# Copy → paste into Batch → convert → export
+```
 
 ---
 
-## Identifier detection
+### 3 — Name search
 
-Detection is local and instant — no network call needed. All input is uppercased before matching.
+**When to use:** you have a protein or gene name from a paper but no database ID.
 
-**Confidence levels:**
+Type any free-text description — protein name, gene description, or alias. Returns up to 5 ranked matches across human, mouse, and rat from MyGene.info. Click any result for a full single lookup.
 
-- `high` — unambiguous format: UniProt accession character pattern, Ensembl ENSG/ENST/ENSP prefix, RefSeq NM_/NP_/NR_ prefix, HGNC: prefix, GO: prefix, R- Reactome prefix, ChEMBL prefix, IPR/PF prefix
-- `medium` — format could match multiple types: pure integer (NCBI Gene ID vs OMIM), 4-character alphanumeric (PDB)
-- `low` — gene symbol: matched only after all specific patterns fail
-
-For gene symbols (low confidence), MyGene.info may return results across multiple species. The top result is shown (human preferred), with other species listed for manual selection.
+**Examples:**
+```
+beta-2 adrenergic receptor  →  ADRB2 (Human), Adrb2 (Mouse)
+tumor protein p53           →  TP53 (Human), Trp53 (Mouse)
+von Willebrand factor       →  VWF (Human)
+BRCA1 kinase                →  BRCA1 (Human) and related entries
+```
 
 ---
 
-## Mapping provenance
+### 4 — Validate
 
-Every cross-database mapping now shows a provenance badge:
+**When to use:** you have a list of identifiers — from your own analysis or from a published dataset — and need to confirm they are still current before submitting a manuscript, reusing a dataset, or building a pipeline.
 
-- `curated` (green) — mapping is manually curated and experimentally verified
-- `auto` (grey) — mapping is computationally predicted or automatically generated
+Paste any number of identifiers. Bio.Sync checks each:
 
-This distinction matters for publication: a curated UniProt → Ensembl mapping is more reliable than an automatic one. Hover the badge for a tooltip explanation.
+- **Ensembl IDs (ENSG/ENST/ENSP):** checked against the current Ensembl release via the POST batch lookup endpoint. Retired IDs are forwarded to the Ensembl archive endpoint, which returns the current replacement ID if one exists.
+- **All other types:** validated by attempted resolution via the appropriate API.
 
-Provenance data comes from UniProt's evidence codes (ECO:0000269 = experimental evidence used in manual assertion).
+**Result statuses:**
+
+| Status | Meaning |
+|---|---|
+| `valid` | Found in current database release. Current name shown. |
+| `retired` | No longer current. Current replacement ID shown with link to Ensembl. |
+| `invalid` | Not found. May be a typo, wrong format, or genuinely absent from the database. |
+| `unrecognised` | Format not recognised by Bio.Sync pattern matching. |
+| `error` | Network or API error during the check. |
+
+Results are sorted problems-first: retired → invalid → unrecognised → valid.
+
+**Two exports:**
+- **Export validation report** — full TSV with every identifier, its status, current name/replacement, and species
+- **Export retired IDs** — TSV of retired identifiers with their current replacements, ready to use for updating a dataset
+
+**Practical use case:** your 2021 analysis used 500 Ensembl Gene IDs based on GRCh38.p13. Before submitting in 2024, run them all through Validate to find which have been retired and what they should be replaced with.
+
+---
+
+### 5 — Orthologs
+
+**When to use:** you have a human gene and need the equivalent in mouse (or another model organism), or vice versa.
+
+Enter any identifier (gene symbol, UniProt accession, Ensembl Gene ID, NCBI Gene ID). Select the target species. Bio.Sync resolves the input to an Ensembl Gene ID first if needed, then queries Ensembl comparative genomics.
+
+**Supported target species:** Mouse, Rat, Zebrafish, Fruit fly, C. elegans, S. cerevisiae, Chicken, Xenopus, Human (for starting from a non-human gene).
+
+**Output table:** Ensembl ID (linked to Ensembl), species, orthology type, sequence identity.
+
+**Orthology types and what they mean:**
+
+| Type | Meaning | Confidence |
+|---|---|---|
+| `ortholog_one2one` | Single clear ortholog in both species | Highest |
+| `ortholog_one2many` | One human gene → multiple orthologs (gene duplicated in target) | Medium |
+| `ortholog_many2one` | Multiple human genes → one ortholog (gene duplicated in human) | Medium |
+| `ortholog_many2many` | Complex duplication history in both lineages | Lowest |
+
+**Examples:**
+```
+ADRB2 → Mouse:   Adrb2 (ENSMUSG00000031489), one2one, 85% identity
+TP53  → Mouse:   Trp53 (ENSMUSG00000059552), one2one, 77% identity
+BRCA1 → Zebrafish: brca1 (ENSDARG00000039453), one2one, 59% identity
+```
+
+---
+
+### 6 — Resolve & Reconcile
+
+**When to use:** you have two gene lists from different sources — one with gene symbols, one with Ensembl IDs — and need to find what they have in common.
+
+The key feature: **both lists are resolved to a common canonical format before comparison**. This means `ADRB2` in List A and `P07550` in List B will correctly match because both resolve to `ENSG00000169252` when Ensembl Gene ID is chosen as the canonical format. Pure string comparison would miss this.
+
+**How to use:**
+1. Paste List A in the left box — any mix of identifier formats
+2. Paste List B in the right box — any mix of formats
+3. Select a canonical format from the dropdown (Ensembl Gene ID is the safest choice for most gene-based analyses)
+4. Click **Resolve & Reconcile →**
+
+Two progress bars show resolution of each list. Comparison happens once both are complete.
+
+**Output:**
+- Stats row: number of Shared / Only A / Only B / Failed identifiers
+- Canonical format badge showing which format was used
+- Three scrollable columns:
+  - **Shared** — identifiers present in both lists (shown as original ID → canonical ID)
+  - **Only A** — identifiers unique to List A
+  - **Only B** — identifiers unique to List B
+- Click any canonical ID to run a full single lookup
+- Failed section listing identifiers that could not be resolved with reasons
+
+**Four exports:**
+- Shared list (canonical IDs + original IDs)
+- Only A list
+- Only B list
+- Full TSV (original ID, canonical ID, group A/B, list label A/B)
+
+**Practical example:**
+```
+List A: your DE analysis output (300 Ensembl Gene IDs)
+List B: published pathway gene list (150 gene symbols from a paper)
+Canonical format: Ensembl Gene ID
+
+→ Bio.Sync resolves the 150 gene symbols to Ensembl IDs
+→ Compares the two resolved sets
+→ Shared: 47 genes in both
+→ Only A: 253 genes unique to your analysis
+→ Only B: 103 genes from the paper not in your results
+```
+
+**Important limitation:** if one identifier resolves to multiple canonical IDs (e.g. GNAS → multiple UniProt accessions), only the first canonical mapping is used for comparison. Choosing Ensembl Gene ID or NCBI Gene ID as the canonical format avoids this issue, as these have 1:1 gene-level mappings.
+
+---
+
+### 7 — Session history
+
+Every resolved identifier is logged in a collapsible drawer accessible from the **History** button in the header. Stores the last 20 lookups this session (identifier, primary name, type). Click any entry to re-run that lookup. History is in-memory only and clears when the tab is closed.
+
+---
+
+## URL deep linking
+
+Any query can be shared as a URL:
+
+```
+https://chakitarora.github.io/biosync?q=P07550
+https://chakitarora.github.io/biosync?q=rs7412
+https://chakitarora.github.io/biosync?q=ADRB2,TP53,BRCA1&mode=batch
+```
+
+The `?q=` parameter auto-fills and resolves on page load. Multiple comma-separated identifiers with `&mode=batch` open in Batch mode pre-filled. Use the **↗ Share URL** button in the header to copy the current query URL.
+
+---
+
+## Provenance and reliability
+
+Every cross-database mapping shows a provenance badge:
+
+- **`curated`** (green) — manually verified, often with experimental evidence. Derived from UniProt ECO:0000269 evidence codes or from primary database curators.
+- **`auto`** (grey) — computationally predicted or automatically propagated. Less reliable for ambiguous or complex loci.
+
+For gene symbol, NCBI Gene, HGNC, and Ensembl Gene lookups, Bio.Sync runs a two-step resolution: MyGene.info for cross-database mappings, then a secondary UniProt search (`gene:{symbol} AND organism_id:{taxId} AND reviewed:true`) to retrieve the canonical reviewed Swiss-Prot entry. This ensures correct results for complex loci where MyGene.info may return the wrong isoform.
 
 ---
 
 ## Data sources and APIs
 
-All data is fetched in real time from free public APIs:
+All data is fetched in real time from public, free, CORS-enabled APIs:
 
-| API | Used for | Base URL |
+| API | Used for | Institution |
 |---|---|---|
-| UniProt REST | UniProt accession resolution, cross-references, function | `rest.uniprot.org` |
-| MyGene.info | Gene/transcript/RefSeq resolution, cross-database mappings | `mygene.info/v3` |
-| Ensembl REST | Transcript→protein isoform mapping, genomic location | `rest.ensembl.org` |
-| Gene Ontology | GO term name, namespace, definition, synonyms | `api.geneontology.org` |
-| Reactome | Pathway name, species, sub-pathway structure | `reactome.org/ContentService` |
-| InterPro | Domain/family name and classification | `www.ebi.ac.uk/interpro` |
-| ChEMBL | Target name, type, UniProt cross-reference | `www.ebi.ac.uk/chembl` |
+| UniProt REST (`rest.uniprot.org`) | Direct accession resolution, canonical gene lookup | EMBL-EBI |
+| MyGene.info (`mygene.info/v3`) | Gene/transcript/RefSeq resolution, cross-db mappings | Scripps / NCBI |
+| Ensembl REST (`rest.ensembl.org`) | Transcript→protein isoform, genomic location, batch validation, orthologs, archive | EMBL-EBI |
+| Gene Ontology (`api.geneontology.org`) | GO term name, namespace, definition, synonyms | GO Consortium |
+| Reactome (`reactome.org/ContentService`) | Pathway name, species, sub-pathway structure | EMBL-EBI / Ontario |
+| InterPro / EBI (`www.ebi.ac.uk/interpro`) | Domain/family classification | EMBL-EBI |
+| ChEMBL (`www.ebi.ac.uk/chembl`) | Target name, type, UniProt cross-reference | EMBL-EBI |
+| NCBI Entrez (`eutils.ncbi.nlm.nih.gov`) | dbSNP rsID resolution, ClinVar ID resolution | NCBI |
 
-All APIs are free, require no authentication, and are CORS-enabled for browser use.
-
-Batch mode uses a 150 ms delay between requests (~6/sec) to remain well within all rate limits.
+Batch mode uses a 150 ms delay between requests (~6/sec) to stay within API rate limits.
 
 ---
 
 ## Caching
 
-Results are cached in `localStorage` for 7 days. Cached lookups are instant and work without internet. The cache count is shown in the header. Click **clear cache** to remove all cached entries.
+Results are cached in your browser's `localStorage` for 7 days. The cache count is shown in the header. Cached lookups are instant and work without internet. Click **clear cache** in the header to remove all entries.
 
-Cache is stored only in your browser — nothing is sent to any server.
+Nothing is sent to any server. The cache is entirely local to your browser.
 
 ---
 
 ## Comparison with existing tools
 
-| Feature | BioSync | UniProt Mapping | bioDBnet | MyGene.info | g:Profiler |
+| Feature | Bio.Sync | UniProt Mapping | bioDBnet | MyGene.info | g:Profiler |
 |---|---|---|---|---|---|
-| Auto-detects ID type | Yes | No | No | Partial | No |
+| Auto-detects identifier type | Yes | No | No | Partial | No |
 | Case-insensitive input | Yes | Yes | Partial | No | Yes |
+| Versioned identifiers handled | Yes (with note) | Partial | No | No | No |
+| 26 supported identifier formats | Yes | Protein focus | Broad | Gene focus | Gene focus |
+| dbSNP / ClinVar variants | Yes | No | No | No | No |
 | GO term resolution | Yes | No | No | No | Yes |
 | Reactome pathway resolution | Yes | No | No | No | Yes |
-| InterPro / Pfam | Yes | No | No | No | No |
+| InterPro / Pfam domain resolution | Yes | No | No | No | No |
 | Transcript → protein isoform | Yes | No | No | No | No |
-| Genomic location | Yes | No | No | No | No |
-| Mapping provenance | Yes | No | No | No | No |
-| Name/alias search | Yes | No | Partial | Yes | No |
+| Genomic coordinates | Yes | No | No | No | No |
+| Canonical UniProt (2-step) | Yes | n/a | No | No | No |
+| Mapping provenance badges | Yes | No | No | No | No |
+| Known complexity warnings (25) | Yes | No | No | No | No |
+| Batch up to 500 identifiers | Yes | Yes (larger) | Yes | Yes (API) | Yes |
+| Batch format conversion built-in | Yes | Partial | Yes | No | No |
+| Identifier validation (retired/current) | Yes | No | No | No | No |
+| Ortholog lookup | Yes | No | No | No | No |
+| Name/alias free-text search | Yes | No | Partial | Yes | No |
+| Resolve & Reconcile (cross-format) | Yes | No | No | No | No |
+| Session history | Yes | No | No | No | No |
+| URL deep linking | Yes | No | No | No | No |
+| Global paste anywhere | Yes | No | No | No | No |
+| Data + database citation copy | Yes | No | No | No | No |
 | Species filter in batch | Yes | No | No | Yes (API) | No |
 | Failed ID separate export | Yes | No | No | No | No |
-| Result caching | Yes (7d) | No | No | No | No |
+| Result caching (7 days, local) | Yes | No | No | No | No |
 | Offline after first lookup | Yes | No | No | No | No |
-| Single file, no backend | Yes | No | No | No | No |
+| Single HTML file, no backend | Yes | No | No | No | No |
 
-**Where other tools are better:**
-- **g:Profiler** covers pathway and GO enrichment analysis — BioSync only resolves individual GO/Reactome IDs, not sets
-- **bioDBnet** covers a wider range of database-to-database conversion paths including metabolomics and microarray probe IDs
-- **UniProt Mapping** handles very large batch jobs (thousands of IDs) better than BioSync's 100-identifier browser limit
-- **MyGene.info Python client** (`pip install mygene`) is better for programmatic large-scale work
+**Where other tools are stronger than Bio.Sync:**
+
+- **Azimuth, CellTypist, SingleR** — reference-based automated cell type annotation from expression matrices. Bio.Sync does not do this.
+- **g:Profiler, Enrichr** — pathway and GO enrichment analysis on gene sets. Bio.Sync resolves individual identifiers only, not gene set enrichment.
+- **bioDBnet** — covers metabolomics identifiers, microarray probe IDs, and some database conversions not supported by Bio.Sync.
+- **UniProt Mapping** — handles very large batch jobs (thousands of identifiers) more robustly than Bio.Sync's 500-identifier browser limit. Better for large-scale proteomics.
+- **MyGene.info Python client** (`pip install mygene`) — better for programmatic large-scale resolution in scripts. Supports 1000+ IDs per query with no manual pasting.
+- **Ensembl BioMart** — more complete for multi-attribute queries (e.g. all transcripts for all genes in a chromosome region). Bio.Sync handles one entity at a time.
 
 ---
 
 ## Known limitations
 
-**Batch limit of 100** — for larger jobs use MyGene.info Python client or UniProt's batch mapping API.
+**Batch and validation limits:** 500 identifiers per batch session. For larger jobs use MyGene.info Python client or UniProt's programmatic API.
 
-**Gene symbol ambiguity** — `TP53` exists in human, mouse, rat, and others. BioSync returns the top result (human preferred) and flags other species.
+**Resolve & Reconcile:** uses the first canonical mapping for each identifier. GNAS has multiple UniProt accessions (it encodes 5+ proteins); Bio.Sync uses the first. Choosing NCBI Gene ID or Ensembl Gene ID as canonical format avoids this.
 
-**NCBI Gene IDs** — a bare integer like `154` is medium confidence: it matches NCBI Gene ID format but could be another numeric identifier.
+**Identifier validation:** Ensembl IDs are checked against the current Ensembl release. Non-Ensembl IDs are validated by attempted resolution — a failed resolution may reflect a genuine invalid ID or a transient network error.
 
-**GO and Reactome** — BioSync resolves individual term/pathway IDs. It does not perform enrichment analysis on gene lists.
+**Ortholog lookup:** Ensembl comparative genomics covers major model organisms well. Poorly annotated species, recently described genes, or genes created by very recent genome re-annotation may return no results.
 
-**Isoform completeness** — Ensembl REST returns transcript metadata but not the full isoform family for a gene. Use Ensembl directly for complete isoform views.
+**rsID / ClinVar:** variant data comes from NCBI dbSNP and ClinVar esummary API. Full variant annotation (consequence prediction, population allele frequencies, functional impact) requires VEP or a dedicated variant database.
 
-**Network required** — identifier type detection is local and instant, but resolving mappings requires internet. Results are cached after first lookup.
+**Gene symbol ambiguity:** `TP53` exists in human, mouse, rat, and many other species. Bio.Sync returns the human-preferred top result from MyGene.info and flags when other species matches exist.
+
+**Network required:** identifier type detection is local and instant. All resolution requires internet. Results are cached after the first lookup.
+
+**No enrichment analysis:** Bio.Sync is an identifier translator, not an analysis tool. It does not perform GO enrichment, pathway analysis, or statistical testing.
 
 ---
 
-## Disclaimer
+## Citing Bio.Sync and data sources
 
-BioSync is a research convenience tool. All data is fetched in real time from third-party APIs and reflects their current state. Mappings may be incomplete, outdated, or incorrect for deprecated or ambiguous identifiers. Verify critical mappings against primary database records before use in publications. Not affiliated with EMBL-EBI, NCBI, or any data provider.
+When using identifier mappings in published work, cite the primary database from which the mapping originates:
+
+**UniProt:**
+> UniProt Consortium. UniProt: the Universal Protein Knowledgebase in 2023. *Nucleic Acids Research.* 2023;51(D1):D523–D531.
+
+**Ensembl:**
+> Martin FJ et al. Ensembl 2023. *Nucleic Acids Research.* 2023;51(D1):D933–D941.
+
+**MyGene.info:**
+> Xin J et al. High-performance web services for querying gene and variant annotation. *Genome Biology.* 2016;17:91.
+
+**Gene Ontology:**
+> Gene Ontology Consortium. The Gene Ontology knowledgebase in 2023. *Genetics.* 2023;224(1):iyad031.
+
+**Reactome:**
+> Milacic M et al. The Reactome Pathway Knowledgebase 2024. *Nucleic Acids Research.* 2024;52(D1):D672–D678.
+
+The **Cite** button on each result card generates both a data citation (for the methods section) and the appropriate database citation (for the bibliography) automatically.
+
+---
+
+## Design
+
+Bio.Sync uses the visual language of mid-century Swiss Federal Railways printed timetables: white paper, typographic grid, colour used only to encode meaning, no ornament. A timetable tells you all the connections from a departure point and which are direct; Bio.Sync does the same for biological identifiers. Primary names are set in Fraunces (a variable optical-size serif); all identifier strings in JetBrains Mono.
 
 ---
 
 ## License
 
-MIT
+MIT — free to use, modify, and redistribute with attribution.
 
 ---
 
