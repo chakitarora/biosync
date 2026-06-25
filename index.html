@@ -1,0 +1,1395 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>BioSync — Biological Identifier Harmonization</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,600;1,9..144,300;1,9..144,400&family=JetBrains+Mono:wght@400;500;600&family=Inter:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --white:   #ffffff;
+  --paper:   #fafaf8;
+  --paper2:  #f4f4f0;
+  --rule:    #e0ddd8;
+  --rule2:   #c8c4be;
+  --ink:     #111111;
+  --ink2:    #2a2a2a;
+  --ink3:    #444444;
+  --muted:   #6b6b6b;
+  --dim:     #a0a09a;
+  --red:     #d4200c;
+  --red-pale:#fdf0ee;
+  --navy:    #1a3a6b;
+  --navy-pale:#eef2f8;
+  --teal:    #0d7a6b;
+  --teal-pale:#eef7f5;
+  --amber:   #8a5a00;
+  --amber-pale:#fdf5e6;
+  --serif:   "Fraunces",Georgia,serif;
+  --mono:    "JetBrains Mono",monospace;
+  --sans:    "Inter","Helvetica Neue",sans-serif;
+}
+body{font-family:var(--sans);background:var(--white);color:var(--ink);min-height:100vh;font-size:14px;-webkit-font-smoothing:antialiased}
+::selection{background:rgba(26,58,107,0.12)}
+a{color:var(--navy);text-decoration:none}a:hover{text-decoration:underline}
+::-webkit-scrollbar{width:6px;height:6px}::-webkit-scrollbar-track{background:var(--paper)}::-webkit-scrollbar-thumb{background:var(--rule2)}
+
+/* ── HEADER ── */
+.hdr{
+  height:52px;padding:0 32px;
+  display:flex;align-items:center;gap:20px;
+  border-bottom:2px solid var(--ink);
+  background:var(--white);
+  position:sticky;top:0;z-index:100;
+}
+.logo-wrap{display:flex;align-items:baseline;gap:10px}
+.logo-name{
+  font-family:var(--serif);font-size:1.25rem;font-weight:600;
+  font-variant-ligatures:none;letter-spacing:-0.01em;color:var(--ink);
+  line-height:1;
+}
+.logo-dot{color:var(--red);margin:0 1px}
+.logo-tag{
+  font-family:var(--mono);font-size:0.58rem;font-weight:400;
+  color:var(--muted);letter-spacing:0.12em;text-transform:uppercase;
+}
+.hdr-sep{flex:1;height:1px;background:var(--rule)}
+.hdr-right{display:flex;align-items:center;gap:14px;font-family:var(--mono);font-size:0.62rem;color:var(--dim)}
+.cache-btn{background:none;border:none;color:var(--dim);cursor:pointer;font-family:var(--mono);font-size:0.62rem;transition:color 0.12s;padding:0}
+.cache-btn:hover{color:var(--red)}
+
+/* ── CONNECTIVITY WARN ── */
+.conn-warn{
+  display:none;padding:8px 32px;
+  background:var(--amber-pale);border-bottom:1px solid rgba(138,90,0,0.2);
+  font-family:var(--mono);font-size:0.7rem;color:var(--amber);
+}
+.conn-warn a{color:var(--navy)}
+
+/* ── SEARCH ZONE ── */
+.search-zone{
+  max-width:780px;margin:0 auto;
+  padding:40px 32px 28px;
+}
+.sz-eyebrow{
+  font-family:var(--mono);font-size:0.62rem;font-weight:500;
+  text-transform:uppercase;letter-spacing:0.14em;
+  color:var(--muted);margin-bottom:20px;
+  display:flex;align-items:center;gap:10px;
+}
+.sz-eyebrow::after{content:'';flex:1;height:1px;background:var(--rule)}
+
+/* TABS */
+.tabs{display:flex;gap:0;margin-bottom:20px;border-bottom:1px solid var(--rule)}
+.tab{
+  font-family:var(--mono);font-size:0.72rem;font-weight:500;
+  padding:7px 18px;border:none;background:none;color:var(--muted);
+  cursor:pointer;transition:color 0.12s;border-bottom:2px solid transparent;margin-bottom:-1px;
+  text-transform:uppercase;letter-spacing:0.08em;
+}
+.tab.on{color:var(--ink);border-bottom-color:var(--ink)}
+.tab:hover:not(.on){color:var(--ink3)}
+
+/* INPUT ROW */
+.input-row{display:flex;gap:0;margin-bottom:12px}
+.id-input{
+  flex:1;
+  font-family:var(--mono);font-size:0.92rem;font-weight:400;
+  border:1px solid var(--ink);border-right:none;
+  padding:11px 14px;color:var(--ink);background:var(--white);
+  outline:none;transition:border-color 0.12s;
+  letter-spacing:0.02em;
+}
+.id-input:focus{border-color:var(--navy);box-shadow:inset 0 0 0 1px var(--navy)}
+.id-input::placeholder{color:var(--dim);font-style:italic;font-size:0.82rem}
+.resolve-btn{
+  font-family:var(--mono);font-size:0.72rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.1em;
+  padding:11px 22px;background:var(--ink);color:var(--white);
+  border:1px solid var(--ink);cursor:pointer;transition:all 0.12s;
+  white-space:nowrap;
+}
+.resolve-btn:hover{background:var(--navy);border-color:var(--navy)}
+
+/* EXAMPLE CHIPS */
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:6px}
+.chip{
+  font-family:var(--mono);font-size:0.64rem;
+  padding:3px 9px;border:1px solid var(--rule2);
+  background:var(--paper);color:var(--ink3);cursor:pointer;
+  transition:all 0.1s;display:flex;align-items:center;gap:5px;
+}
+.chip:hover{border-color:var(--navy);color:var(--navy);background:var(--navy-pale)}
+.chip-id{font-weight:500;color:var(--navy)}.chip-type{color:var(--dim)}
+
+/* DB RAIL */
+.db-rail{
+  display:flex;flex-wrap:wrap;gap:4px;padding-top:10px;
+  border-top:1px solid var(--rule);margin-top:4px;
+}
+.db-tag{
+  font-family:var(--mono);font-size:0.58rem;
+  padding:2px 6px;border:1px solid var(--rule2);
+  color:var(--muted);background:var(--paper);
+}
+
+/* ── BATCH SPECIFICS ── */
+.batch-ta{
+  width:100%;height:120px;
+  font-family:var(--mono);font-size:0.8rem;line-height:1.9;
+  border:1px solid var(--ink);padding:10px 12px;
+  color:var(--ink);background:var(--white);outline:none;resize:vertical;
+  transition:border-color 0.12s;margin-bottom:8px;
+}
+.batch-ta:focus{border-color:var(--navy);box-shadow:inset 0 0 0 1px var(--navy)}
+.batch-ta::placeholder{color:var(--dim);font-style:italic;font-size:0.74rem}
+.batch-controls{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.species-sel{
+  font-family:var(--mono);font-size:0.7rem;
+  border:1px solid var(--rule2);padding:7px 10px;
+  color:var(--ink3);background:var(--paper);outline:none;cursor:pointer;
+}
+.species-sel:focus{border-color:var(--navy)}
+.batch-hint{font-family:var(--mono);font-size:0.62rem;color:var(--dim)}
+.progress-bar-wrap{display:none;margin-top:10px}
+.pbar-track{height:2px;background:var(--rule);margin-bottom:4px}
+.pbar-fill{height:100%;background:var(--navy);transition:width 0.2s}
+.pbar-txt{font-family:var(--mono);font-size:0.62rem;color:var(--muted)}
+
+/* ── SEARCH PANEL ── */
+.search-hint{font-family:var(--mono);font-size:0.64rem;color:var(--dim);margin-top:5px;text-align:left}
+
+/* ── RESULTS ZONE ── */
+.results-zone{max-width:780px;margin:0 auto;padding:0 32px 60px}
+
+/* DETECTED STRIP */
+.detected-strip{
+  display:flex;align-items:center;gap:0;
+  margin-bottom:0;
+  border:1px solid var(--rule2);
+  border-bottom:none;
+  background:var(--paper);
+  font-family:var(--mono);font-size:0.68rem;
+}
+.ds-seg{
+  padding:6px 12px;border-right:1px solid var(--rule2);
+  display:flex;align-items:center;gap:6px;
+  white-space:nowrap;
+}
+.ds-seg:last-child{border-right:none}
+.ds-label{color:var(--dim);text-transform:uppercase;letter-spacing:0.1em;font-size:0.56rem}
+.ds-val{color:var(--ink2);font-weight:500}
+.ds-type{color:var(--navy)}
+.ds-entity{padding:1px 6px;font-size:0.62rem;font-weight:600}
+.entity-protein{color:var(--navy);background:var(--navy-pale);border:1px solid rgba(26,58,107,0.2)}
+.entity-gene{color:var(--teal);background:var(--teal-pale);border:1px solid rgba(13,122,107,0.2)}
+.entity-transcript{color:var(--amber);background:var(--amber-pale);border:1px solid rgba(138,90,0,0.2)}
+.entity-functionprocesscomponent,.entity-ontologyterm{color:#1a6b5a;background:#eef7f3;border:1px solid rgba(26,107,90,0.2)}
+.entity-pathway{color:#5a1a6b;background:#f5eef8;border:1px solid rgba(90,26,107,0.2)}
+.entity-domainfamily,.entity-domain{color:#6b4a1a;background:#fdf5e8;border:1px solid rgba(107,74,26,0.2)}
+.entity-structure{color:var(--muted);background:var(--paper2);border:1px solid var(--rule)}
+.entity-target{color:var(--red);background:var(--red-pale);border:1px solid rgba(212,32,12,0.2)}
+.entity-mirna{color:#2a6b1a;background:#eef7ea;border:1px solid rgba(42,107,26,0.2)}
+/* SIGNAL DOTS */
+.sig{width:10px;height:10px;border-radius:50%;flex-shrink:0;border:1.5px solid}
+.sig-high{background:var(--teal);border-color:var(--teal)}
+.sig-medium{background:none;border-color:var(--amber);box-shadow:inset 0 0 0 3px var(--amber-pale)}
+.sig-low{background:none;border-color:var(--muted)}
+.sig-none{background:none;border-color:var(--red)}
+.conf-label-high{color:var(--teal)}.conf-label-medium{color:var(--amber)}.conf-label-low{color:var(--muted)}.conf-label-none{color:var(--red)}
+
+/* RESOLVING */
+.resolving{
+  display:flex;align-items:center;gap:10px;
+  font-family:var(--mono);font-size:0.76rem;color:var(--muted);
+  padding:20px 0;
+}
+.spinner{
+  width:12px;height:12px;
+  border:1.5px solid var(--rule2);border-top-color:var(--navy);
+  border-radius:50%;animation:spin 0.7s linear infinite;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* RESULT CARD — timetable layout */
+.result-card{border:1px solid var(--rule2)}
+
+.rc-primary-row{
+  padding:18px 20px 14px;
+  border-bottom:1px solid var(--rule);
+  background:var(--white);
+  display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;
+}
+.rc-name{
+  font-family:var(--serif);font-size:2rem;font-weight:600;
+  color:var(--ink);letter-spacing:-0.02em;line-height:1.1;
+  font-optical-sizing:auto;
+}
+.rc-fullname{
+  font-family:var(--serif);font-style:italic;font-weight:300;
+  font-size:0.88rem;color:var(--muted);margin-top:3px;line-height:1.4;
+}
+.rc-badges{display:flex;gap:5px;flex-wrap:wrap;align-items:flex-start;justify-content:flex-end}
+.rc-badge{
+  font-family:var(--mono);font-size:0.58rem;font-weight:500;
+  padding:2px 7px;border:1px solid;white-space:nowrap;
+}
+.badge-species{border-color:rgba(26,58,107,0.3);color:var(--navy);background:var(--navy-pale)}
+.badge-reviewed{border-color:rgba(13,122,107,0.3);color:var(--teal);background:var(--teal-pale)}
+.badge-genetype,.badge-biotype,.badge-ns{border-color:var(--rule2);color:var(--muted);background:var(--paper)}
+
+/* ISOFORM BAR */
+.isoform-bar{
+  padding:7px 20px;background:var(--navy-pale);
+  border-bottom:1px solid rgba(26,58,107,0.12);
+  display:flex;align-items:center;gap:12px;
+  font-family:var(--mono);font-size:0.68rem;
+}
+.iso-arrow{color:var(--navy);font-size:0.9rem}
+.iso-label{color:var(--muted)}
+.iso-id{color:var(--navy);font-weight:500}
+.iso-len{color:var(--muted);margin-left:auto}
+.iso-loc{color:var(--muted)}
+
+/* SECTION */
+.rc-section{border-bottom:1px solid var(--rule)}
+.rc-section:last-child{border-bottom:none}
+.rc-sec-head{
+  padding:8px 20px;background:var(--paper);
+  border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:0.6rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.14em;color:var(--muted);
+}
+.rc-sec-body{padding:10px 20px}
+
+/* MAPPING TABLE — timetable rows */
+.map-table{display:flex;flex-direction:column}
+.map-row{
+  display:grid;grid-template-columns:160px 1fr auto 24px;
+  align-items:center;gap:8px;
+  padding:5px 0;border-bottom:1px solid var(--rule);
+}
+.map-row:last-child{border-bottom:none}
+.map-db-label{
+  font-family:var(--mono);font-size:0.64rem;font-weight:600;
+  color:var(--navy);
+}
+.map-id-val{font-family:var(--mono);font-size:0.78rem;color:var(--ink2)}
+.map-id-link{color:var(--navy);transition:color 0.1s}
+.map-id-link:hover{color:var(--red);text-decoration:underline}
+.map-prov{
+  font-family:var(--mono);font-size:0.56rem;
+  padding:1px 5px;border:1px solid;
+  cursor:help;white-space:nowrap;flex-shrink:0;
+}
+.prov-curated{border-color:rgba(13,122,107,0.35);color:var(--teal)}
+.prov-auto{border-color:var(--rule2);color:var(--muted)}
+.map-copy{
+  background:none;border:none;color:var(--dim);cursor:pointer;
+  font-size:0.75rem;padding:0;transition:color 0.1s;
+}
+.map-copy:hover{color:var(--navy)}
+
+/* ALIAS CHIPS */
+.alias-tags{display:flex;flex-wrap:wrap;gap:4px}
+.alias-tag{
+  font-family:var(--mono);font-size:0.68rem;
+  padding:2px 8px;border:1px solid var(--rule2);
+  color:var(--ink3);background:var(--paper);
+}
+.alias-tag-gene{border-color:rgba(13,122,107,0.3);color:var(--teal)}
+
+/* FUNCTION TEXT */
+.fn-text{
+  font-family:var(--serif);font-style:italic;font-weight:300;
+  font-size:0.88rem;line-height:1.7;color:var(--ink3);
+  border-left:2px solid var(--rule2);padding-left:12px;
+}
+
+/* FOOTER ROW */
+.rc-footer-row{
+  padding:7px 20px;background:var(--paper);
+  border-top:1px solid var(--rule);
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+}
+.rc-src-label{font-family:var(--mono);font-size:0.6rem;color:var(--dim)}
+.rc-ext-link{
+  font-family:var(--mono);font-size:0.62rem;color:var(--navy);
+  border:1px solid var(--rule2);padding:2px 7px;text-decoration:none;
+  transition:all 0.1s;
+}
+.rc-ext-link:hover{border-color:var(--navy);background:var(--navy-pale)}
+
+/* AMBIGUITY */
+.ambig-row{
+  padding:9px 20px;background:var(--amber-pale);
+  border-bottom:1px solid rgba(138,90,0,0.15);
+  font-family:var(--mono);font-size:0.68rem;color:var(--amber);
+  display:flex;align-items:center;gap:8px;flex-wrap:wrap;
+}
+.ambig-item{
+  padding:1px 6px;border:1px solid rgba(138,90,0,0.3);
+  cursor:pointer;transition:all 0.1s;color:var(--navy);
+}
+.ambig-item:hover{background:var(--navy-pale)}
+
+/* FREE-TEXT RESULTS */
+.ft-results{border:1px solid var(--rule2)}
+.ft-head{
+  padding:8px 16px;background:var(--paper);border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:0.64rem;color:var(--muted);
+  display:flex;align-items:center;gap:8px;
+}
+.ft-row{
+  display:grid;grid-template-columns:110px 1fr 90px;gap:12px;
+  padding:9px 16px;border-bottom:1px solid var(--rule);
+  cursor:pointer;transition:background 0.08s;align-items:center;
+}
+.ft-row:last-child{border-bottom:none}
+.ft-row:hover{background:var(--navy-pale)}
+.ft-sym{font-family:var(--mono);font-size:0.82rem;font-weight:600;color:var(--navy)}
+.ft-name{font-family:var(--serif);font-size:0.84rem;font-style:italic;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ft-sp{font-family:var(--mono);font-size:0.64rem;color:var(--muted);text-align:right}
+
+/* ERROR / INFO */
+.err-box{
+  padding:12px 16px;background:var(--red-pale);
+  border:1px solid rgba(212,32,12,0.2);border-left:3px solid var(--red);
+  font-family:var(--mono);font-size:0.72rem;color:var(--ink3);line-height:1.7;
+}
+.info-box{
+  padding:12px 16px;background:var(--navy-pale);
+  border:1px solid rgba(26,58,107,0.2);border-left:3px solid var(--navy);
+  font-family:var(--mono);font-size:0.72rem;color:var(--ink3);line-height:1.7;
+}
+.net-err{background:var(--amber-pale);border-color:rgba(138,90,0,0.2);border-left-color:var(--amber)}
+.err-title{font-weight:600;color:var(--red);margin-bottom:6px;font-size:0.76rem}
+.net-err .err-title{color:var(--amber)}
+.err-body{font-size:0.7rem;line-height:1.8}
+.err-body code{background:var(--paper2);padding:1px 5px;border:1px solid var(--rule);font-family:var(--mono)}
+
+/* BATCH TABLE */
+.batch-summary{
+  display:flex;align-items:center;gap:10px;flex-wrap:wrap;
+  padding:8px 0;margin-bottom:8px;
+  border-top:2px solid var(--ink);border-bottom:1px solid var(--rule);
+  font-family:var(--mono);font-size:0.7rem;
+}
+.bs-n{color:var(--muted)}.bs-ok{color:var(--teal)}.bs-fail{color:var(--red)}
+.exp-btn{
+  font-family:var(--mono);font-size:0.62rem;padding:3px 9px;
+  border:1px solid var(--rule2);background:var(--paper);
+  color:var(--muted);cursor:pointer;transition:all 0.1s;
+}
+.exp-btn:hover{border-color:var(--navy);color:var(--navy)}
+.bt-tbl{width:100%;border-collapse:collapse;font-size:0.76rem}
+.bt-tbl th{
+  font-family:var(--mono);font-size:0.58rem;font-weight:600;
+  text-transform:uppercase;letter-spacing:0.1em;color:var(--muted);
+  padding:5px 8px;border-bottom:1px solid var(--ink);
+  text-align:left;background:var(--paper);
+}
+.bt-tbl td{padding:5px 8px;border-bottom:1px solid var(--rule);vertical-align:top}
+.bt-tbl tr:last-child td{border-bottom:none}
+.bt-tbl tr:hover td{background:var(--paper)}
+.bt-input-id{font-family:var(--mono);font-size:0.7rem;color:var(--navy);white-space:nowrap}
+.bt-type-cell{font-family:var(--mono);font-size:0.62rem;color:var(--muted);white-space:nowrap}
+.bt-name-cell{font-weight:500}
+.bt-sp-cell{font-family:var(--mono);font-size:0.68rem;color:var(--muted);white-space:nowrap}
+.bt-map-cell{font-family:var(--mono);font-size:0.66rem}
+.map-db-sm{
+  font-family:var(--mono);font-size:0.58rem;font-weight:600;
+  color:var(--navy);padding:1px 4px;border:1px solid rgba(26,58,107,0.2);
+  background:var(--navy-pale);margin-right:3px;
+}
+.bt-err-cell{color:var(--red);font-family:var(--mono);font-size:0.66rem}
+.pbar-wrap{display:none;margin-top:10px}
+.pbar-track{height:2px;background:var(--rule)}
+.pbar-fill{height:100%;background:var(--navy);transition:width 0.2s}
+.pbar-txt{font-family:var(--mono);font-size:0.6rem;color:var(--muted);margin-top:4px}
+
+/* ── FOOTER ── */
+.site-footer{
+  border-top:2px solid var(--ink);padding:14px 32px;
+  display:flex;gap:16px;flex-wrap:wrap;align-items:baseline;
+  font-family:var(--mono);font-size:0.6rem;
+}
+.footer-left{color:var(--dim);line-height:1.8;flex:2}
+.footer-right{text-align:right}
+.footer-right a{color:var(--navy)}
+.footer-right a:hover{text-decoration:underline}
+.design-note{
+  width:100%;padding-top:10px;
+  border-top:1px solid var(--rule);
+  font-family:var(--serif);font-style:italic;font-weight:300;
+  font-size:0.72rem;color:var(--dim);line-height:1.7;
+}
+
+@media(max-width:640px){
+  .search-zone,.results-zone{padding-left:16px;padding-right:16px}
+  .rc-primary-row{grid-template-columns:1fr}
+  .rc-badges{justify-content:flex-start}
+  .map-row{grid-template-columns:120px 1fr auto 20px}
+}
+</style>
+</head>
+<body>
+
+<header class="hdr">
+  <div class="logo-wrap">
+    <span class="logo-name">Bio<span class="logo-dot">.</span>Sync</span>
+    <span class="logo-tag">Identifier Harmonization</span>
+  </div>
+  <div class="hdr-sep"></div>
+  <div class="hdr-right">
+    <span id="cache-stats"></span>
+    <button class="cache-btn" onclick="clearCache()" title="Clear cached results">clear cache</button>
+  </div>
+</header>
+
+<div id="connectivity-warn" class="conn-warn">
+  &#x26A0;&ensp;External API access is blocked in this preview environment.
+  BioSync works on GitHub Pages or any web server. &ensp;
+  <a href="https://chakitarora.github.io/biosync" target="_blank">Open live tool &nearr;</a>
+</div>
+
+<div class="search-zone">
+  <div class="sz-eyebrow">Look up any biological identifier</div>
+
+  <div class="tabs">
+    <button class="tab on" data-m="single" onclick="setMode('single')">Single</button>
+    <button class="tab" data-m="batch" onclick="setMode('batch')">Batch</button>
+    <button class="tab" data-m="search" onclick="setMode('search')">Name search</button>
+  </div>
+
+  <!-- SINGLE -->
+  <div id="single-panel">
+    <div class="input-row">
+      <input class="id-input" id="single-input" type="text"
+        placeholder="P07550 &nbsp;&middot;&nbsp; ENSG00000169252 &nbsp;&middot;&nbsp; GO:0007165 &nbsp;&middot;&nbsp; R-HSA-162582 &nbsp;&middot;&nbsp; adrb2"/>
+      <button class="resolve-btn" onclick="runSingle()">Resolve &rarr;</button>
+    </div>
+    <div class="chips" id="examples"></div>
+    <div class="db-rail">
+      <span class="db-tag">UniProt</span><span class="db-tag">Ensembl</span>
+      <span class="db-tag">RefSeq</span><span class="db-tag">NCBI Gene</span>
+      <span class="db-tag">HGNC</span><span class="db-tag">GO</span>
+      <span class="db-tag">Reactome</span><span class="db-tag">ChEMBL</span>
+      <span class="db-tag">InterPro</span><span class="db-tag">Pfam</span>
+      <span class="db-tag">PDB</span><span class="db-tag">miRBase</span>
+    </div>
+  </div>
+
+  <!-- BATCH -->
+  <div id="batch-panel" style="display:none">
+    <textarea class="batch-ta" id="batch-input"
+      placeholder="One identifier per line (case-insensitive):&#10;P07550&#10;ENSG00000169252&#10;GO:0007165&#10;NM_000024&#10;ADRB2&#10;&#10;Comma or tab-separated also accepted. Up to 100. Duplicates removed."></textarea>
+    <div class="batch-controls">
+      <button class="resolve-btn" id="batch-run-btn" onclick="runBatch()">Resolve all &rarr;</button>
+      <select class="species-sel" id="batch-species">
+        <option value="all">All species</option>
+        <option value="human">Human only</option>
+        <option value="mouse">Mouse only</option>
+        <option value="rat">Rat only</option>
+        <option value="zebrafish">Zebrafish only</option>
+        <option value="fly">Fly only</option>
+        <option value="worm">C. elegans only</option>
+      </select>
+      <span class="batch-hint">Results cached 7 days &middot; ~6 req/sec</span>
+    </div>
+    <div class="pbar-wrap" id="batch-progress">
+      <div class="pbar-track"><div class="pbar-fill" id="batch-progress-fill" style="width:0%"></div></div>
+      <div class="pbar-txt" id="batch-progress-text"></div>
+    </div>
+  </div>
+
+  <!-- NAME SEARCH -->
+  <div id="search-panel" style="display:none">
+    <div class="input-row">
+      <input class="id-input" id="search-input" type="text"
+        placeholder="beta-2 adrenergic receptor &nbsp;&middot;&nbsp; tumor protein p53 &nbsp;&middot;&nbsp; BRCA1 kinase"
+        onkeydown="if(event.key==='Enter')runFreeSearch()"/>
+      <button class="resolve-btn" onclick="runFreeSearch()">Search &rarr;</button>
+    </div>
+    <div class="search-hint">Search by protein name, gene description, or alias &mdash; returns matching entries across human, mouse, and rat</div>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div class="results-zone">
+  <div id="single-result"></div>
+  <div id="batch-result"></div>
+  <div id="search-result"></div>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-left">
+    Queries MyGene.info, UniProt REST, Ensembl REST, Gene Ontology, Reactome, InterPro, and ChEMBL in real time.
+    Results cached locally 7 days. Verify critical mappings against primary databases before publication.
+  </div>
+  <div class="footer-right">
+    Built by <a href="https://chakitarora.github.io" target="_blank">Chakit Arora</a><br/>
+    Post-Doctoral Fellow, BIO@SNS, Pisa
+  </div>
+  <div class="design-note">
+    Design note &mdash; The visual language of Bio.Sync is borrowed from mid-century Swiss Federal Railways printed timetables: white paper, typographic precision, colour used only to encode meaning, no ornament. A timetable tells you all the connections from your departure point and which are direct; Bio.Sync does the same for biological identifiers. Primary type is set in Fraunces (a variable optical-size serif); identifiers in JetBrains Mono.
+  </div>
+</footer>
+
+<script>
+// ═══════════════════════════════════════════════
+// IDENTIFIER PATTERNS — v2
+// ═══════════════════════════════════════════════
+var ID_PATTERNS = [
+  { type:'UniProt Accession', db:'UniProt', entity:'Protein',
+    regex:/^[OPQ][0-9][A-Z0-9]{3}[0-9](\.[0-9]+)?$|^[A-NR-Z][0-9]([A-Z][A-Z0-9]{2}[0-9]){1,2}(\.[0-9]+)?$/,
+    confidence:'high' },
+  { type:'Ensembl Gene', db:'Ensembl', entity:'Gene',
+    regex:/^ENSG[0-9]{11}(\.[0-9]+)?$/, confidence:'high' },
+  { type:'Ensembl Transcript', db:'Ensembl', entity:'Transcript',
+    regex:/^ENST[0-9]{11}(\.[0-9]+)?$/, confidence:'high' },
+  { type:'Ensembl Protein', db:'Ensembl', entity:'Protein',
+    regex:/^ENSP[0-9]{11}(\.[0-9]+)?$/, confidence:'high' },
+  { type:'Ensembl Gene (Mouse)', db:'Ensembl', entity:'Gene',
+    regex:/^ENSMUSG[0-9]{11}(\.[0-9]+)?$/, confidence:'high' },
+  { type:'Ensembl Transcript (Mouse)', db:'Ensembl', entity:'Transcript',
+    regex:/^ENSMUST[0-9]{11}(\.[0-9]+)?$/, confidence:'high' },
+  { type:'RefSeq mRNA', db:'RefSeq', entity:'Transcript',
+    regex:/^NM_[0-9]+(\.[0-9]+)?$/, confidence:'high' },
+  { type:'RefSeq ncRNA', db:'RefSeq', entity:'Transcript',
+    regex:/^NR_[0-9]+(\.[0-9]+)?$/, confidence:'high' },
+  { type:'RefSeq Protein', db:'RefSeq', entity:'Protein',
+    regex:/^NP_[0-9]+(\.[0-9]+)?$/, confidence:'high' },
+  { type:'RefSeq Predicted mRNA', db:'RefSeq', entity:'Transcript',
+    regex:/^XM_[0-9]+(\.[0-9]+)?$/, confidence:'high' },
+  { type:'RefSeq Predicted Protein', db:'RefSeq', entity:'Protein',
+    regex:/^XP_[0-9]+(\.[0-9]+)?$/, confidence:'high' },
+  { type:'RefSeq Genomic', db:'RefSeq', entity:'Gene',
+    regex:/^NG_[0-9]+(\.[0-9]+)?$/, confidence:'high' },
+  { type:'LRG Identifier', db:'LRG', entity:'Gene',
+    regex:/^LRG_[0-9]+/, confidence:'high' },
+  { type:'UniParc', db:'UniParc', entity:'Protein',
+    regex:/^UPI[0-9A-F]{10}$/, confidence:'high' },
+  { type:'HGNC ID', db:'HGNC', entity:'Gene',
+    regex:/^HGNC:[0-9]+$/, confidence:'high' },
+  { type:'ChEMBL ID', db:'ChEMBL', entity:'Target',
+    regex:/^CHEMBL[0-9]+$/, confidence:'high' },
+  { type:'GO Term', db:'Gene Ontology', entity:'Function/Process/Component',
+    regex:/^GO:[0-9]{7}$/, confidence:'high' },
+  { type:'Reactome Pathway', db:'Reactome', entity:'Pathway',
+    regex:/^R-[A-Z]{2,4}-[0-9]+$/, confidence:'high' },
+  { type:'InterPro', db:'InterPro', entity:'Domain/Family',
+    regex:/^IPR[0-9]{6}$/, confidence:'high' },
+  { type:'Pfam', db:'Pfam', entity:'Domain',
+    regex:/^PF[0-9]{5}$/, confidence:'high' },
+  { type:'miRBase', db:'miRBase', entity:'miRNA',
+    regex:/^MI[0-9]{7}$|^[A-Z]{3}-MIR-[0-9A-Z\-]+$/, confidence:'high' },
+  { type:'PDB ID', db:'PDB', entity:'Structure',
+    regex:/^[0-9][A-Z0-9]{3}$/, confidence:'medium' },
+  { type:'NCBI Gene ID', db:'NCBI Gene', entity:'Gene',
+    regex:/^[1-9][0-9]{1,8}$/, confidence:'medium' },
+  { type:'Gene Symbol', db:'Multiple', entity:'Gene',
+    regex:/^[A-Z][A-Z0-9\-]{1,19}$/, confidence:'low' },
+];
+
+function detectIdentifier(raw) {
+  if (!raw) return null;
+  var trimmed = raw.trim();
+  var up = trimmed.toUpperCase();
+  if (/[,\t\n]/.test(trimmed) || trimmed.split(/\s+/).length > 1) {
+    return { id: trimmed, type: 'Multiple', db: 'Multiple', entity: 'Multiple', confidence: 'multi' };
+  }
+  for (var i = 0; i < ID_PATTERNS.length; i++) {
+    var p = ID_PATTERNS[i];
+    if (p.regex.test(up)) {
+      return { id: up, originalId: trimmed, type: p.type, db: p.db, entity: p.entity, confidence: p.confidence };
+    }
+  }
+  return { id: up, originalId: trimmed, type: 'Unknown', db: 'Unknown', entity: 'Unknown', confidence: 'none' };
+}
+
+// ═══════════════════════════════════════════════
+// CACHE
+// ═══════════════════════════════════════════════
+function fromCache(id) {
+  try {
+    var raw = localStorage.getItem('biosync_' + id);
+    if (raw) { var d = JSON.parse(raw); if (d.ts && Date.now() - d.ts < 7*24*3600*1000) return d.data; }
+  } catch(e) {}
+  return null;
+}
+function toCache(id, data) {
+  try { localStorage.setItem('biosync_' + id, JSON.stringify({ts: Date.now(), data: data})); } catch(e) {}
+}
+
+// ═══════════════════════════════════════════════
+// MAIN ROUTER
+// ═══════════════════════════════════════════════
+function resolveIdentifier(detected, callback) {
+  var cached = fromCache(detected.id);
+  if (cached) { callback(null, cached); return; }
+  var id = detected.id;
+  var type = detected.type;
+
+  var routes = {
+    'UniProt Accession': function() { resolveUniProt(id, done); },
+    'UniParc': function() { resolveUniProt(id, done); },
+    'GO Term': function() { resolveGO(id, done); },
+    'Reactome Pathway': function() { resolveReactome(id, done); },
+    'InterPro': function() { resolveInterPro(id, done); },
+    'Pfam': function() { resolveInterPro(id, done); },
+    'ChEMBL ID': function() { resolveChEMBL(id, done); },
+    'Ensembl Transcript': function() { resolveEnsembl(id, detected, done); },
+    'Ensembl Transcript (Mouse)': function() { resolveEnsembl(id, detected, done); },
+    'Ensembl Protein': function() { resolveEnsembl(id, detected, done); },
+    'Ensembl Gene': function() { resolveMyGene(id, detected, done); },
+    'Ensembl Gene (Mouse)': function() { resolveMyGene(id, detected, done); },
+    'HGNC ID': function() { resolveMyGene(id, detected, done); },
+    'NCBI Gene ID': function() { resolveMyGene(id, detected, done); },
+    'RefSeq mRNA': function() { resolveMyGene(id, detected, done); },
+    'RefSeq ncRNA': function() { resolveMyGene(id, detected, done); },
+    'RefSeq Protein': function() { resolveMyGene(id, detected, done); },
+    'RefSeq Predicted mRNA': function() { resolveMyGene(id, detected, done); },
+    'RefSeq Predicted Protein': function() { resolveMyGene(id, detected, done); },
+    'RefSeq Genomic': function() { resolveMyGene(id, detected, done); },
+    'Gene Symbol': function() { resolveMyGene(id, detected, done); },
+    'miRBase': function() { resolveMyGene(id, detected, done); },
+  };
+
+  function done(err, data) {
+    if (!err && data) toCache(id, data);
+    callback(err, data);
+  }
+
+  if (routes[type]) { routes[type](); }
+  else { resolveMyGene(id, detected, done); }
+}
+
+// ═══════════════════════════════════════════════
+// NETWORK HELPER
+// ═══════════════════════════════════════════════
+function apiFetch(url, callback) {
+  fetch(url)
+    .then(function(r) {
+      if (r.status === 404) throw new Error('not_found');
+      if (r.status === 429) throw new Error('rate_limited');
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.json();
+    })
+    .then(function(d) { callback(null, d); })
+    .catch(function(e) {
+      var msg = e.message || String(e);
+      if (msg.toLowerCase().includes('failed to fetch') ||
+          msg.toLowerCase().includes('networkerror') ||
+          msg.toLowerCase().includes('load failed') ||
+          msg.toLowerCase().includes('fetch')) {
+        callback('network_error', null);
+      } else {
+        callback(msg, null);
+      }
+    });
+}
+
+// ═══════════════════════════════════════════════
+// UNIPROT
+// ═══════════════════════════════════════════════
+function resolveUniProt(accession, callback) {
+  var acc = accession.replace(/\.[0-9]+$/, '');
+  apiFetch('https://rest.uniprot.org/uniprotkb/' + acc + '.json', function(err, d) {
+    if (err) { callback(err, null); return; }
+    var name = d.uniProtkbId || '';
+    var fullName = '';
+    if (d.proteinDescription && d.proteinDescription.recommendedName)
+      fullName = d.proteinDescription.recommendedName.fullName.value || '';
+    var shortNames = [];
+    if (d.proteinDescription && d.proteinDescription.recommendedName && d.proteinDescription.recommendedName.shortNames)
+      shortNames = d.proteinDescription.recommendedName.shortNames.map(function(s){return s.value;});
+    var genes = [];
+    if (d.genes) d.genes.forEach(function(g){
+      if (g.geneName) genes.push(g.geneName.value);
+      if (g.synonyms) g.synonyms.forEach(function(s){genes.push(s.value);});
+    });
+    var organism = d.organism ? d.organism.scientificName : '';
+    var commonName = d.organism && d.organism.commonName ? d.organism.commonName : '';
+    var taxId = d.organism && d.organism.taxonId ? String(d.organism.taxonId) : '';
+    var xrefs = {};
+    if (d.uniProtKBCrossReferences) {
+      d.uniProtKBCrossReferences.forEach(function(x){
+        if (!xrefs[x.database]) xrefs[x.database] = [];
+        xrefs[x.database].push({ id: x.id, evidences: x.evidences });
+      });
+    }
+    // Build mappings with provenance
+    var mappings = [];
+    var mapOrder = ['GeneID','HGNC','Ensembl','RefSeq','AlphaFoldDB','PDB','GO','Reactome','KEGG'];
+    var linkMap = {
+      'GeneID': function(id){ return {db:'NCBI Gene', link:'https://www.ncbi.nlm.nih.gov/gene/'+id}; },
+      'HGNC': function(id){ return {db:'HGNC', link:'https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/'+id}; },
+      'Ensembl': function(id){ return {db: id.startsWith('ENSG')?'Ensembl Gene':id.startsWith('ENST')?'Ensembl Transcript':'Ensembl Protein', link:'https://www.ensembl.org/id/'+id}; },
+      'RefSeq': function(id){ return {db:'RefSeq', link:'https://www.ncbi.nlm.nih.gov/nuccore/'+id}; },
+      'AlphaFoldDB': function(id){ return {db:'AlphaFold', link:'https://alphafold.ebi.ac.uk/entry/'+id}; },
+      'PDB': function(id){ return {db:'PDB', link:'https://www.rcsb.org/structure/'+id}; },
+      'GO': function(id){ return {db:'GO', link:'https://amigo.geneontology.org/amigo/term/'+id}; },
+      'Reactome': function(id){ return {db:'Reactome', link:'https://reactome.org/content/detail/'+id}; },
+      'KEGG': function(id){ return {db:'KEGG', link:'https://www.kegg.jp/entry/'+id}; },
+    };
+    mapOrder.forEach(function(dbk){
+      if (!xrefs[dbk]) return;
+      xrefs[dbk].slice(0,4).forEach(function(x){
+        var meta = linkMap[dbk] ? linkMap[dbk](x.id) : {db:dbk, link:null};
+        var curated = x.evidences && x.evidences.some(function(e){return e.evidenceCode && e.evidenceCode.value && e.evidenceCode.value.startsWith('ECO:0000269');});
+        mappings.push({ db: meta.db, id: x.id, link: meta.link, curated: curated });
+      });
+    });
+    var fn_ = '';
+    if (d.comments) {
+      var fc = d.comments.filter(function(c){return c.commentType==='FUNCTION';});
+      if (fc.length && fc[0].texts && fc[0].texts[0]) fn_ = fc[0].texts[0].value;
+    }
+    callback(null, {
+      source:'UniProt', inputId:accession, detectedType:'UniProt Accession',
+      entity:'Protein', primaryName:genes[0]||name||fullName, fullName:fullName,
+      organism:organism, commonName:commonName, taxId:taxId,
+      geneSymbols:genes, aliases:([name].concat(shortNames)).filter(Boolean),
+      mappings:mappings, function_:fn_,
+      reviewed: d.entryType === 'UniProtKB reviewed (Swiss-Prot)',
+      uniprotLink:'https://www.uniprot.org/uniprot/'+acc,
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════
+// ENSEMBL REST — transcript/protein isoform info
+// ═══════════════════════════════════════════════
+function resolveEnsembl(id, detected, callback) {
+  var baseId = id.split('.')[0];
+  apiFetch('https://rest.ensembl.org/lookup/id/' + baseId + '?content-type=application/json&expand=1', function(err, d) {
+    if (err) { resolveMyGene(id, detected, callback); return; }
+    var mappings = [];
+    var entity = d.object_type || detected.entity;
+    if (d.Parent) mappings.push({ db:'Parent Gene', id:d.Parent, link:'https://www.ensembl.org/id/'+d.Parent, curated:true });
+    if (d.Translation) {
+      var t = d.Translation;
+      mappings.push({ db:'Ensembl Protein', id:t.id, link:'https://www.ensembl.org/id/'+t.id, curated:true });
+      mappings.push({ db:'Protein length', id:t.length+' aa', link:null, curated:true });
+    }
+    if (d.Exon) mappings.push({ db:'Exon count', id:String(d.Exon.length), link:null, curated:true });
+    if (d.gene_id) mappings.push({ db:'Ensembl Gene', id:d.gene_id, link:'https://www.ensembl.org/id/'+d.gene_id, curated:true });
+    // Also get MyGene mappings for cross-db refs
+    resolveMyGene(id, detected, function(err2, mgData) {
+      if (mgData && mgData.mappings) {
+        mgData.mappings.forEach(function(m){ mappings.push(m); });
+      }
+      callback(null, {
+        source:'Ensembl REST', inputId:id, detectedType:detected.type,
+        entity:entity,
+        primaryName:d.display_name || d.id || id,
+        fullName:d.description || '',
+        organism:d.species ? d.species.replace(/_/g,' ') : '',
+        taxId:'',
+        geneSymbols:d.display_name ? [d.display_name] : [],
+        aliases:[],
+        mappings:mappings,
+        biotype:d.biotype || '',
+        strand:d.strand !== undefined ? (d.strand > 0 ? '+' : '-') : '',
+        location: d.seq_region_name ? d.seq_region_name+':'+d.start+'-'+d.end : '',
+        ensemblLink:'https://www.ensembl.org/id/'+baseId,
+        transcriptInfo: d.Translation ? {
+          protein: d.Translation.id,
+          length: d.Translation.length
+        } : null,
+      });
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════
+// GO TERM
+// ═══════════════════════════════════════════════
+function resolveGO(id, callback) {
+  var goId = id.toUpperCase();
+  apiFetch('https://api.geneontology.org/api/ontology/term/' + goId, function(err, d) {
+    if (err) { callback(err, null); return; }
+    var mappings = [
+      { db:'AmiGO', id:goId, link:'https://amigo.geneontology.org/amigo/term/'+goId, curated:true },
+      { db:'QuickGO', id:goId, link:'https://www.ebi.ac.uk/QuickGO/term/'+goId, curated:true },
+    ];
+    var ns = d.goid ? (d.namespace||'') : '';
+    var nsLabel = {biological_process:'Biological Process', molecular_function:'Molecular Function', cellular_component:'Cellular Component'}[ns] || ns;
+    if (d.synonyms && d.synonyms.length) {
+      d.synonyms.slice(0,3).forEach(function(s){
+        mappings.push({ db:'Synonym ('+s.pred+')', id:s.val, link:null, curated:false });
+      });
+    }
+    callback(null, {
+      source:'Gene Ontology', inputId:id, detectedType:'GO Term',
+      entity:nsLabel || 'Ontology Term',
+      primaryName:d.label || id,
+      fullName:d.definition || '',
+      organism:'All species',
+      taxId:'',
+      geneSymbols:[],
+      aliases:d.synonyms ? d.synonyms.slice(0,5).map(function(s){return s.val;}) : [],
+      mappings:mappings,
+      namespace:nsLabel,
+      goLink:'https://amigo.geneontology.org/amigo/term/'+goId,
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════
+// REACTOME
+// ═══════════════════════════════════════════════
+function resolveReactome(id, callback) {
+  var rxId = id.toUpperCase();
+  apiFetch('https://reactome.org/ContentService/data/query/' + rxId, function(err, d) {
+    if (err) { callback(err, null); return; }
+    var mappings = [
+      { db:'Reactome', id:rxId, link:'https://reactome.org/content/detail/'+rxId, curated:true },
+    ];
+    if (d.hasEvent) {
+      d.hasEvent.slice(0,4).forEach(function(e){
+        mappings.push({ db:'Sub-pathway', id:e.displayName||e.stId, link:'https://reactome.org/content/detail/'+e.stId, curated:true });
+      });
+    }
+    var species = d.speciesName || (d.species && d.species[0] && d.species[0].displayName) || '';
+    callback(null, {
+      source:'Reactome', inputId:id, detectedType:'Reactome Pathway',
+      entity: d.className || 'Pathway',
+      primaryName:d.displayName || d.name || id,
+      fullName:d.displayName || '',
+      organism:species,
+      taxId:'',
+      geneSymbols:[],
+      aliases:[],
+      mappings:mappings,
+      reactomeLink:'https://reactome.org/content/detail/'+rxId,
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════
+// INTERPRO / PFAM
+// ═══════════════════════════════════════════════
+function resolveInterPro(id, callback) {
+  var url = id.startsWith('IPR') ?
+    'https://www.ebi.ac.uk/interpro/api/entry/interpro/' + id + '/?format=json' :
+    'https://www.ebi.ac.uk/interpro/api/entry/pfam/' + id + '/?format=json';
+  apiFetch(url, function(err, d) {
+    if (err) { callback(err, null); return; }
+    var meta = d.metadata || {};
+    var mappings = [
+      { db: id.startsWith('IPR') ? 'InterPro' : 'Pfam',
+        id: id,
+        link: id.startsWith('IPR') ? 'https://www.ebi.ac.uk/interpro/entry/interpro/'+id : 'https://www.ebi.ac.uk/interpro/entry/pfam/'+id,
+        curated:true },
+    ];
+    callback(null, {
+      source:'InterPro', inputId:id,
+      detectedType: id.startsWith('IPR') ? 'InterPro' : 'Pfam',
+      entity:'Domain/Family',
+      primaryName:meta.name && meta.name.name ? meta.name.name : id,
+      fullName:meta.description || '',
+      organism:'All species',
+      taxId:'',
+      geneSymbols:[],
+      aliases:[],
+      mappings:mappings,
+      domainType:meta.type || '',
+      interproLink:mappings[0].link,
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════
+// CHEMBL
+// ═══════════════════════════════════════════════
+function resolveChEMBL(id, callback) {
+  apiFetch('https://www.ebi.ac.uk/chembl/api/data/target/' + id.toUpperCase() + '.json', function(err, d) {
+    if (err) { callback(err, null); return; }
+    var mappings = [];
+    if (d.target_components) d.target_components.forEach(function(tc){
+      if (tc.accession) mappings.push({ db:'UniProt', id:tc.accession, link:'https://www.uniprot.org/uniprot/'+tc.accession, curated:true });
+    });
+    mappings.push({ db:'ChEMBL', id:id.toUpperCase(), link:'https://www.ebi.ac.uk/chembl/target_report_card/'+id.toUpperCase(), curated:true });
+    callback(null, {
+      source:'ChEMBL', inputId:id, detectedType:'ChEMBL ID',
+      entity:'Target', primaryName:d.pref_name||id,
+      fullName:d.pref_name||'',
+      organism:d.organism||'', taxId:'',
+      geneSymbols:[], aliases:[],
+      mappings:mappings,
+      targetType:d.target_type||'',
+      chemblLink:'https://www.ebi.ac.uk/chembl/target_report_card/'+id.toUpperCase(),
+    });
+  });
+}
+
+// ═══════════════════════════════════════════════
+// MYGENE.INFO — gene/transcript/symbol
+// ═══════════════════════════════════════════════
+function resolveMyGene(id, detected, callback) {
+  var fields = 'symbol,name,taxid,species,entrezgene,ensembl,refseq,uniprot,alias,HGNC,other_names,type_of_gene,genomic_pos';
+  var url;
+  var up = id.toUpperCase();
+  if (/^[1-9][0-9]{1,8}$/.test(up)) {
+    url = 'https://mygene.info/v3/gene/' + id + '?fields=' + fields;
+  } else if (/^ENSG[0-9]|^ENSMUSG[0-9]/i.test(up)) {
+    url = 'https://mygene.info/v3/query?q=ensembl.gene:' + up.split('.')[0] + '&fields=' + fields + '&size=1';
+  } else if (/^ENST[0-9]|^ENSMUST[0-9]/i.test(up)) {
+    url = 'https://mygene.info/v3/query?q=ensembl.transcript:' + up.split('.')[0] + '&fields=' + fields + '&size=1';
+  } else if (/^ENSP[0-9]/i.test(up)) {
+    url = 'https://mygene.info/v3/query?q=ensembl.protein:' + up.split('.')[0] + '&fields=' + fields + '&size=1';
+  } else if (/^NM_|^NR_/i.test(up)) {
+    url = 'https://mygene.info/v3/query?q=refseq.rna:' + up.split('.')[0] + '&fields=' + fields + '&size=1';
+  } else if (/^NP_/i.test(up)) {
+    url = 'https://mygene.info/v3/query?q=refseq.protein:' + up.split('.')[0] + '&fields=' + fields + '&size=1';
+  } else if (/^NG_/i.test(up)) {
+    url = 'https://mygene.info/v3/query?q=refseq.genomic:' + up.split('.')[0] + '&fields=' + fields + '&size=1';
+  } else if (/^HGNC:[0-9]+$/i.test(up)) {
+    url = 'https://mygene.info/v3/query?q=HGNC:' + up.replace(/^HGNC:/i,'') + '&fields=' + fields + '&size=1';
+  } else {
+    // Gene symbol or free-text: prefer human, then mouse, rat
+    url = 'https://mygene.info/v3/query?q=symbol:' + encodeURIComponent(id) + '&species=9606,10090,10116&fields=' + fields + '&size=5';
+  }
+  apiFetch(url, function(err, d) {
+    if (err) { callback(err, null); return; }
+    var gene = d._id ? d : (d.hits && d.hits[0] ? d.hits[0] : null);
+    if (!gene) { callback('not_found', null); return; }
+    var result = parseMyGeneJSON(gene, id, detected);
+    if (d.hits && d.hits.length > 1) {
+      result.ambiguous = d.hits.map(function(h){ return {symbol:h.symbol||h.name, taxid:h.taxid, entrez:h._id}; });
+    }
+    callback(null, result);
+  });
+}
+
+// ═══════════════════════════════════════════════
+// FREE-TEXT SEARCH (fallback for unknown)
+// ═══════════════════════════════════════════════
+function freeTextSearch(query, callback) {
+  var fields = 'symbol,name,taxid,entrezgene,ensembl,refseq,uniprot,alias,HGNC,type_of_gene';
+  var url = 'https://mygene.info/v3/query?q=' + encodeURIComponent(query) + '&species=9606,10090,10116&fields=' + fields + '&size=5';
+  apiFetch(url, function(err, d) {
+    if (err || !d || !d.hits || !d.hits.length) { callback(err || 'not_found', null); return; }
+    var detected_fake = { type:'Free-text search', db:'MyGene.info', entity:'Gene', confidence:'low' };
+    var results = d.hits.map(function(h){ return parseMyGeneJSON(h, query, detected_fake); });
+    callback(null, { freeTextResults: results, query: query });
+  });
+}
+
+function parseMyGeneJSON(d, originalId, detected) {
+  var symbol = d.symbol || '';
+  var name = d.name || '';
+  var taxid = d.taxid || '';
+  var aliases = d.alias ? (Array.isArray(d.alias) ? d.alias : [d.alias]) : [];
+  var otherNames = d.other_names ? (Array.isArray(d.other_names) ? d.other_names : [d.other_names]) : [];
+  var speciesMap = {'9606':'Human','10090':'Mouse','10116':'Rat','7227':'Fruit fly','6239':'C. elegans','7955':'Zebrafish','9913':'Bovine','9823':'Pig'};
+  var species = taxid ? (speciesMap[String(taxid)] || 'TaxID '+taxid) : '';
+  var mappings = [];
+  var entrez = d._id || d.entrezgene || '';
+  if (entrez) mappings.push({ db:'NCBI Gene', id:String(entrez), link:'https://www.ncbi.nlm.nih.gov/gene/'+entrez, curated:true });
+  var hgnc = d.HGNC || '';
+  if (hgnc) mappings.push({ db:'HGNC', id:'HGNC:'+hgnc, link:'https://www.genenames.org/data/gene-symbol-report/#!/hgnc_id/HGNC:'+hgnc, curated:true });
+  if (d.ensembl) {
+    var ensList = Array.isArray(d.ensembl) ? d.ensembl : [d.ensembl];
+    ensList.slice(0,2).forEach(function(ens){
+      if (ens.gene) mappings.push({ db:'Ensembl Gene', id:ens.gene, link:'https://www.ensembl.org/id/'+ens.gene, curated:true });
+      var txs = ens.transcript ? (Array.isArray(ens.transcript)?ens.transcript.slice(0,2):[ens.transcript]) : [];
+      txs.forEach(function(t){ mappings.push({ db:'Ensembl Transcript', id:t, link:'https://www.ensembl.org/id/'+t, curated:false }); });
+      var prots = ens.protein ? (Array.isArray(ens.protein)?ens.protein.slice(0,2):[ens.protein]) : [];
+      prots.forEach(function(p){ mappings.push({ db:'Ensembl Protein', id:p, link:'https://www.ensembl.org/id/'+p, curated:false }); });
+    });
+  }
+  if (d.refseq) {
+    var rs = d.refseq;
+    if (rs.rna) { var rnas=Array.isArray(rs.rna)?rs.rna.slice(0,3):[rs.rna]; rnas.forEach(function(r){ mappings.push({db:'RefSeq mRNA',id:r,link:'https://www.ncbi.nlm.nih.gov/nuccore/'+r,curated:true}); }); }
+    if (rs.protein) { var prns=Array.isArray(rs.protein)?rs.protein.slice(0,2):[rs.protein]; prns.forEach(function(r){ mappings.push({db:'RefSeq Protein',id:r,link:'https://www.ncbi.nlm.nih.gov/protein/'+r,curated:true}); }); }
+    if (rs.genomic) { var gens=Array.isArray(rs.genomic)?rs.genomic.slice(0,1):[rs.genomic]; gens.forEach(function(r){ mappings.push({db:'RefSeq Genomic',id:r,link:'https://www.ncbi.nlm.nih.gov/nuccore/'+r,curated:false}); }); }
+  }
+  if (d.uniprot) {
+    var up2 = d.uniprot;
+    var sw = up2['Swiss-Prot'];
+    if (sw) { var sps=Array.isArray(sw)?sw.slice(0,2):[sw]; sps.forEach(function(u){ mappings.push({db:'UniProt (reviewed)',id:u,link:'https://www.uniprot.org/uniprot/'+u,curated:true}); }); }
+    var tr = up2['TrEMBL'];
+    if (tr && !sw) { var trs=Array.isArray(tr)?tr.slice(0,1):[tr]; trs.forEach(function(u){ mappings.push({db:'UniProt (TrEMBL)',id:u,link:'https://www.uniprot.org/uniprot/'+u,curated:false}); }); }
+  }
+  return {
+    source:'MyGene.info', inputId:originalId,
+    detectedType:detected?detected.type:'Gene Symbol',
+    entity:detected?detected.entity:'Gene',
+    primaryName:symbol||name, fullName:name,
+    organism:species, taxId:String(taxid),
+    geneSymbols:symbol?[symbol]:[],
+    aliases:aliases.concat(otherNames).slice(0,10),
+    mappings:mappings,
+    typeOfGene:d.type_of_gene||'',
+    mygeneLink:'https://mygene.info/v3/gene/'+(d._id||entrez),
+  };
+}
+
+// ═══════════════════════════════════════════════
+// BATCH WITH SPECIES FILTER
+// ═══════════════════════════════════════════════
+function processBatch(ids, speciesFilter, onEach, onDone) {
+  var results = [];
+  var i = 0;
+  var delay = 150;
+  function next() {
+    if (i >= ids.length) { onDone(results); return; }
+    var id = ids[i++];
+    var detected = detectIdentifier(id);
+    if (!detected || detected.type === 'Unknown') {
+      results.push({ id: id, error: 'Unrecognised identifier', detected: detected });
+      onEach(results[results.length-1], i, ids.length);
+      setTimeout(next, 50);
+      return;
+    }
+    resolveIdentifier(detected, function(err, data) {
+      if (!err && data && speciesFilter && speciesFilter !== 'all') {
+        var taxMap = {human:'9606',mouse:'10090',rat:'10116',zebrafish:'7955',fly:'7227',worm:'6239'};
+        var targetTax = taxMap[speciesFilter];
+        if (targetTax && data.taxId && data.taxId !== targetTax) {
+          // Try to refetch with species constraint for gene symbols
+          if (detected.type === 'Gene Symbol') {
+            var sUrl = 'https://mygene.info/v3/query?q=symbol:'+encodeURIComponent(detected.id)+'&species='+targetTax+'&fields=symbol,name,taxid,ensembl,refseq,uniprot,HGNC,type_of_gene&size=1';
+            apiFetch(sUrl, function(e2, d2) {
+              if (!e2 && d2 && d2.hits && d2.hits[0]) {
+                data = parseMyGeneJSON(d2.hits[0], id, detected);
+              }
+              var r = { id: id, data: data, detected: detected };
+              results.push(r); onEach(r, i, ids.length); setTimeout(next, delay);
+            });
+            return;
+          }
+        }
+      }
+      var r = err ? { id: id, error: err, detected: detected } : { id: id, data: data, detected: detected };
+      results.push(r);
+      onEach(r, i, ids.length);
+      setTimeout(next, delay);
+    });
+  }
+  next();
+}
+var currentMode = 'single';
+var batchResults = [];
+
+function init() {
+  document.getElementById('single-input').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') runSingle();
+  });
+  renderExamples();
+  renderCacheStats();
+  checkConnectivity();
+}
+
+function renderExamples() {
+  var ex = [
+    ['P07550','UniProt'],['ENSG00000169252','Ensembl'],
+    ['GO:0007165','GO term'],['R-HSA-162582','Reactome'],
+    ['HGNC:286','HGNC'],['NM_000024','RefSeq'],
+    ['ENST00000359597','Ensembl TX'],['CHEMBL210','ChEMBL'],
+    ['IPR000276','InterPro'],['ADRB2','Symbol'],
+  ];
+  var w = document.getElementById('examples'); w.innerHTML = '';
+  ex.forEach(function(e2) {
+    var b = document.createElement('button'); b.className = 'chip';
+    b.innerHTML = '<span class="chip-id">'+e2[0]+'</span><span class="chip-type">'+e2[1]+'</span>';
+    b.onclick = (function(id){ return function(){ document.getElementById('single-input').value=id; setMode('single'); runSingle(); }; })(e2[0]);
+    w.appendChild(b);
+  });
+}
+
+function renderCacheStats() {
+  var c=0; try{ for(var k in localStorage){if(k.startsWith('biosync_'))c++;}}catch(e){}
+  var el=document.getElementById('cache-stats'); if(el) el.textContent=c?c+' cached':'';
+}
+
+function checkConnectivity() {
+  fetch('https://mygene.info/v3/metadata',{method:'HEAD'})
+    .then(function(){ var w=document.getElementById('connectivity-warn'); if(w) w.style.display='none'; })
+    .catch(function(){ var w=document.getElementById('connectivity-warn'); if(w) w.style.display='block'; });
+}
+
+function setMode(m) {
+  currentMode = m;
+  document.querySelectorAll('.tab').forEach(function(b){ b.classList.toggle('on', b.dataset.m===m); });
+  document.getElementById('single-panel').style.display  = m==='single' ? 'block':'none';
+  document.getElementById('batch-panel').style.display   = m==='batch'  ? 'block':'none';
+  document.getElementById('search-panel').style.display  = m==='search' ? 'block':'none';
+}
+
+function runSingle() {
+  var raw = document.getElementById('single-input').value.trim();
+  if (!raw) return;
+  var res = document.getElementById('single-result');
+  var det = detectIdentifier(raw);
+  if (det.confidence === 'multi') {
+    document.getElementById('batch-input').value = raw.replace(/,\s*/g,'\n');
+    setMode('batch');
+    res.innerHTML = '<div class="info-box">Multiple identifiers detected &mdash; switched to Batch mode.</div>';
+    return;
+  }
+  res.innerHTML = renderDetStrip(det) + '<div class="resolving"><div class="spinner"></div> Resolving&hellip;</div>';
+  if (det.type === 'Unknown') {
+    res.innerHTML = renderDetStrip(det) + '<div class="resolving"><div class="spinner"></div> Trying name search&hellip;</div>';
+    freeTextSearch(raw, function(err, data) {
+      if (err || !data || !data.freeTextResults || !data.freeTextResults.length) {
+        res.innerHTML = renderDetStrip(det) + renderErr('unknown', raw);
+        return;
+      }
+      res.innerHTML = renderDetStrip(det) + renderFTResults(data);
+    });
+    return;
+  }
+  resolveIdentifier(det, function(err, data) {
+    res.innerHTML = err ? renderDetStrip(det)+renderErr(err,raw) : renderDetStrip(det)+renderCard(data);
+    renderCacheStats();
+  });
+}
+
+function renderDetStrip(det) {
+  if (!det || det.confidence==='multi') return '';
+  var sigClass = 'sig-'+det.confidence;
+  var confClass = 'conf-label-'+det.confidence;
+  return '<div class="detected-strip">'
+    + '<div class="ds-seg"><span class="ds-label">Input</span><span class="ds-val" style="color:var(--navy);font-weight:600">'+esc(det.originalId||det.id)+'</span></div>'
+    + '<div class="ds-seg"><span class="ds-label">Type</span><span class="ds-val ds-type">'+esc(det.type)+'</span></div>'
+    + '<div class="ds-seg"><span class="ds-label">Database</span><span class="ds-val">'+esc(det.db)+'</span></div>'
+    + '<div class="ds-seg"><span class="ds-entity entity-'+((det.entity||'').toLowerCase().replace(/[^a-z]/g,''))+'">'+esc(det.entity)+'</span></div>'
+    + '<div class="ds-seg" style="margin-left:auto"><div class="sig '+sigClass+'" title="'+det.confidence+' confidence"></div><span class="'+confClass+'" style="font-size:0.62rem;font-family:var(--mono)">'+det.confidence+'</span></div>'
+    + '</div>';
+}
+
+function renderErr(err, raw) {
+  if (err === 'network_error') {
+    return '<div class="err-box net-err"><div class="err-title">&#x26A0; Network request blocked</div>'
+      + '<div class="err-body">BioSync queries external APIs blocked in this preview.'
+      + '<br/>Works on GitHub Pages or locally: <code>python3 -m http.server 8080</code></div></div>';
+  }
+  if (err === 'not_found') return '<div class="err-box"><strong>Not found</strong> &mdash; '+esc(raw)+' was not found. Check the format or verify the identifier is current.</div>';
+  if (err === 'rate_limited') return '<div class="err-box"><strong>Rate limited</strong> &mdash; wait a moment and try again.</div>';
+  if (err === 'unknown') return '<div class="err-box">Could not recognise <strong>'+esc(raw)+'</strong>. Supported: UniProt (P07550), Ensembl (ENSG/ENST/ENSP), RefSeq (NM_/NP_/NR_), HGNC (HGNC:286), GO (GO:0007165), Reactome (R-HSA-...), ChEMBL, InterPro (IPR...), Pfam (PF...), NCBI Gene ID, gene symbol. Input is case-insensitive.</div>';
+  return '<div class="err-box">Could not resolve: '+esc(err)+'</div>';
+}
+
+function renderCard(data) {
+  if (!data) return '<div class="err-box">No data returned.</div>';
+  var html = '<div class="result-card">';
+
+  // Primary row
+  html += '<div class="rc-primary-row">'
+    + '<div><div class="rc-name">'+esc(data.primaryName||data.inputId)+'</div>'
+    + (data.fullName && data.fullName!==data.primaryName ? '<div class="rc-fullname">'+esc(data.fullName.substring(0,220))+'</div>' : '')
+    + '</div>'
+    + '<div class="rc-badges">';
+  if (data.organism) html += '<span class="rc-badge badge-species">'+esc(data.organism)+(data.commonName?' ('+esc(data.commonName)+')':'')+'</span>';
+  if (data.entity) html += '<span class="rc-badge ds-entity entity-'+data.entity.toLowerCase().replace(/[^a-z]/g,'')+'">'+esc(data.entity)+'</span>';
+  if (data.reviewed) html += '<span class="rc-badge badge-reviewed">Swiss-Prot reviewed</span>';
+  if (data.typeOfGene) html += '<span class="rc-badge badge-genetype">'+esc(data.typeOfGene)+'</span>';
+  if (data.namespace) html += '<span class="rc-badge badge-ns">'+esc(data.namespace)+'</span>';
+  if (data.biotype) html += '<span class="rc-badge badge-biotype">'+esc(data.biotype)+'</span>';
+  if (data.targetType) html += '<span class="rc-badge badge-genetype">'+esc(data.targetType)+'</span>';
+  html += '</div></div>';
+
+  // Isoform bar
+  if (data.transcriptInfo) {
+    html += '<div class="isoform-bar">'
+      + '<span class="iso-arrow">&#x21b3;</span>'
+      + '<span class="iso-label">Encodes</span>'
+      + '<span class="iso-id"><a href="https://www.ensembl.org/id/'+esc(data.transcriptInfo.protein)+'" target="_blank" class="map-id-link">'+esc(data.transcriptInfo.protein)+' &nearr;</a></span>'
+      + '<span class="iso-len">'+esc(String(data.transcriptInfo.length))+' aa</span>'
+      + (data.location ? '<span class="iso-loc">&#9656; '+esc(data.location)+(data.strand?' ('+esc(data.strand)+')':'')+'</span>' : '')
+      + '</div>';
+  } else if (data.location) {
+    html += '<div class="isoform-bar"><span class="iso-label">&#9656;</span><span class="iso-loc">'+esc(data.location)+(data.strand?' ('+esc(data.strand)+')':'')+'</span></div>';
+  }
+
+  // Ambiguity
+  if (data.ambiguous && data.ambiguous.length > 1) {
+    html += '<div class="ambig-row">&#x26A0; Multiple species matches. Others: '
+      + data.ambiguous.slice(1,4).map(function(a){ return '<span class="ambig-item" onclick="lookupDirect(\''+esc(a.entrez)+'\')">'+esc(a.symbol||a.entrez)+' ('+esc(String(a.taxid))+')</span>'; }).join('')
+      + '</div>';
+  }
+
+  // Mappings
+  if (data.mappings && data.mappings.length) {
+    html += '<div class="rc-section"><div class="rc-sec-head">Cross-database mappings</div><div class="rc-sec-body"><div class="map-table">';
+    data.mappings.forEach(function(m) {
+      var prov = m.curated !== undefined
+        ? '<span class="map-prov '+(m.curated?'prov-curated':'prov-auto')+'" title="'+(m.curated?'Manually curated':'Computationally predicted')+'">'+(m.curated?'curated':'auto')+'</span>'
+        : '';
+      html += '<div class="map-row">'
+        + '<span class="map-db-label">'+esc(m.db)+'</span>'
+        + '<span class="map-id-val">'+(m.link?'<a href="'+esc(m.link)+'" target="_blank" class="map-id-link">'+esc(m.id)+' &nearr;</a>':esc(m.id))+'</span>'
+        + prov
+        + '<button class="map-copy" onclick="copyId(\''+esc(m.id)+'\',this)" title="Copy">&#x2398;</button>'
+        + '</div>';
+    });
+    html += '</div></div></div>';
+  }
+
+  // Aliases
+  if (data.aliases && data.aliases.length) {
+    html += '<div class="rc-section"><div class="rc-sec-head">Aliases &amp; synonyms</div><div class="rc-sec-body"><div class="alias-tags">';
+    data.aliases.slice(0,12).forEach(function(a){ html += '<span class="alias-tag">'+esc(a)+'</span>'; });
+    html += '</div></div></div>';
+  }
+
+  if (data.geneSymbols && data.geneSymbols.length > 1) {
+    html += '<div class="rc-section"><div class="rc-sec-head">Gene names</div><div class="rc-sec-body"><div class="alias-tags">';
+    data.geneSymbols.forEach(function(g){ html += '<span class="alias-tag alias-tag-gene">'+esc(g)+'</span>'; });
+    html += '</div></div></div>';
+  }
+
+  // Function
+  if (data.function_ && data.function_.length > 10) {
+    html += '<div class="rc-section"><div class="rc-sec-head">Function</div><div class="rc-sec-body"><div class="fn-text">'+esc(data.function_.substring(0,500))+(data.function_.length>500?'&hellip;':'')+'</div></div></div>';
+  }
+
+  // Footer
+  html += '<div class="rc-footer-row"><span class="rc-src-label">Source: '+esc(data.source)+'</span>';
+  if (data.uniprotLink) html += '<a href="'+esc(data.uniprotLink)+'" target="_blank" class="rc-ext-link">UniProt &nearr;</a>';
+  if (data.ensemblLink) html += '<a href="'+esc(data.ensemblLink)+'" target="_blank" class="rc-ext-link">Ensembl &nearr;</a>';
+  if (data.chemblLink) html += '<a href="'+esc(data.chemblLink)+'" target="_blank" class="rc-ext-link">ChEMBL &nearr;</a>';
+  if (data.mygeneLink) html += '<a href="'+esc(data.mygeneLink)+'" target="_blank" class="rc-ext-link">MyGene.info &nearr;</a>';
+  if (data.goLink) html += '<a href="'+esc(data.goLink)+'" target="_blank" class="rc-ext-link">AmiGO &nearr;</a>';
+  if (data.reactomeLink) html += '<a href="'+esc(data.reactomeLink)+'" target="_blank" class="rc-ext-link">Reactome &nearr;</a>';
+  if (data.interproLink) html += '<a href="'+esc(data.interproLink)+'" target="_blank" class="rc-ext-link">InterPro &nearr;</a>';
+  html += '</div></div>';
+  return html;
+}
+
+function renderFTResults(data) {
+  if (!data.freeTextResults || !data.freeTextResults.length) return '<div class="err-box">No results found.</div>';
+  var html = '<div class="ft-results">'
+    + '<div class="ft-head">Free-text results for &ldquo;'+esc(data.query)+'&rdquo; &mdash; click to resolve</div>';
+  data.freeTextResults.forEach(function(r) {
+    var entrez = r.mappings && r.mappings[0] ? r.mappings[0].id : r.primaryName;
+    html += '<div class="ft-row" onclick="lookupDirect(\''+esc(entrez)+'\')">'
+      + '<span class="ft-sym">'+esc(r.primaryName)+'</span>'
+      + '<span class="ft-name">'+esc(r.fullName.substring(0,70))+'</span>'
+      + '<span class="ft-sp">'+esc(r.organism)+'</span>'
+      + '</div>';
+  });
+  html += '</div>';
+  return html;
+}
+
+function lookupDirect(id) {
+  document.getElementById('single-input').value = id;
+  setMode('single'); runSingle();
+}
+
+function runFreeSearch() {
+  var q = document.getElementById('search-input').value.trim();
+  if (!q) return;
+  var res = document.getElementById('search-result');
+  res.innerHTML = '<div class="resolving"><div class="spinner"></div> Searching&hellip;</div>';
+  freeTextSearch(q, function(err, data) {
+    if (err || !data || !data.freeTextResults || !data.freeTextResults.length) {
+      res.innerHTML = err==='network_error' ? renderErr('network_error','') : '<div class="err-box">No results for &ldquo;'+esc(q)+'&rdquo;.</div>';
+      return;
+    }
+    res.innerHTML = renderFTResults(data);
+  });
+}
+
+function runBatch() {
+  var raw = document.getElementById('batch-input').value.trim();
+  if (!raw) { alert('Paste identifiers first.'); return; }
+  var species = document.getElementById('batch-species').value;
+  var ids = raw.split(/[\n,\t]+/).map(function(s){return s.trim();}).filter(Boolean);
+  var seen={}; ids=ids.filter(function(id){var k=id.toUpperCase(); if(seen[k])return false; seen[k]=true; return true;});
+  if (ids.length>100 && !confirm(ids.length+' IDs — ~'+Math.ceil(ids.length*0.15)+'s. Continue?')) return;
+
+  batchResults = [];
+  document.getElementById('batch-result').innerHTML = '';
+  document.getElementById('batch-progress').style.display = 'block';
+  document.getElementById('batch-run-btn').disabled = true;
+
+  processBatch(ids, species, function(r, done, total) {
+    batchResults.push(r);
+    document.getElementById('batch-progress-fill').style.width = Math.round(done/total*100)+'%';
+    document.getElementById('batch-progress-text').textContent = done+' / '+total;
+    if (done%5===0 || done===total) renderBatchTable();
+  }, function() {
+    document.getElementById('batch-progress').style.display = 'none';
+    document.getElementById('batch-run-btn').disabled = false;
+    renderBatchTable(); renderCacheStats();
+  });
+}
+
+function renderBatchTable() {
+  var res = document.getElementById('batch-result');
+  if (!batchResults.length) { res.innerHTML=''; return; }
+  var ok = batchResults.filter(function(r){return r.data;});
+  var fail = batchResults.filter(function(r){return r.error;});
+
+  var html = '<div class="batch-summary">'
+    + '<span class="bs-n">'+batchResults.length+' identifiers</span>'
+    + '<span class="bs-ok">'+ok.length+' resolved</span>'
+    + (fail.length?'<span class="bs-fail">'+fail.length+' failed</span>':'')
+    + '<div style="margin-left:auto;display:flex;gap:5px">'
+    + '<button class="exp-btn" onclick="exportBatch()">&#8595; Export TSV</button>'
+    + (fail.length?'<button class="exp-btn" onclick="exportFailed()">&#8595; Failed IDs</button>':'')
+    + '</div></div>';
+
+  html += '<table class="bt-tbl"><thead><tr>'
+    + '<th>Input</th><th>Type</th><th>Name</th><th>Species</th><th>Top mapping</th><th>Source</th>'
+    + '</tr></thead><tbody>';
+
+  batchResults.forEach(function(r) {
+    if (r.error) {
+      html += '<tr><td class="bt-input-id">'+esc(r.id)+'</td>'
+        +'<td class="bt-type-cell">'+(r.detected?esc(r.detected.type):'?')+'</td>'
+        +'<td colspan="4" class="bt-err-cell">'+esc(r.error==='network_error'?'Network blocked':r.error)+'</td></tr>';
+    } else {
+      var d=r.data, top=d.mappings&&d.mappings[0]?d.mappings[0]:null;
+      html += '<tr>'
+        +'<td class="bt-input-id">'+esc(r.id)+'</td>'
+        +'<td class="bt-type-cell">'+esc(d.detectedType||'')+'</td>'
+        +'<td class="bt-name-cell">'+esc(d.primaryName||'')+'</td>'
+        +'<td class="bt-sp-cell">'+esc(d.organism||'')+'</td>'
+        +'<td class="bt-map-cell">'+(top?'<span class="map-db-sm">'+esc(top.db)+'</span>'+esc(top.id):'—')+'</td>'
+        +'<td class="bt-type-cell">'+esc(d.source||'')+'</td></tr>';
+    }
+  });
+  html += '</tbody></table>';
+  res.innerHTML = html;
+}
+
+function exportBatch() {
+  if (!batchResults.length) return;
+  var rows = ['Input\tDetected type\tEntity\tName\tFull name\tOrganism\tTaxID\tAliases\tAll mappings\tCurated mappings\tSource'];
+  batchResults.forEach(function(r) {
+    if (r.error) {
+      rows.push([r.id,r.detected?r.detected.type:'?','','','','','','','ERROR: '+r.error,'',''].join('\t'));
+    } else {
+      var d=r.data;
+      var all=(d.mappings||[]).map(function(m){return m.db+':'+m.id;}).join(';');
+      var cur=(d.mappings||[]).filter(function(m){return m.curated;}).map(function(m){return m.db+':'+m.id;}).join(';');
+      rows.push([r.id,d.detectedType||'',d.entity||'',d.primaryName||'',d.fullName||'',d.organism||'',d.taxId||'',(d.aliases||[]).slice(0,5).join(';'),all,cur,d.source||''].join('\t'));
+    }
+  });
+  rows.push('','Generated by BioSync (chakitarora.github.io/biosync)');
+  dl(new Blob([rows.join('\n')],{type:'text/plain'}),'biosync_batch.tsv');
+}
+
+function exportFailed() {
+  var fail=batchResults.filter(function(r){return r.error;});
+  if (!fail.length) return;
+  dl(new Blob([fail.map(function(r){return r.id;}).join('\n')+'\n\n# '+fail.length+' unresolved'],{type:'text/plain'}),'biosync_failed.txt');
+}
+
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
+function copyId(id,btn){navigator.clipboard.writeText(id).then(function(){var o=btn.innerHTML;btn.innerHTML='&#x2714;';btn.style.color='var(--teal)';setTimeout(function(){btn.innerHTML=o;btn.style.color='';},1500);});}
+function dl(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;a.click();}
+function clearCache(){var c=0;try{var ks=[];for(var k in localStorage){if(k.startsWith('biosync_'))ks.push(k);}ks.forEach(function(k){localStorage.removeItem(k);c++;});}catch(e){}renderCacheStats();alert('Cleared '+c+' cached entries.');}
+
+window.addEventListener('load', init);
+</script>
+</body>
+</html>
