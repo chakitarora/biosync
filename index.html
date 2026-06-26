@@ -413,7 +413,7 @@ a{color:var(--navy);text-decoration:none}a:hover{text-decoration:underline}
         <option value="yeast">&#x2192; S. cerevisiae</option>
         <option value="chicken">&#x2192; Chicken</option>
         <option value="xenopus">&#x2192; Xenopus</option>
-        <option value="human">&#x2192; Human (from mouse)</option>
+        <option value="human">&#x2192; Human</option>
       </select>
       <span class="field-hint">Finds orthologs via Ensembl comparative genomics &mdash; includes orthology type and sequence identity</span>
     </div>
@@ -1800,26 +1800,59 @@ var SPECIES_NAME = {
   '559292': 'S. cerevisiae', '9031': 'Chicken', '8364': 'Xenopus'
 };
 
-function resolveOrtholog(ensGeneId, targetSpecies, callback) {
-  var url = 'https://rest.ensembl.org/homology/id/' + ensGeneId
-    + '?content-type=application/json&target_taxon=' + (SPECIES_TAXON[targetSpecies] || targetSpecies)
-    + '&type=orthologues&sequence=none';
-  apiFetch(url, function(err, d) {
-    if (err) { callback(err, null); return; }
+function resolveOrtholog(geneInput, targetSpecies, sourceSpecies, callback) {
+  var targetTaxon = SPECIES_TAXON[targetSpecies] || targetSpecies;
+  var srcSpecies  = sourceSpecies || 'human';
+  var parseHomologs = function(d) {
     var homologs = [];
-    if (d.data && d.data[0] && d.data[0].homologies) {
+    if (d && d.data && d.data[0] && d.data[0].homologies) {
       d.data[0].homologies.forEach(function(h) {
-        if (h.target) homologs.push({
+        if (!h.target) return;
+        homologs.push({
           id: h.target.id,
-          symbol: h.target.protein_id || h.target.id,
           species: SPECIES_NAME[String(h.target.taxon_id)] || 'TaxID ' + h.target.taxon_id,
-          type: h.type,
-          identity: h.target.perc_id ? Math.round(h.target.perc_id) + '% identity' : '',
+          type: h.type || '',
+          identity: h.target.perc_id !== undefined ? Math.round(h.target.perc_id) + '% identity' : '',
           link: 'https://www.ensembl.org/id/' + h.target.id
         });
       });
     }
-    callback(null, homologs);
+    return homologs;
+  };
+
+  // Primary: use symbol endpoint — more reliable, no pre-resolution needed
+  var isEnsembl = /^ENSG[0-9]{11}/i.test(geneInput);
+  var url = isEnsembl
+    ? 'https://rest.ensembl.org/homology/id/' + geneInput.split('.')[0]
+        + '?content-type=application/json&target_taxon=' + targetTaxon
+        + '&type=orthologues&sequence=none'
+    : 'https://rest.ensembl.org/homology/symbol/' + encodeURIComponent(srcSpecies)
+        + '/' + encodeURIComponent(geneInput)
+        + '?content-type=application/json&target_taxon=' + targetTaxon
+        + '&type=orthologues&sequence=none';
+
+  apiFetch(url, function(err, d) {
+    if (err) { callback(err, null); return; }
+    var homologs = parseHomologs(d);
+    // If empty and we used symbol endpoint, try without target_taxon filter
+    // (sometimes Ensembl returns empty for valid genes due to annotation gaps)
+    if (!homologs.length && !isEnsembl) {
+      var url2 = 'https://rest.ensembl.org/homology/symbol/' + encodeURIComponent(srcSpecies)
+        + '/' + encodeURIComponent(geneInput)
+        + '?content-type=application/json&type=orthologues&sequence=none';
+      apiFetch(url2, function(err2, d2) {
+        if (err2) { callback(null, []); return; }
+        var all = parseHomologs(d2);
+        // Filter manually if we got results
+        var filtered = all.filter(function(h) {
+          return String(SPECIES_TAXON[targetSpecies] || targetSpecies) ===
+                 String(h.species === (SPECIES_NAME[String(SPECIES_TAXON[targetSpecies])] || '') ? SPECIES_TAXON[targetSpecies] : '0');
+        });
+        callback(null, filtered.length ? filtered : all.slice(0, 5));
+      });
+    } else {
+      callback(null, homologs);
+    }
   });
 }
 
@@ -2002,57 +2035,87 @@ function runOrtholog() {
   setMode('ortholog');
   var res = document.getElementById('ortholog-result');
   res.style.display = 'block';
-  res.innerHTML = '<div class="resolving"><div class="spinner"></div> Finding orthologs&hellip;</div>';
+  res.innerHTML = '<div class="resolving"><div class="spinner"></div> Querying Ensembl comparative genomics&hellip; <span style="font-size:0.7rem;color:var(--dim)">(may take 5&ndash;10s)</span></div>';
 
   var det = detectIdentifier(raw);
+  var up = raw.toUpperCase();
 
-  function doOrtholog(ensGeneId, sourceName) {
-    resolveOrtholog(ensGeneId, targetSp, function(err, homologs) {
-      if (err) { res.innerHTML = renderErr(err, raw); return; }
-      if (!homologs || !homologs.length) {
-        res.innerHTML = '<div class="err-box">No ' + esc(targetSp) + ' ortholog found for ' + esc(sourceName) + ' in Ensembl. The gene may not have a documented ortholog in this species, or the Ensembl ID may be incorrect.</div>';
-        return;
-      }
-      var html = '<div class="rr-card">';
-      html += '<div class="rr-header">'
-        + '<span style="font-family:var(--mono);font-size:0.76rem;color:var(--ink)"><strong>' + esc(sourceName) + '</strong></span>'
-        + '<span style="font-family:var(--mono);font-size:0.9rem;color:var(--muted);margin:0 8px">&rarr;</span>'
-        + '<span class="rr-fmt-badge">' + esc(targetSp) + ' orthologs</span>'
-        + '<span style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);margin-left:8px">' + homologs.length + ' found</span>'
-        + '</div>';
-      html += '<table class="bt-tbl"><thead><tr><th>Ensembl ID</th><th>Species</th><th>Orthology type</th><th>Identity</th></tr></thead><tbody>';
-      homologs.forEach(function(h) {
-        html += '<tr>'
-          + '<td class="bt-input-id"><a href="' + esc(h.link) + '" target="_blank" class="map-id-link">' + esc(h.id) + ' &nearr;</a></td>'
-          + '<td class="bt-sp-cell">' + esc(h.species) + '</td>'
-          + '<td class="bt-type-cell">' + esc(h.type.replace(/_/g,' ')) + '</td>'
-          + '<td class="bt-type-cell">' + esc(h.identity) + '</td>'
-          + '</tr>';
-      });
-      html += '</tbody></table></div>';
-      res.innerHTML = html;
+  // Detect source species from identifier type
+  var srcSpecies = 'human';
+  if (det.type === 'Ensembl Gene (Mouse)' || det.type === 'Ensembl Transcript (Mouse)') srcSpecies = 'mus_musculus';
+
+  function renderOrthologResults(geneLabel, homologs, targetSp) {
+    if (!homologs || !homologs.length) {
+      res.innerHTML = '<div class="err-box">'
+        + '<strong>No ' + esc(targetSp) + ' orthologs found</strong> for ' + esc(geneLabel) + '.<br/>'
+        + '<span style="font-size:0.78rem;line-height:1.7">Possible reasons: (1) this gene has no documented ortholog in ' + esc(targetSp) + ' in the current Ensembl release; '
+        + '(2) the gene symbol was not recognised by Ensembl — try using the Ensembl Gene ID (ENSG...) directly; '
+        + '(3) Ensembl comparative genomics may not cover this gene.</span></div>';
+      return;
+    }
+    var html = '<div class="rr-card">';
+    html += '<div class="rr-header">'
+      + '<span style="font-family:var(--mono);font-size:0.76rem;font-weight:600;color:var(--navy)">' + esc(geneLabel) + '</span>'
+      + '<span style="font-family:var(--mono);font-size:0.9rem;color:var(--muted);margin:0 8px">&rarr;</span>'
+      + '<span class="rr-fmt-badge">' + esc(targetSp) + '</span>'
+      + '<span style="font-family:var(--mono);font-size:0.68rem;color:var(--muted);margin-left:8px">' + homologs.length + ' ortholog' + (homologs.length !== 1 ? 's' : '') + '</span>'
+      + '</div>';
+    html += '<table class="bt-tbl"><thead><tr>'
+      + '<th>Ensembl ID</th><th>Species</th><th>Orthology type</th><th>Identity</th>'
+      + '</tr></thead><tbody>';
+    homologs.forEach(function(h) {
+      var typeClean = (h.type || '').replace(/ortholog_/g,'').replace(/_/g,' ');
+      var typeColour = h.type === 'ortholog_one2one' ? 'color:var(--teal)' : 'color:var(--muted)';
+      html += '<tr>'
+        + '<td class="bt-input-id"><a href="' + esc(h.link) + '" target="_blank" class="map-id-link">' + esc(h.id) + ' &nearr;</a></td>'
+        + '<td class="bt-sp-cell">' + esc(h.species) + '</td>'
+        + '<td class="bt-type-cell" style="' + typeColour + '">' + esc(typeClean) + '</td>'
+        + '<td class="bt-type-cell">' + esc(h.identity) + '</td>'
+        + '</tr>';
     });
+    html += '</tbody></table>'
+      + '<div style="padding:6px 14px;font-family:var(--mono);font-size:0.6rem;color:var(--dim);background:var(--paper);border-top:1px solid var(--rule)">'
+      + 'Source: Ensembl comparative genomics &middot; one2one = highest confidence'
+      + '</div></div>';
+    res.innerHTML = html;
+    addToHistory(raw, geneLabel, det.type || 'Gene');
   }
 
-  // Need an Ensembl Gene ID to query Ensembl homology
+  // For Ensembl IDs: use /homology/id/ endpoint
   if (det.type === 'Ensembl Gene' || det.type === 'Ensembl Gene (Mouse)') {
-    doOrtholog(det.id.split('.')[0], det.id);
-  } else {
-    // Resolve to get Ensembl Gene ID first
-    resolveIdentifier(det, function(err, data) {
-      if (err || !data) { res.innerHTML = renderErr(err || 'not_found', raw); return; }
-      var ensId = null;
-      if (data.mappings) {
-        var ensMap = data.mappings.find(function(m){ return m.db === 'Ensembl Gene'; });
-        if (ensMap) ensId = ensMap.id;
-      }
-      if (!ensId) {
-        res.innerHTML = '<div class="err-box">Could not find an Ensembl Gene ID for <strong>' + esc(raw) + '</strong> — needed for ortholog lookup. Try entering the Ensembl Gene ID directly (ENSG...).</div>';
-        return;
-      }
-      doOrtholog(ensId, data.primaryName || raw);
+    resolveOrtholog(det.id, targetSp, srcSpecies, function(err, homologs) {
+      if (err) { res.innerHTML = renderErr(err, raw); return; }
+      renderOrthologResults(det.id, homologs, targetSp);
     });
+    return;
   }
+
+  // For gene symbols: use /homology/symbol/ endpoint directly — no pre-resolution needed
+  if (det.type === 'Gene Symbol' || det.confidence === 'low') {
+    resolveOrtholog(up, targetSp, srcSpecies, function(err, homologs) {
+      if (err) { res.innerHTML = renderErr(err, raw); return; }
+      renderOrthologResults(raw, homologs, targetSp);
+    });
+    return;
+  }
+
+  // For other types: resolve first to get gene symbol + Ensembl Gene ID
+  resolveIdentifier(det, function(err, data) {
+    if (err || !data) { res.innerHTML = renderErr(err || 'not_found', raw); return; }
+    // Try symbol first (more reliable for homology endpoint)
+    var symbol = data.geneSymbols && data.geneSymbols[0] ? data.geneSymbols[0] : null;
+    var ensId = null;
+    if (data.mappings) {
+      var em = data.mappings.find(function(m){ return m.db === 'Ensembl Gene'; });
+      if (em) ensId = em.id;
+    }
+    var queryId = symbol || ensId || raw;
+    var isEns = !symbol && ensId;
+    resolveOrtholog(isEns ? ensId : queryId, targetSp, srcSpecies, function(err2, homologs) {
+      if (err2) { res.innerHTML = renderErr(err2, raw); return; }
+      renderOrthologResults(data.primaryName || raw, homologs, targetSp);
+    });
+  });
 }
 
 
